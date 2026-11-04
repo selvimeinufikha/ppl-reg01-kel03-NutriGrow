@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardPenggunaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,9 +45,5 @@ Route::get('/dashboard-admin', function () {
     return redirect()->route('home');
 })->name('dashboard.admin');
 
-Route::get('/dashboard-pengguna', function () {
-    if (view()->exists('DashboardPengguna.index')) {
-        return view('DashboardPengguna.index');
-    }
-    return redirect()->route('home');
-})->name('dashboard.pengguna');
+Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
+Route::get('/dashboard', [DashboardPenggunaController::class, 'index'])->name('dashboard');
