@@ -101,3 +101,4 @@ class AdminAuthController extends Controller
         return redirect()->route('admin.login')->with('success_logout', 'Anda telah berhasil keluar dari Portal Faskes & Tenaga Kesehatan.');
     }
 }
+
