@@ -28,18 +28,6 @@
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     colors: {
-                        brand: {
-                            50: '#fff1f2',
-                            100: '#ffe4e6',
-                            200: '#fecdd3',
-                            300: '#fda4af',
-                            400: '#fb7185',
-                            500: '#f43f5e',
-                            600: '#e11d48',
-                            700: '#be123c',
-                            800: '#9f1239',
-                            900: '#881337',
-                        },
                         medical: {
                             50: '#f0f9ff',
                             100: '#e0f2fe',
@@ -65,15 +53,15 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        /* Soft Ambient Glows for Left Hero Section */
-        .ambient-glow-left {
-            background: radial-gradient(circle at 10% 15%, rgba(186, 230, 253, 0.45) 0%, transparent 45%),
-                        radial-gradient(circle at 75% 85%, rgba(254, 205, 211, 0.35) 0%, transparent 40%),
-                        linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f0fdf4 100%);
+        /* Mobile background gradient fallback */
+        .ambient-glow-mobile {
+            background: radial-gradient(circle at 10% 15%, rgba(186, 230, 253, 0.5) 0%, transparent 45%),
+                        radial-gradient(circle at 85% 75%, rgba(254, 205, 211, 0.35) 0%, transparent 40%),
+                        linear-gradient(180deg, #f0f9ff 0%, #ffffff 50%, #f8fafc 100%);
         }
     </style>
 </head>
-<body class="min-h-screen bg-slate-50 font-sans antialiased text-slate-800 flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+<body class="min-h-screen bg-white font-sans antialiased text-slate-800 flex flex-col justify-between selection:bg-sky-500 selection:text-white">
 
     <!-- =================================================================== -->
     <!-- MAIN CONTAINER: SPLIT SCREEN (LEFT: BRAND & HERO, RIGHT: ADMIN FORM) -->
@@ -83,42 +71,76 @@
         <!-- =============================================================== -->
         <!-- 1. LEFT COLUMN: HERO SHOWCASE (PORTAL FASKES & NAKES)           -->
         <!-- =============================================================== -->
-        <div class="w-full lg:w-1/2 min-h-[520px] lg:min-h-screen ambient-glow-left px-6 sm:px-10 lg:px-12 xl:px-16 py-6 sm:py-8 lg:py-10 flex flex-col justify-between relative border-b lg:border-b-0 lg:border-r border-slate-100/80">
+        <div class="w-full lg:w-[48%] xl:w-1/2 min-h-[520px] lg:min-h-screen relative px-6 sm:px-10 lg:px-12 xl:px-16 py-6 sm:py-8 lg:py-10 flex flex-col justify-between ambient-glow-mobile lg:bg-transparent">
 
-            <!-- Top Row: Logo & Tenaga Kesehatan + Pill Badge -->
-            <div class="flex flex-wrap items-center justify-between gap-3 relative z-10">
+            <!-- =========================================================== -->
+            <!-- DESKTOP BACKGROUND WITH ORGANIC RIGHT CONVEX CURVE (LENGKUNG) -->
+            <!-- =========================================================== -->
+            <svg class="hidden lg:block absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+                <defs>
+                    <!-- Linear Gradient Top Cyan to Bottom Pink -->
+                    <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.85" />
+                        <stop offset="20%" stop-color="#f0f9ff" stop-opacity="0.6" />
+                        <stop offset="45%" stop-color="#ffffff" stop-opacity="0.95" />
+                        <stop offset="70%" stop-color="#ffffff" stop-opacity="0.9" />
+                        <stop offset="85%" stop-color="#fce7f3" stop-opacity="0.6" />
+                        <stop offset="100%" stop-color="#ffe4e6" stop-opacity="0.4" />
+                    </linearGradient>
+
+                    <!-- Top-Left Cyan Ambient Glow -->
+                    <radialGradient id="topCyanGlow" cx="15%" cy="10%" r="50%">
+                        <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.65" />
+                        <stop offset="50%" stop-color="#e0f2fe" stop-opacity="0.3" />
+                        <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+                    </radialGradient>
+
+                    <!-- Bottom-Right Soft Pink Glow -->
+                    <radialGradient id="bottomPinkGlow" cx="88%" cy="70%" r="45%">
+                        <stop offset="0%" stop-color="#fbcfe8" stop-opacity="0.5" />
+                        <stop offset="45%" stop-color="#fce7f3" stop-opacity="0.25" />
+                        <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+                    </radialGradient>
+                </defs>
+
+                <!-- Base Organic Curved Shape (Bowing outwards to the right in the middle) -->
+                <path d="M 0,0 L 910,0 C 975,250 1000,450 1000,520 C 1000,600 965,800 890,1000 L 0,1000 Z" fill="url(#heroGradient)" />
+                <path d="M 0,0 L 910,0 C 975,250 1000,450 1000,520 C 1000,600 965,800 890,1000 L 0,1000 Z" fill="url(#topCyanGlow)" />
+                <path d="M 0,0 L 910,0 C 975,250 1000,450 1000,520 C 1000,600 965,800 890,1000 L 0,1000 Z" fill="url(#bottomPinkGlow)" />
+
+                <!-- Delicate 1px Border Stroke Along the Curve -->
+                <path d="M 910,0 C 975,250 1000,450 1000,520 C 1000,600 965,800 890,1000" fill="none" stroke="rgba(226, 232, 240, 0.75)" stroke-width="1.5" />
+            </svg>
+
+            <!-- Top Row: Logo & Tenaga Kesehatan + Pill Badge (Didekatkan Bersebelahan) -->
+            <div class="flex items-center gap-3.5 sm:gap-4 relative z-10">
                 <!-- Brand NutriGrow with Tenaga Kesehatan Subtitle -->
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('admin.login') }}" class="group block">
-                        <img
-                            src="{{ asset('images/nutrigrow-logo.png') }}"
-                            alt="NutriGrow Logo"
-                            class="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105"
-                            onerror="this.onerror=null; this.src='{{ asset('images/nutrigrow-icon.png') }}';"
-                        />
-                        <span class="block text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-[#0369a1] mt-0.5">
-                            TENAGA KESEHATAN
-                        </span>
-                    </a>
-                </div>
-
-                <!-- Pill Badge: Portal Khusus Faskes & Nakes -->
-                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-xs border border-slate-200/90 shadow-2xs">
-                    <span class="relative flex h-2.5 w-2.5">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                <a href="{{ route('admin.login') }}" class="group block shrink-0">
+                    <img
+                        src="{{ asset('images/nutrigrow-logo.png') }}"
+                        alt="NutriGrow Logo"
+                        class="h-7 sm:h-8 w-auto object-contain transition-transform group-hover:scale-105"
+                        onerror="this.onerror=null; this.src='{{ asset('images/nutrigrow-icon.png') }}';"
+                    />
+                    <span class="block text-[9.5px] sm:text-[10px] font-black uppercase tracking-wider text-[#0284c7] mt-0.5">
+                        TENAGA KESEHATAN
                     </span>
-                    <span class="text-xs font-semibold text-slate-700 tracking-tight">
+                </a>
+
+                <!-- Pill Badge: Portal Khusus Faskes & Nakes (Posisi di samping NutriGrow) -->
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 border border-sky-100/90 shadow-2xs shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span class="text-[11px] sm:text-xs font-bold text-slate-700 tracking-tight whitespace-nowrap">
                         Portal Khusus Faskes &amp; Nakes
                     </span>
                 </div>
             </div>
 
             <!-- Middle Section: Image Showcase Card & Typography -->
-            <div class="my-auto py-8 sm:py-10 max-w-[440px] mx-auto w-full flex flex-col items-center relative z-10">
-                
+            <div class="my-auto py-8 sm:py-10 max-w-[420px] mx-auto w-full flex flex-col items-center relative z-10">
+
                 <!-- Card Photo: Dokter Memeriksa Anak di Timbangan Digital -->
-                <div class="relative w-full max-w-[340px] sm:max-w-[370px] rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-xl shadow-slate-200/60 border border-white/90 bg-white group">
+                <div class="relative w-full max-w-[340px] sm:max-w-[365px] rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-xl shadow-slate-200/60 border border-white/90 bg-white group">
                     <img
                         src="{{ asset('images/growth-measurement-hd.png') }}"
                         alt="Pemantauan Gizi Anak & Pencegahan Stunting NutriGrow"
@@ -131,10 +153,10 @@
 
                 <!-- Headings & Description -->
                 <div class="text-center mt-6 sm:mt-7 px-2">
-                    <h2 class="text-xl sm:text-[25px] font-extrabold text-slate-900 tracking-tight leading-snug">
+                    <h2 class="text-xl sm:text-[25px] font-extrabold text-[#0f172a] tracking-tight leading-snug">
                         Pemantauan Gizi Anak &amp; Pencegahan Stunting
                     </h2>
-                    <p class="text-xs sm:text-[13.5px] text-slate-500 mt-2.5 leading-relaxed font-normal">
+                    <p class="text-xs sm:text-[13px] text-slate-500 mt-2.5 leading-relaxed font-normal max-w-sm sm:max-w-md mx-auto">
                         Portal terpadu khusus admin dan tenaga kesehatan faskes untuk mengelola data tumbuh kembang, memantau riwayat gizi anak, serta pelaporan intervensi medis secara akurat.
                     </p>
                 </div>
@@ -142,9 +164,9 @@
             </div>
 
             <!-- Bottom Left Footer: Standar Keamanan Data Medis -->
-            <div class="pt-4 flex flex-wrap items-center justify-between gap-3 text-[11px] sm:text-xs text-slate-400 border-t border-slate-200/60 relative z-10">
+            <div class="pt-4 flex flex-wrap items-center justify-between gap-3 text-[11px] sm:text-xs text-slate-400 border-t border-slate-200/50 relative z-10">
                 <div class="flex items-center gap-1.5 text-slate-600 font-medium">
-                    <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-[#0284c7] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                     </svg>
                     <span>Standar Keamanan Data Medis Terproteksi</span>
@@ -159,7 +181,7 @@
         <!-- =============================================================== -->
         <!-- 2. RIGHT COLUMN: ADMIN LOGIN FORM                               -->
         <!-- =============================================================== -->
-        <div class="w-full lg:w-1/2 min-h-screen bg-white px-6 sm:px-10 lg:px-12 xl:px-16 py-6 sm:py-8 lg:py-10 flex flex-col justify-between relative">
+        <div class="w-full lg:w-[52%] xl:w-1/2 min-h-screen bg-white px-6 sm:px-10 lg:px-12 xl:px-16 py-6 sm:py-8 lg:py-10 flex flex-col justify-between relative">
 
             <!-- Top Right Bar: Switch to User / Parent Login -->
             <div class="w-full flex items-center justify-end relative z-10 mb-4 sm:mb-6">
@@ -543,4 +565,3 @@
 
 </body>
 </html>
-

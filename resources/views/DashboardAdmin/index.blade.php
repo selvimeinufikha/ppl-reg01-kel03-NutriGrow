@@ -65,7 +65,7 @@
         <button
             type="button"
             onclick="toggleAdminSidebar()"
-            class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+            class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
             aria-label="Buka Menu"
         >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -107,29 +107,23 @@
                         </svg>
                         <span>Dashboard Utama</span>
                     </a>
-                    <a href="#data-balita" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition">
+                    <a href="#tabel-antropometri" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
                         <span>Data Tumbuh Kembang</span>
                     </a>
-                    <a href="#pemantauan-stunting" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition">
+                    <a href="#tabel-antropometri" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                         </svg>
                         <span>Pencegahan Stunting</span>
                     </a>
-                    <a href="#posyandu" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition">
+                    <a href="javascript:void(0)" onclick="openMeasurementModal()" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                         </svg>
-                        <span>Jadwal Posyandu &amp; Faskes</span>
-                    </a>
-                    <a href="#satusehat" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                        </svg>
-                        <span>Sinkronisasi SatuSehat</span>
+                        <span>Input Pengukuran Baru</span>
                     </a>
                 </nav>
             </div>
@@ -177,13 +171,17 @@
                     </p>
                 </div>
 
-                <!-- Admin Action Tools (No User Navigation) -->
+                <!-- Admin Action Tools -->
                 <div class="flex items-center gap-2.5">
                     <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 shadow-2xs">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span>SatuSehat Kemenkes Aktif</span>
                     </div>
-                    <button class="px-4 py-2 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                    <button
+                        type="button"
+                        onclick="openMeasurementModal()"
+                        class="px-4 py-2 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+                    >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                         </svg>
@@ -192,12 +190,20 @@
                 </div>
             </div>
 
+            <!-- Toast Notification -->
+            <div id="toastSuccess" class="fixed top-5 right-5 z-50 p-4 rounded-2xl bg-emerald-600 text-white shadow-xl flex items-center gap-3 text-xs font-semibold hidden transform transition-all">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span id="toastMessage">Data pengukuran antropometri balita berhasil disimpan!</span>
+            </div>
+
             <!-- 4 Metric Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
                 <!-- Card 1 -->
                 <div class="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-2xs">
                     <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Balita Terdata</p>
-                    <h3 class="text-3xl font-black text-slate-900 mt-2">1,248</h3>
+                    <h3 id="statTotalBalita" class="text-3xl font-black text-slate-900 mt-2">1,248</h3>
                     <p class="text-xs text-emerald-600 font-bold mt-2 flex items-center gap-1">
                         <span>&uarr; 12 balita baru</span>
                         <span class="text-slate-400 font-normal">minggu ini</span>
@@ -207,7 +213,7 @@
                 <!-- Card 2 -->
                 <div class="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-2xs">
                     <p class="text-xs font-bold uppercase tracking-wider text-emerald-600">Gizi Baik &amp; Optimal</p>
-                    <h3 class="text-3xl font-black text-slate-900 mt-2">1,178</h3>
+                    <h3 id="statGiziOptimal" class="text-3xl font-black text-slate-900 mt-2">1,178</h3>
                     <p class="text-xs text-slate-500 font-medium mt-2">
                         <span class="font-bold text-emerald-600">94.4%</span> dari total populasi balita
                     </p>
@@ -216,7 +222,7 @@
                 <!-- Card 3 -->
                 <div class="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-2xs">
                     <p class="text-xs font-bold uppercase tracking-wider text-amber-600">Risiko Stunting</p>
-                    <h3 class="text-3xl font-black text-slate-900 mt-2">42</h3>
+                    <h3 id="statStunting" class="text-3xl font-black text-slate-900 mt-2">42</h3>
                     <p class="text-xs text-amber-700 font-medium mt-2">
                         <span class="font-bold">3.4%</span> &bull; 18 anak program PMT
                     </p>
@@ -225,7 +231,7 @@
                 <!-- Card 4 -->
                 <div class="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-2xs">
                     <p class="text-xs font-bold uppercase tracking-wider text-rose-600">Gizi Kurang / Rentan</p>
-                    <h3 class="text-3xl font-black text-slate-900 mt-2">28</h3>
+                    <h3 id="statGiziKurang" class="text-3xl font-black text-slate-900 mt-2">28</h3>
                     <p class="text-xs text-rose-600 font-medium mt-2">
                         <span class="font-bold">2.2%</span> &bull; Pantauan intensif Puskesmas
                     </p>
@@ -233,14 +239,21 @@
             </div>
 
             <!-- Table of Recent Children Antropometri Measurements -->
-            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-2xs overflow-hidden mb-8">
+            <div id="tabel-antropometri" class="bg-white rounded-3xl border border-slate-200/80 shadow-2xs overflow-hidden mb-8">
                 <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-900">Pemeriksaan Antropometri Balita Terkini</h2>
                         <p class="text-xs text-slate-500 mt-0.5">Riwayat penimbangan berat badan (BB) dan tinggi badan (TB) Posyandu</p>
                     </div>
-                    <button class="px-4 py-2 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold transition shadow-xs">
-                        + Input Pengukuran Baru
+                    <button
+                        type="button"
+                        onclick="openMeasurementModal()"
+                        class="px-4 py-2 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold transition shadow-xs cursor-pointer flex items-center gap-1.5"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <span>+ Input Pengukuran Baru</span>
                     </button>
                 </div>
 
@@ -257,7 +270,7 @@
                                 <th class="py-3 px-5">Waktu Periksa</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-xs">
+                        <tbody id="measurementTableBody" class="divide-y divide-slate-100 text-xs">
                             <tr class="hover:bg-slate-50/50 transition">
                                 <td class="py-3.5 px-5 font-bold text-slate-900">
                                     <span>Muhammad Kenzo Ardiansyah</span>
@@ -315,7 +328,89 @@
 
     </div>
 
-    <!-- Toggle Admin Mobile Sidebar Script -->
+    <!-- =============================================================== -->
+    <!-- MODAL FORM: INPUT PENGUKURAN ANTROPOMETRI BALITA                -->
+    <!-- =============================================================== -->
+    <div id="measurementModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-sky-50 text-[#0284c7] flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Input Pengukuran Antropometri</h3>
+                        <p class="text-xs text-slate-500">Standar Kurva Pertumbuhan Balita WHO 2006</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeMeasurementModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form id="formInputPengukuran" onsubmit="handleMeasurementSubmit(event)" class="mt-4 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap Balita *</label>
+                    <input type="text" id="m_nama" required placeholder="Contoh: Arka Daniswara" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Ibu / Wali *</label>
+                        <input type="text" id="m_ibu" required placeholder="Contoh: Ibu Ratih" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Usia Balita (Bulan) *</label>
+                        <input type="number" id="m_usia" min="0" max="60" required placeholder="Contoh: 12" oninput="calculateLiveZScore()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Berat Badan (kg) *</label>
+                        <input type="number" step="0.1" id="m_bb" required placeholder="Contoh: 9.2" oninput="calculateLiveZScore()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Tinggi / Panjang (cm) *</label>
+                        <input type="number" step="0.1" id="m_tb" required placeholder="Contoh: 76.5" oninput="calculateLiveZScore()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Lokasi Faskes / Posyandu *</label>
+                    <select id="m_faskes" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none">
+                        <option value="Posyandu Melati II">Posyandu Melati II</option>
+                        <option value="Posyandu Mawar I">Posyandu Mawar I</option>
+                        <option value="Puskesmas Kecamatan Tebet">Puskesmas Kecamatan Tebet</option>
+                        <option value="Posyandu Teratai III">Posyandu Teratai III</option>
+                    </select>
+                </div>
+
+                <!-- Live Antropometri / Z-Score Classification Badge -->
+                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
+                    <p class="text-[11px] font-bold text-slate-500 mb-1">Klasifikasi Status Gizi WHO:</p>
+                    <div id="liveStatusBadge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-700">
+                        Masukkan BB, TB &amp; Usia
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeMeasurementModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold shadow-md cursor-pointer">
+                        Simpan Hasil Pengukuran
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT: TOGGLE SIDEBAR, MODAL & LIVE WHO CALCULATION -->
     <script>
         function toggleAdminSidebar() {
             const sidebar = document.getElementById('adminSidebar');
@@ -328,6 +423,111 @@
             } else {
                 sidebar.classList.add('-translate-x-full');
                 backdrop.classList.add('hidden');
+            }
+        }
+
+        function openMeasurementModal() {
+            document.getElementById('measurementModal').classList.remove('hidden');
+        }
+
+        function closeMeasurementModal() {
+            document.getElementById('measurementModal').classList.add('hidden');
+        }
+
+        // Live calculation estimation based on WHO child growth standards
+        function calculateLiveZScore() {
+            const usia = parseFloat(document.getElementById('m_usia').value) || 0;
+            const bb = parseFloat(document.getElementById('m_bb').value) || 0;
+            const tb = parseFloat(document.getElementById('m_tb').value) || 0;
+            const badge = document.getElementById('liveStatusBadge');
+
+            if (!usia || !bb || !tb) {
+                badge.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-700";
+                badge.innerText = "Masukkan BB, TB & Usia";
+                return { status: "Belum lengkap", color: "slate" };
+            }
+
+            // Expected median height: ~50cm at birth + ~2.5cm/mo (1-6) + ~1.2cm/mo (7-12) + ~1cm/mo (>12)
+            let medianTB = 50 + (usia <= 6 ? usia * 2.5 : (6 * 2.5) + (Math.min(usia, 12) - 6) * 1.5 + Math.max(0, usia - 12) * 0.9);
+            let medianBB = 3.3 + (usia * 0.55);
+
+            let isStunting = tb < (medianTB - 5);
+            let isWasting = bb < (medianBB - 2);
+
+            if (isStunting) {
+                badge.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300";
+                badge.innerText = "⚠️ Risiko Stunting (Perlu PMT & Evaluasi Nakes)";
+                return { status: "Risiko Stunting (Perlu PMT)", color: "amber" };
+            } else if (isWasting) {
+                badge.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300";
+                badge.innerText = "⚠️ Gizi Kurang (Intervensi Puskesmas)";
+                return { status: "Gizi Kurang (Intervensi Puskesmas)", color: "rose" };
+            } else {
+                badge.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+                badge.innerText = "✅ Optimal / Sesuai Kurva WHO";
+                return { status: "Optimal / Sesuai Kurva WHO", color: "emerald" };
+            }
+        }
+
+        function handleMeasurementSubmit(e) {
+            e.preventDefault();
+            const nama = document.getElementById('m_nama').value;
+            const ibu = document.getElementById('m_ibu').value;
+            const usia = document.getElementById('m_usia').value;
+            const bb = document.getElementById('m_bb').value;
+            const tb = document.getElementById('m_tb').value;
+            const faskes = document.getElementById('m_faskes').value;
+            const res = calculateLiveZScore();
+
+            // Insert new row to the table
+            const tableBody = document.getElementById('measurementTableBody');
+            const randId = 'BLT-' + Math.floor(1000 + Math.random() * 9000);
+            const badgeClass = res.color === 'emerald'
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                : (res.color === 'amber' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200');
+
+            const newRow = document.createElement('tr');
+            newRow.className = "hover:bg-sky-50/50 transition bg-emerald-50/30";
+            newRow.innerHTML = `
+                <td class="py-3.5 px-5 font-bold text-slate-900">
+                    <span>${nama}</span>
+                    <span class="block text-[10px] text-slate-400 font-mono">${randId}</span>
+                </td>
+                <td class="py-3.5 px-5 text-slate-600">${usia} Bulan</td>
+                <td class="py-3.5 px-5 text-slate-600">${ibu}</td>
+                <td class="py-3.5 px-5 font-bold text-slate-800">${bb} kg / ${tb} cm</td>
+                <td class="py-3.5 px-5">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClass} border">
+                        ${res.status}
+                    </span>
+                </td>
+                <td class="py-3.5 px-5 text-slate-600">${faskes}</td>
+                <td class="py-3.5 px-5 text-emerald-600 font-bold">Baru saja</td>
+            `;
+
+            tableBody.insertBefore(newRow, tableBody.firstChild);
+
+            // Update Total Balita Stat
+            const statTotal = document.getElementById('statTotalBalita');
+            if (statTotal) {
+                let current = parseInt(statTotal.innerText.replace(',', '')) || 1248;
+                statTotal.innerText = (current + 1).toLocaleString('en-US');
+            }
+
+            // Close modal & reset
+            closeMeasurementModal();
+            document.getElementById('formInputPengukuran').reset();
+            calculateLiveZScore();
+
+            // Show toast notification
+            const toast = document.getElementById('toastSuccess');
+            const toastMsg = document.getElementById('toastMessage');
+            if (toast && toastMsg) {
+                toastMsg.innerText = `Data balita ${nama} berhasil disimpan ke sistem!`;
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 4000);
             }
         }
     </script>
