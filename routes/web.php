@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminEdukasiGiziController;
 use App\Http\Controllers\DashboardPenggunaController;
+use App\Http\Controllers\TumbuhKembangAnakController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,11 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 // Dashboard Pengguna (Keluarga & Orang Tua)
 Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
 Route::get('/dashboard', [DashboardPenggunaController::class, 'index'])->name('dashboard');
+
+// Rekam Medis: Riwayat Tumbuh Kembang Anak (PBI-016 / F-06)
+Route::get('/tumbuh-kembang-anak', [TumbuhKembangAnakController::class, 'index'])->name('tumbuh-kembang.index');
+Route::get('/riwayat-tumbuh-kembang', [TumbuhKembangAnakController::class, 'index'])->name('riwayat-tumbuh-kembang');
+Route::get('/dashboard-pengguna/tumbuh-kembang-anak', [TumbuhKembangAnakController::class, 'index'])->name('dashboard.tumbuh-kembang');
 
 
 // =========================================================================
