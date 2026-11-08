@@ -142,8 +142,7 @@
 
                     <!-- 3. Data Pemeriksaan Kehamilan -->
                     <a
-                        href="javascript:void(0)"
-                        onclick="switchTableTab('anc')"
+                        href="{{ Route::has('admin.pemeriksaan.index') ? route('admin.pemeriksaan.index') : 'javascript:void(0)' }}"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -166,8 +165,7 @@
 
                     <!-- 5. Data Edukasi Gizi -->
                     <a
-                        href="javascript:void(0)"
-                        onclick="showFeatureNotice('Data Edukasi Gizi')"
+                        href="{{ Route::has('admin.edukasi.index') ? route('admin.edukasi.index') : 'javascript:void(0)' }}"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

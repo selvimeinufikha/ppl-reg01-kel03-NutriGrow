@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminPemeriksaanKehamilanController;
 use App\Http\Controllers\DashboardPenggunaController;
 
 /*
@@ -67,6 +68,23 @@ Route::prefix('admin')->group(function () {
     // Dashboard Admin (URL: /admin/dashboard)
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
+    // Data Pemeriksaan Kehamilan (URL: /admin/pemeriksaan-kehamilan)
+    Route::get('/pemeriksaan-kehamilan', [AdminPemeriksaanKehamilanController::class, 'index'])->name('admin.pemeriksaan.index');
+    Route::get('/data-pemeriksaan-kehamilan', [AdminPemeriksaanKehamilanController::class, 'index'])->name('admin.pemeriksaan.alias');
+    Route::get('/pemeriksaan-kehamilan/pasien/{kehamilanId}', [AdminPemeriksaanKehamilanController::class, 'getPasienInfo'])->name('admin.pemeriksaan.pasien-info');
+    Route::post('/pemeriksaan-kehamilan', [AdminPemeriksaanKehamilanController::class, 'store'])->name('admin.pemeriksaan.store');
+    Route::delete('/pemeriksaan-kehamilan/{id}', [AdminPemeriksaanKehamilanController::class, 'destroy'])->name('admin.pemeriksaan.destroy');
+
+    // Data Edukasi Gizi (URL: /admin/edukasi-gizi)
+    if (class_exists(\App\Http\Controllers\AdminEdukasiGiziController::class)) {
+        Route::get('/edukasi-gizi', [\App\Http\Controllers\AdminEdukasiGiziController::class, 'index'])->name('admin.edukasi.index');
+        Route::get('/data-edukasi-gizi', [\App\Http\Controllers\AdminEdukasiGiziController::class, 'index'])->name('admin.edukasi.alias');
+        Route::post('/edukasi-gizi', [\App\Http\Controllers\AdminEdukasiGiziController::class, 'store'])->name('admin.edukasi.store');
+        Route::put('/edukasi-gizi/{id}', [\App\Http\Controllers\AdminEdukasiGiziController::class, 'update'])->name('admin.edukasi.update');
+        Route::post('/edukasi-gizi/{id}', [\App\Http\Controllers\AdminEdukasiGiziController::class, 'update'])->name('admin.edukasi.update.post');
+        Route::delete('/edukasi-gizi/{id}', [\App\Http\Controllers\AdminEdukasiGiziController::class, 'destroy'])->name('admin.edukasi.destroy');
+    }
+
     // Beralih Peran Superadmin / Admin (Demonstrasi & Pengujian)
     Route::get('/switch-role/{role}', [AdminDashboardController::class, 'switchRole'])->name('admin.switch-role');
     Route::post('/switch-role', [AdminDashboardController::class, 'switchRole'])->name('admin.switch-role.post');
@@ -95,3 +113,6 @@ Route::get('/admin/lupa-password', function () {
 Route::get('/dashboard-admin', function () {
     return redirect()->route('admin.dashboard');
 })->name('dashboard.admin');
+Route::get('/pemeriksaan-kehamilan', function () {
+    return redirect()->route('admin.pemeriksaan.index');
+});
