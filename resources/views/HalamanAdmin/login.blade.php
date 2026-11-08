@@ -180,22 +180,6 @@
         <!-- =============================================================== -->
         <div class="w-full lg:w-1/2 min-h-screen lg:min-h-0 lg:h-full bg-white px-6 sm:px-8 lg:px-10 xl:px-14 py-5 sm:py-6 lg:py-8 flex flex-col justify-between items-center relative z-10 overflow-y-auto no-scrollbar">
 
-            <!-- Top Right Bar: Switch to User / Parent Login -->
-            <div class="w-full flex items-center justify-end relative z-10 mb-4 sm:mb-6">
-                <div class="text-xs sm:text-[13px] text-slate-500 font-normal">
-                    <span>Bukan tenaga medis?</span>
-                    <a
-                        href="{{ route('login') }}"
-                        class="text-[#0284c7] hover:text-[#0369a1] font-bold ml-1 inline-flex items-center gap-1 hover:underline transition"
-                    >
-                        <span>Masuk Pengguna / Orang Tua</span>
-                        <svg class="w-3.5 h-3.5 transform hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
             <!-- Center Content: The Form Card -->
             <div class="w-full max-w-[420px] mx-auto my-auto py-2">
 
