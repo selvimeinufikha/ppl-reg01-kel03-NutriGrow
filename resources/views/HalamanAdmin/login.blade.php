@@ -143,19 +143,31 @@
                 </div>
             </div>
 
-            <!-- Middle Section: Image Showcase Card (Tulisan pencegahan stunting dikesampingkan / dihilangkan sesuai permintaan user) -->
-            <div class="my-auto py-6 sm:py-8 max-w-[400px] mx-auto w-full flex flex-col items-center justify-center relative z-10">
+            <!-- Middle Section: Image Showcase Card & Centered Typography (Persis Sesuai Gambar Referensi) -->
+            <div class="my-auto py-4 sm:py-6 max-w-[420px] mx-auto w-full flex flex-col items-center justify-center relative z-10">
 
                 <!-- Card Photo: Dokter Memeriksa Anak di Timbangan Digital -->
-                <div class="relative w-full max-w-[340px] sm:max-w-[380px] rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-xl shadow-slate-200/60 border border-white/90 bg-white group">
+                <div class="relative w-full max-w-[340px] sm:max-w-[370px] rounded-[26px] sm:rounded-[30px] overflow-hidden shadow-xl shadow-slate-200/60 border border-white/90 bg-white group">
                     <img
                         src="{{ asset('images/growth-measurement-hd.png') }}"
                         alt="Pemantauan Gizi Anak & Pencegahan Stunting NutriGrow"
-                        class="w-full h-[260px] sm:h-[300px] object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                        class="w-full h-[220px] sm:h-[250px] object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
                         onerror="this.onerror=null; this.src='{{ asset('images/growth-measurement.jpg') }}';"
                     />
                     <!-- Subtle Glass Highlight on Top -->
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-white/10 pointer-events-none"></div>
+                </div>
+
+                <!-- Typography Under Photo: Rata Tengah & 3 Baris Rapi Sesuai Referensi -->
+                <div class="text-center mt-5 sm:mt-6 w-full max-w-[420px] px-2">
+                    <h2 class="text-lg sm:text-[21px] font-extrabold text-[#0f172a] tracking-tight leading-snug text-center">
+                        Pemantauan Gizi Anak &amp; Pencegahan Stunting
+                    </h2>
+                    <p class="text-xs sm:text-[13px] text-slate-500 mt-2 sm:mt-2.5 leading-relaxed text-center font-normal">
+                        Portal terpadu khusus admin dan tenaga kesehatan faskes untuk<br class="hidden sm:inline">
+                        mengelola data tumbuh kembang, memantau riwayat gizi anak,<br class="hidden sm:inline">
+                        serta pelaporan intervensi medis secara akurat.
+                    </p>
                 </div>
 
             </div>
