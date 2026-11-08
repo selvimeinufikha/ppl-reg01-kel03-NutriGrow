@@ -61,11 +61,8 @@ Route::prefix('admin')->group(function () {
     // Dashboard Admin (URL: /admin/dashboard)
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    // Pengalihan dasar /admin
+    // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {
-        if (\Illuminate\Support\Facades\Auth::check() && method_exists(\Illuminate\Support\Facades\Auth::user(), 'isStaffOrAdmin') && \Illuminate\Support\Facades\Auth::user()->isStaffOrAdmin()) {
-            return redirect()->route('admin.dashboard');
-        }
         return redirect()->route('admin.login');
     })->name('admin.root');
 });

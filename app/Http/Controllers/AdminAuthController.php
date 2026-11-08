@@ -15,15 +15,7 @@ class AdminAuthController extends Controller
      */
     public function showLoginForm()
     {
-        // Jika sudah login dan merupakan admin/nakes, arahkan langsung ke dashboard admin
-        if (Auth::check()) {
-            /** @var User $user */
-            $user = Auth::user();
-            if (method_exists($user, 'isStaffOrAdmin') && $user->isStaffOrAdmin()) {
-                return redirect()->route('admin.dashboard');
-            }
-        }
-
+        // Selalu tampilkan halaman Login Admin saat URL /admin/login dibuka
         return view('HalamanAdmin.login');
     }
 
