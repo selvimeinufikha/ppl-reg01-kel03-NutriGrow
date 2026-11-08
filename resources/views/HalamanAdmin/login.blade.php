@@ -78,38 +78,38 @@
             <!-- =========================================================== -->
             <svg class="hidden lg:block absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 1000 1000" preserveAspectRatio="none">
                 <defs>
-                    <!-- Linear Gradient Top Cyan to Bottom Pink -->
+                    <!-- Linear Gradient Top Cyan to Bottom Pink matching user crop -->
                     <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.85" />
-                        <stop offset="20%" stop-color="#f0f9ff" stop-opacity="0.6" />
-                        <stop offset="45%" stop-color="#ffffff" stop-opacity="0.95" />
-                        <stop offset="70%" stop-color="#ffffff" stop-opacity="0.9" />
-                        <stop offset="85%" stop-color="#fce7f3" stop-opacity="0.6" />
-                        <stop offset="100%" stop-color="#ffe4e6" stop-opacity="0.4" />
+                        <stop offset="25%" stop-color="#f0f9ff" stop-opacity="0.6" />
+                        <stop offset="50%" stop-color="#ffffff" stop-opacity="0.95" />
+                        <stop offset="75%" stop-color="#fdf2f8" stop-opacity="0.75" />
+                        <stop offset="90%" stop-color="#fce7f3" stop-opacity="0.55" />
+                        <stop offset="100%" stop-color="#f8fafc" stop-opacity="0.85" />
                     </linearGradient>
 
                     <!-- Top-Left Cyan Ambient Glow -->
-                    <radialGradient id="topCyanGlow" cx="15%" cy="10%" r="50%">
+                    <radialGradient id="topCyanGlow" cx="12%" cy="8%" r="48%">
                         <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.65" />
-                        <stop offset="50%" stop-color="#e0f2fe" stop-opacity="0.3" />
+                        <stop offset="55%" stop-color="#e0f2fe" stop-opacity="0.2" />
                         <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
                     </radialGradient>
 
-                    <!-- Bottom-Right Soft Pink Glow -->
+                    <!-- Lower-Right Soft Pink Glow (Visible in media_1794108693047_4dbe61ec.png) -->
                     <radialGradient id="bottomPinkGlow" cx="88%" cy="70%" r="45%">
-                        <stop offset="0%" stop-color="#fbcfe8" stop-opacity="0.5" />
-                        <stop offset="45%" stop-color="#fce7f3" stop-opacity="0.25" />
+                        <stop offset="0%" stop-color="#fbcfe8" stop-opacity="0.55" />
+                        <stop offset="40%" stop-color="#fce7f3" stop-opacity="0.3" />
                         <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
                     </radialGradient>
                 </defs>
 
-                <!-- Base Organic Curved Shape (Bowing outwards to the right in the middle) -->
-                <path d="M 0,0 L 910,0 C 975,250 1000,450 1000,520 C 1000,600 965,800 890,1000 L 0,1000 Z" fill="url(#heroGradient)" />
-                <path d="M 0,0 L 910,0 C 975,250 1000,450 1000,520 C 1000,600 965,800 890,1000 L 0,1000 Z" fill="url(#topCyanGlow)" />
-                <path d="M 0,0 L 910,0 C 975,250 1000,450 1000,520 C 1000,600 965,800 890,1000 L 0,1000 Z" fill="url(#bottomPinkGlow)" />
+                <!-- Organic Curved Shape: starts at x=880 at top, bows out to x=1000 around y=560, tapers back to x=870 at bottom -->
+                <path d="M 0,0 L 880,0 C 940,200 990,380 1000,560 C 1005,660 970,820 870,1000 L 0,1000 Z" fill="url(#heroGradient)" />
+                <path d="M 0,0 L 880,0 C 940,200 990,380 1000,560 C 1005,660 970,820 870,1000 L 0,1000 Z" fill="url(#topCyanGlow)" />
+                <path d="M 0,0 L 880,0 C 940,200 990,380 1000,560 C 1005,660 970,820 870,1000 L 0,1000 Z" fill="url(#bottomPinkGlow)" />
 
-                <!-- Delicate 1px Border Stroke Along the Curve -->
-                <path d="M 910,0 C 975,250 1000,450 1000,520 C 1000,600 965,800 890,1000" fill="none" stroke="rgba(226, 232, 240, 0.75)" stroke-width="1.5" />
+                <!-- Delicate 1.5px Stroke Along the Curve Separating the Panels -->
+                <path d="M 880,0 C 940,200 990,380 1000,560 C 1005,660 970,820 870,1000" fill="none" stroke="rgba(203, 213, 225, 0.85)" stroke-width="1.5" />
             </svg>
 
             <!-- Top Row: Logo & Tenaga Kesehatan + Pill Badge (Didekatkan Bersebelahan) -->
@@ -136,27 +136,27 @@
                 </div>
             </div>
 
-            <!-- Middle Section: Image Showcase Card & Typography -->
-            <div class="my-auto py-8 sm:py-10 max-w-[420px] mx-auto w-full flex flex-col items-center relative z-10">
+            <!-- Middle Section: Image Showcase Card & Typography (Dikesampingkan / Rata Kiri) -->
+            <div class="my-auto py-6 sm:py-8 max-w-[420px] mx-auto w-full flex flex-col items-start relative z-10">
 
                 <!-- Card Photo: Dokter Memeriksa Anak di Timbangan Digital -->
                 <div class="relative w-full max-w-[340px] sm:max-w-[365px] rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-xl shadow-slate-200/60 border border-white/90 bg-white group">
                     <img
                         src="{{ asset('images/growth-measurement-hd.png') }}"
                         alt="Pemantauan Gizi Anak & Pencegahan Stunting NutriGrow"
-                        class="w-full h-[240px] sm:h-[280px] object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                        class="w-full h-[240px] sm:h-[275px] object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
                         onerror="this.onerror=null; this.src='{{ asset('images/growth-measurement.jpg') }}';"
                     />
                     <!-- Subtle Glass Highlight on Top -->
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-white/10 pointer-events-none"></div>
                 </div>
 
-                <!-- Headings & Description -->
-                <div class="text-center mt-6 sm:mt-7 px-2">
-                    <h2 class="text-xl sm:text-[25px] font-extrabold text-[#0f172a] tracking-tight leading-snug">
+                <!-- Headings & Description (Dikesampingkan / Rata Kiri Sesuai Gambar Referensi) -->
+                <div class="text-left mt-6 sm:mt-7 w-full max-w-[340px] sm:max-w-[365px]">
+                    <h2 class="text-xl sm:text-[24px] font-extrabold text-[#0f172a] tracking-tight leading-snug text-left">
                         Pemantauan Gizi Anak &amp; Pencegahan Stunting
                     </h2>
-                    <p class="text-xs sm:text-[13px] text-slate-500 mt-2.5 leading-relaxed font-normal max-w-sm sm:max-w-md mx-auto">
+                    <p class="text-xs sm:text-[13px] text-slate-500 mt-2.5 leading-relaxed font-normal text-left">
                         Portal terpadu khusus admin dan tenaga kesehatan faskes untuk mengelola data tumbuh kembang, memantau riwayat gizi anak, serta pelaporan intervensi medis secara akurat.
                     </p>
                 </div>
