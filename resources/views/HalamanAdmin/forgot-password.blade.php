@@ -289,22 +289,6 @@
                 </svg>
             </div>
 
-            <!-- Top Right Bar: Switch to User / Parent Login -->
-            <div class="w-full flex items-center justify-end relative z-10 mb-4 sm:mb-6">
-                <div class="text-xs sm:text-[13px] text-slate-500 font-normal">
-                    <span>Bukan tenaga medis?</span>
-                    <a
-                        href="{{ route('login') }}"
-                        class="text-[#0284c7] hover:text-[#0369a1] font-bold ml-1 inline-flex items-center gap-1 hover:underline transition"
-                    >
-                        <span>Masuk Pengguna / Orang Tua</span>
-                        <svg class="w-3.5 h-3.5 transform hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
             <!-- Middle Section: 3D Lock Illustration Card & Typography -->
             <div class="my-auto py-4 sm:py-6 max-w-[420px] mx-auto w-full flex flex-col items-center justify-center relative z-10">
 

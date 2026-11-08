@@ -126,9 +126,6 @@
                     <path d="M 1000,0 L 90,0 C 30,300 0,550 100,1000 L 1000,1000 Z" fill="url(#adminBotGlowReset)" />
                 </svg>
             </div>
-            <div class="w-full flex items-center justify-end relative z-10 mb-4">
-                <a href="{{ route('login') }}" class="text-xs text-[#0284c7] font-bold hover:underline">Masuk Pengguna / Orang Tua &rarr;</a>
-            </div>
             <div class="my-auto py-4 max-w-[420px] mx-auto w-full flex flex-col items-center justify-center relative z-10">
                 <div class="relative w-full max-w-[340px] sm:max-w-[370px] rounded-[26px] overflow-hidden shadow-xl shadow-sky-100/60 border border-white/90 bg-white">
                     <img src="{{ asset('images/admin-security-lock.png') }}" alt="Keamanan Akun" class="w-full h-[220px] sm:h-[250px] object-cover" onerror="this.onerror=null; this.src='{{ asset('images/forgot-password-hero.png') }}';" />
