@@ -58,6 +58,12 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
+    // Lupa & Reset Password Admin & Nakes (URL: /admin/forgot-password)
+    Route::get('/forgot-password', [AdminAuthController::class, 'showForgotPasswordForm'])->name('admin.password.request');
+    Route::post('/forgot-password', [AdminAuthController::class, 'sendResetLinkEmail'])->name('admin.password.email');
+    Route::get('/reset-password/{token}', [AdminAuthController::class, 'showResetPasswordForm'])->name('admin.password.reset');
+    Route::post('/reset-password', [AdminAuthController::class, 'resetPassword'])->name('admin.password.update');
+
     // Dashboard Admin (URL: /admin/dashboard)
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
@@ -70,6 +76,12 @@ Route::prefix('admin')->group(function () {
 // Alias & Pengalihan kompatibilitas rute Admin
 Route::get('/login-admin', function () {
     return redirect()->route('admin.login');
+});
+Route::get('/lupa-password-admin', function () {
+    return redirect()->route('admin.password.request');
+});
+Route::get('/admin/lupa-password', function () {
+    return redirect()->route('admin.password.request');
 });
 Route::get('/dashboard-admin', function () {
     return redirect()->route('admin.dashboard');

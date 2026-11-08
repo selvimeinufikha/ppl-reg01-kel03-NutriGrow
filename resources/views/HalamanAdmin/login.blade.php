@@ -308,7 +308,7 @@
                         </label>
 
                         <a
-                            href="{{ route('password.request') }}"
+                            href="{{ route('admin.password.request') }}"
                             class="text-xs font-semibold text-[#0284c7] hover:text-[#0369a1] hover:underline transition"
                         >
                             Lupa Password?

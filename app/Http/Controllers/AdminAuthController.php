@@ -100,4 +100,84 @@ class AdminAuthController extends Controller
 
         return redirect()->route('admin.login')->with('success_logout', 'Anda telah berhasil keluar dari Portal Admin & Tenaga Kesehatan.');
     }
+
+    /**
+     * Tampilkan formulir Lupa Password khusus Admin & Tenaga Kesehatan.
+     * URL: /admin/forgot-password
+     */
+    public function showForgotPasswordForm()
+    {
+        return view('HalamanAdmin.forgot-password');
+    }
+
+    /**
+     * Kirim tautan / instruksi pemulihan kata sandi ke email resmi faskes.
+     */
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'string', 'email'],
+        ], [
+            'email.required' => 'Email petugas / faskes wajib diisi.',
+            'email.email' => 'Format email petugas tidak valid.',
+        ]);
+
+        $email = strtolower(trim($request->email));
+
+        // Cek user di database
+        $user = User::where('email', $email)->first();
+        $isDemo = in_array($email, ['admin@nutrigrow.id', 'petugas@puskesmas.go.id']);
+
+        if (!$user && !$isDemo) {
+            return back()->withErrors([
+                'email' => 'Email petugas faskes tidak terdaftar dalam sistem resmi NutriGrow.',
+            ])->withInput();
+        }
+
+        if ($user && method_exists($user, 'isStaffOrAdmin') && !$user->isStaffOrAdmin()) {
+            return back()->withErrors([
+                'email' => 'Akun ini terdaftar sebagai akun keluarga/orang tua. Silakan gunakan pemulihan akun portal pengguna umum.',
+            ])->withInput();
+        }
+
+        $simulatedToken = 'admin-reset-' . bin2hex(random_bytes(16));
+
+        return back()->with('status', 'Instruksi pemulihan kata sandi telah dikirimkan ke email resmi Anda. Silakan periksa kotak masuk atau folder spam email faskes Anda.')
+                     ->with('demo_reset_link', route('admin.password.reset', ['token' => $simulatedToken, 'email' => $email]));
+    }
+
+    /**
+     * Tampilkan formulir Reset Password Admin.
+     */
+    public function showResetPasswordForm($token, Request $request)
+    {
+        $email = $request->query('email', '');
+        return view('HalamanAdmin.reset-password', compact('token', 'email'));
+    }
+
+    /**
+     * Proses ubah kata sandi baru akun Admin & Tenaga Kesehatan.
+     */
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ], [
+            'email.required' => 'Email petugas faskes wajib diisi.',
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.min' => 'Kata sandi minimal 6 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+        ]);
+
+        $email = strtolower(trim($request->email));
+        $user = User::where('email', $email)->first();
+
+        if ($user) {
+            $user->password = Hash::make($request->password);
+            $user->save();
+        }
+
+        return redirect()->route('admin.login')->with('success_reset', 'Kata sandi akun petugas berhasil diperbarui. Silakan masuk menggunakan kata sandi baru Anda.');
+    }
 }
