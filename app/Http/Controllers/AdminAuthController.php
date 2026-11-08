@@ -11,26 +11,24 @@ class AdminAuthController extends Controller
 {
     /**
      * Tampilkan halaman Masuk Admin / Portal Khusus Faskes & Nakes.
+     * URL: /admin/login
      */
     public function showLoginForm()
     {
         // Jika sudah login dan merupakan admin/nakes, arahkan langsung ke dashboard admin
         if (Auth::check()) {
+            /** @var User $user */
             $user = Auth::user();
             if (method_exists($user, 'isStaffOrAdmin') && $user->isStaffOrAdmin()) {
-                return redirect()->route('dashboard.admin');
+                return redirect()->route('admin.dashboard');
             }
-        }
-
-        if (view()->exists('HalamanAdmin.login')) {
-            return view('HalamanAdmin.login');
         }
 
         return view('HalamanAdmin.login');
     }
 
     /**
-     * Proses autentikasi login untuk Admin & Tenaga Kesehatan.
+     * Proses autentikasi login khusus Admin & Tenaga Kesehatan.
      */
     public function login(Request $request)
     {
@@ -47,23 +45,32 @@ class AdminAuthController extends Controller
         $email = strtolower(trim($credentials['email']));
         $password = $credentials['password'];
 
-        // Cek pengguna berdasarkan email
-        $user = User::where('email', $email)->first();
-
-        // Autentikasi menggunakan Auth::attempt
+        // Cek login via Auth::attempt
         if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
             $request->session()->regenerate();
 
             /** @var User $authUser */
             $authUser = Auth::user();
 
-            // Berikan flash session notifikasi selamat datang
-            session()->flash('success_admin_login', 'Selamat datang, ' . $authUser->name . '! Anda berhasil masuk ke Portal Faskes & Nakes NutriGrow.');
+            // Validasi hak akses faskes / admin
+            if (method_exists($authUser, 'isStaffOrAdmin') && !$authUser->isStaffOrAdmin()) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
 
-            return redirect()->route('dashboard.admin');
+                return back()->withErrors([
+                    'login_error' => 'Akun ini terdaftar sebagai akun keluarga/orang tua. Silakan masuk melalui halaman login pengguna umum.',
+                ])->withInput($request->only('email'));
+            }
+
+            // Flash notifikasi sukses
+            session()->flash('success_admin_login', 'Selamat datang, ' . $authUser->name . '! Anda berhasil masuk ke Dashboard Admin NutriGrow.');
+
+            // Arahkan LANGSUNG ke Dashboard Admin (URL: /admin/dashboard)
+            return redirect()->route('admin.dashboard');
         }
 
-        // Dukungan kredensial default jika user belum ter-seed
+        // Dukungan kredensial default untuk demo praktikum
         if (in_array($email, ['admin@nutrigrow.id', 'petugas@puskesmas.go.id']) && $password === 'admin123') {
             $user = User::firstOrCreate(
                 ['email' => $email],
@@ -79,9 +86,10 @@ class AdminAuthController extends Controller
             Auth::login($user, $remember);
             $request->session()->regenerate();
 
-            session()->flash('success_admin_login', 'Selamat datang, ' . $user->name . '! Anda berhasil masuk ke Portal Faskes & Nakes NutriGrow.');
+            session()->flash('success_admin_login', 'Selamat datang, ' . $user->name . '! Anda berhasil masuk ke Dashboard Admin NutriGrow.');
 
-            return redirect()->route('dashboard.admin');
+            // Arahkan LANGSUNG ke Dashboard Admin (URL: /admin/dashboard)
+            return redirect()->route('admin.dashboard');
         }
 
         return back()->withErrors([
@@ -98,7 +106,6 @@ class AdminAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('admin.login')->with('success_logout', 'Anda telah berhasil keluar dari Portal Faskes & Tenaga Kesehatan.');
+        return redirect()->route('admin.login')->with('success_logout', 'Anda telah berhasil keluar dari Portal Admin & Tenaga Kesehatan.');
     }
 }
-

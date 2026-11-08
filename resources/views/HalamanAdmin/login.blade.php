@@ -89,7 +89,7 @@
             <div class="flex flex-wrap items-center justify-between gap-3 relative z-10">
                 <!-- Brand NutriGrow with Tenaga Kesehatan Subtitle -->
                 <div class="flex items-center gap-3">
-                    <a href="{{ route('home') }}" class="group block">
+                    <a href="{{ route('admin.login') }}" class="group block">
                         <img
                             src="{{ asset('images/nutrigrow-logo.png') }}"
                             alt="NutriGrow Logo"

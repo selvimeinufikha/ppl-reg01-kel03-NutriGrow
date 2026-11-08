@@ -54,17 +54,40 @@
 </head>
 <body class="min-h-screen bg-slate-50 font-sans antialiased text-slate-800">
 
+    <!-- Mobile Top Navigation Bar (Admin Only) -->
+    <div class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
+        <div class="flex items-center gap-2">
+            <img src="{{ asset('images/nutrigrow-logo.png') }}" alt="NutriGrow" class="h-7 w-auto">
+            <span class="text-[10px] font-black uppercase tracking-wider text-[#0284c7] bg-sky-50 px-2 py-0.5 rounded-md">
+                Admin
+            </span>
+        </div>
+        <button
+            type="button"
+            onclick="toggleAdminSidebar()"
+            class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+            aria-label="Buka Menu"
+        >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Backdrop for Mobile Sidebar -->
+    <div id="adminSidebarBackdrop" onclick="toggleAdminSidebar()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
     <div class="min-h-screen flex flex-col lg:flex-row">
 
         <!-- =============================================================== -->
-        <!-- SIDEBAR NAVIGASI                                                -->
+        <!-- SIDEBAR NAVIGASI (KHUSUS ADMIN & NAKES)                         -->
         <!-- =============================================================== -->
-        <aside class="w-full lg:w-72 bg-white border-r border-slate-200/80 flex flex-col justify-between py-6 px-5 shrink-0">
+        <aside id="adminSidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200/80 flex flex-col justify-between py-6 px-5 shrink-0 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto transition-transform duration-300 ease-in-out">
             <div>
-                <!-- Brand / Logo -->
+                <!-- Brand / Logo Admin -->
                 <div class="mb-8 px-2 flex items-center justify-between">
                     <div>
-                        <a href="{{ route('dashboard.admin') }}" class="block">
+                        <a href="{{ route('admin.dashboard') }}" class="block">
                             <img src="{{ asset('images/nutrigrow-logo.png') }}" alt="NutriGrow" class="h-8 w-auto">
                             <span class="block text-[10px] font-black uppercase tracking-widest text-[#0284c7] mt-1">
                                 PORTAL ADMIN &amp; NAKES
@@ -76,9 +99,9 @@
                     </span>
                 </div>
 
-                <!-- Navigation Links -->
+                <!-- Navigation Links (Admin Only) -->
                 <nav class="space-y-1.5 text-xs font-semibold">
-                    <a href="{{ route('dashboard.admin') }}" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl bg-[#0284c7] text-white shadow-sm">
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl bg-[#0284c7] text-white shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                         </svg>
@@ -135,7 +158,7 @@
         </aside>
 
         <!-- =============================================================== -->
-        <!-- MAIN CONTENT AREA                                               -->
+        <!-- MAIN CONTENT AREA (KHUSUS ADMIN)                                -->
         <!-- =============================================================== -->
         <main class="flex-1 p-6 lg:p-10 max-w-7xl mx-auto w-full">
 
@@ -154,17 +177,18 @@
                     </p>
                 </div>
 
+                <!-- Admin Action Tools (No User Navigation) -->
                 <div class="flex items-center gap-2.5">
-                    <a
-                        href="{{ route('home') }}"
-                        target="_blank"
-                        class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
-                    >
-                        <span>Lihat Beranda</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                    <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 shadow-2xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>SatuSehat Kemenkes Aktif</span>
+                    </div>
+                    <button class="px-4 py-2 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                         </svg>
-                    </a>
+                        <span>+ Input Pengukuran</span>
+                    </button>
                 </div>
             </div>
 
@@ -291,6 +315,22 @@
 
     </div>
 
+    <!-- Toggle Admin Mobile Sidebar Script -->
+    <script>
+        function toggleAdminSidebar() {
+            const sidebar = document.getElementById('adminSidebar');
+            const backdrop = document.getElementById('adminSidebarBackdrop');
+            if (!sidebar || !backdrop) return;
+
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+    </script>
+
 </body>
 </html>
-

@@ -11,23 +11,39 @@ class AdminDashboardController extends Controller
 {
     /**
      * Tampilkan Dashboard Khusus Admin & Tenaga Kesehatan (Faskes).
+     * URL: /admin/dashboard
      */
     public function index()
     {
-        /** @var User|null $user */
+        // Proteksi akses: Pastikan pengguna telah login
+        if (!Auth::check()) {
+            return redirect()->route('admin.login')->withErrors([
+                'login_error' => 'Silakan masuk ke Portal Admin & Tenaga Kesehatan untuk mengakses Dashboard.',
+            ]);
+        }
+
+        /** @var User $user */
         $user = Auth::user();
 
-        // Data admin / nakes fallback untuk demonstrasi jika belum ada sesi
-        $adminName = $user ? $user->name : 'dr. Sarah Nakes (Admin Faskes)';
-        $adminEmail = $user ? $user->email : 'admin@nutrigrow.id';
-        $adminRole = $user && $user->role === 'nakes' ? 'Tenaga Kesehatan (Bidan/Dokter)' : 'Administrator Faskes';
-        $faskesName = $user && $user->faskes_name ? $user->faskes_name : 'Puskesmas Kecamatan Tebet & Posyandu Melati';
-        $nipStr = $user && $user->nip_str ? $user->nip_str : 'STR-19880412-2023-019';
+        // Validasi peran: Tolak jika merupakan akun pengguna biasa/orang tua
+        if (method_exists($user, 'isStaffOrAdmin') && !$user->isStaffOrAdmin()) {
+            Auth::logout();
+            return redirect()->route('admin.login')->withErrors([
+                'login_error' => 'Akses ditolak. Halaman ini khusus untuk Admin & Petugas Faskes.',
+            ]);
+        }
+
+        // Data petugas yang sedang login
+        $adminName = $user->name;
+        $adminEmail = $user->email;
+        $adminRole = $user->role === 'nakes' ? 'Tenaga Kesehatan (Bidan/Dokter)' : 'Administrator Faskes';
+        $faskesName = $user->faskes_name ?: 'Puskesmas Kecamatan Tebet & Posyandu Melati';
+        $nipStr = $user->nip_str ?: 'STR-19880412-2023-019';
 
         Carbon::setLocale('id');
         $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
 
-        // Statistik agregat pemantauan gizi & stunting
+        // Statistik agregat pemantauan gizi & stunting faskes
         $statistics = [
             'total_balita' => 1248,
             'balita_normal' => 1178, // 94.4%
@@ -114,4 +130,3 @@ class AdminDashboardController extends Controller
         ));
     }
 }
-
