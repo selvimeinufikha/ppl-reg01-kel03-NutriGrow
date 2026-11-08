@@ -272,6 +272,14 @@
                         </button>
                     </div>
 
+                    <!-- Link Khusus Tenaga Medis / Admin -->
+                    <div class="mt-2.5 text-center">
+                        <a href="{{ route('admin.login') }}" class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-sky-600 hover:text-sky-700 hover:underline transition">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span>Petugas Faskes / Tenaga Medis? Masuk Admin &rarr;</span>
+                        </a>
+                    </div>
+
                 </div>
 
                 <!-- Footer: Data Medis Terenkripsi -->
