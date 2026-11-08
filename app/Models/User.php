@@ -22,6 +22,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'faskes_name',
+        'nip_str',
+        'phone',
     ];
 
     /**
@@ -45,5 +49,34 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Check if user is an admin or healthcare worker (nakes / staff).
+     */
+    public function isStaffOrAdmin(): bool
+    {
+        return in_array($this->role, ['admin', 'nakes', 'petugas'])
+            || str_ends_with($this->email, '@nutrigrow.id')
+            || str_ends_with($this->email, '@puskesmas.go.id')
+            || str_ends_with($this->email, '@kemkes.go.id')
+            || str_ends_with($this->email, '@dinkes.go.id');
+    }
+
+    /**
+     * Check if user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin'
+            || str_starts_with($this->email, 'admin@');
+    }
+
+    /**
+     * Check if user is a healthcare worker (nakes).
+     */
+    public function isNakes(): bool
+    {
+        return in_array($this->role, ['nakes', 'petugas', 'admin']);
     }
 }
