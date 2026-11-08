@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminEdukasiGiziController;
 use App\Http\Controllers\DashboardPenggunaController;
 
 /*
@@ -67,6 +68,14 @@ Route::prefix('admin')->group(function () {
     // Dashboard Admin (URL: /admin/dashboard)
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
+    // Data Edukasi Gizi (URL: /admin/edukasi-gizi)
+    Route::get('/edukasi-gizi', [AdminEdukasiGiziController::class, 'index'])->name('admin.edukasi.index');
+    Route::get('/data-edukasi-gizi', [AdminEdukasiGiziController::class, 'index'])->name('admin.edukasi.alias');
+    Route::post('/edukasi-gizi', [AdminEdukasiGiziController::class, 'store'])->name('admin.edukasi.store');
+    Route::put('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'update'])->name('admin.edukasi.update');
+    Route::post('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'update'])->name('admin.edukasi.update.post');
+    Route::delete('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'destroy'])->name('admin.edukasi.destroy');
+
     // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {
         return redirect()->route('admin.login');
@@ -86,3 +95,6 @@ Route::get('/admin/lupa-password', function () {
 Route::get('/dashboard-admin', function () {
     return redirect()->route('admin.dashboard');
 })->name('dashboard.admin');
+Route::get('/data-edukasi-gizi', function () {
+    return redirect()->route('admin.edukasi.index');
+});
