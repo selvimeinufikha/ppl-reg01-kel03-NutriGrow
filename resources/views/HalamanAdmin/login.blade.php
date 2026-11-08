@@ -69,48 +69,55 @@
     <div class="min-h-screen w-full flex flex-col lg:flex-row bg-white relative overflow-x-hidden">
 
         <!-- =============================================================== -->
-        <!-- 1. LEFT COLUMN: HERO SHOWCASE (PORTAL FASKES & NAKES)           -->
+        <!-- DESKTOP BACKGROUND SVG: FULL-HEIGHT ORGANIC CURVE ON LEFT SIDE  -->
         <!-- =============================================================== -->
-        <div class="w-full lg:w-[48%] xl:w-1/2 min-h-[520px] lg:min-h-screen relative px-6 sm:px-10 lg:px-12 xl:px-16 py-6 sm:py-8 lg:py-10 flex flex-col justify-between ambient-glow-mobile lg:bg-transparent">
-
-            <!-- =========================================================== -->
-            <!-- DESKTOP BACKGROUND WITH ORGANIC RIGHT CONVEX CURVE (LENGKUNG) -->
-            <!-- =========================================================== -->
-            <svg class="hidden lg:block absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+        <div class="hidden lg:block absolute inset-0 w-full h-full pointer-events-none z-0">
+            <svg class="w-full h-full" viewBox="0 0 1000 1000" preserveAspectRatio="none">
                 <defs>
                     <!-- Linear Gradient Top Cyan to Bottom Pink matching user crop -->
                     <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.85" />
-                        <stop offset="25%" stop-color="#f0f9ff" stop-opacity="0.6" />
-                        <stop offset="50%" stop-color="#ffffff" stop-opacity="0.95" />
-                        <stop offset="75%" stop-color="#fdf2f8" stop-opacity="0.75" />
-                        <stop offset="90%" stop-color="#fce7f3" stop-opacity="0.55" />
-                        <stop offset="100%" stop-color="#f8fafc" stop-opacity="0.85" />
+                        <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.9" />
+                        <stop offset="25%" stop-color="#f0f9ff" stop-opacity="0.75" />
+                        <stop offset="55%" stop-color="#ffffff" stop-opacity="0.95" />
+                        <stop offset="80%" stop-color="#fdf2f8" stop-opacity="0.85" />
+                        <stop offset="92%" stop-color="#fce7f3" stop-opacity="0.7" />
+                        <stop offset="100%" stop-color="#f8fafc" stop-opacity="0.9" />
                     </linearGradient>
 
                     <!-- Top-Left Cyan Ambient Glow -->
-                    <radialGradient id="topCyanGlow" cx="12%" cy="8%" r="48%">
-                        <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.65" />
-                        <stop offset="55%" stop-color="#e0f2fe" stop-opacity="0.2" />
+                    <radialGradient id="topCyanGlow" cx="12%" cy="10%" r="50%">
+                        <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.7" />
+                        <stop offset="50%" stop-color="#e0f2fe" stop-opacity="0.3" />
                         <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
                     </radialGradient>
 
                     <!-- Lower-Right Soft Pink Glow (Visible in media_1794108693047_4dbe61ec.png) -->
-                    <radialGradient id="bottomPinkGlow" cx="88%" cy="70%" r="45%">
-                        <stop offset="0%" stop-color="#fbcfe8" stop-opacity="0.55" />
-                        <stop offset="40%" stop-color="#fce7f3" stop-opacity="0.3" />
+                    <radialGradient id="bottomPinkGlow" cx="44%" cy="72%" r="30%">
+                        <stop offset="0%" stop-color="#fbcfe8" stop-opacity="0.7" />
+                        <stop offset="50%" stop-color="#fce7f3" stop-opacity="0.4" />
                         <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
                     </radialGradient>
+
+                    <!-- Soft blur / glow along the dividing edge -->
+                    <filter id="edgeGlow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="3" dy="0" stdDeviation="5" flood-color="#cbd5e1" flood-opacity="0.25" />
+                    </filter>
                 </defs>
 
-                <!-- Organic Curved Shape: starts at x=880 at top, bows out to x=1000 around y=560, tapers back to x=870 at bottom -->
-                <path d="M 0,0 L 880,0 C 940,200 990,380 1000,560 C 1005,660 970,820 870,1000 L 0,1000 Z" fill="url(#heroGradient)" />
-                <path d="M 0,0 L 880,0 C 940,200 990,380 1000,560 C 1005,660 970,820 870,1000 L 0,1000 Z" fill="url(#topCyanGlow)" />
-                <path d="M 0,0 L 880,0 C 940,200 990,380 1000,560 C 1005,660 970,820 870,1000 L 0,1000 Z" fill="url(#bottomPinkGlow)" />
+                <!-- Organic Curved Shape: starts at x=440 at top, bows out to x=480 around y=480, tapers back to x=430 at bottom -->
+                <path d="M 0,0 L 440,0 C 455,180 480,320 480,480 C 480,640 455,820 430,1000 L 0,1000 Z" fill="url(#heroGradient)" filter="url(#edgeGlow)" />
+                <path d="M 0,0 L 440,0 C 455,180 480,320 480,480 C 480,640 455,820 430,1000 L 0,1000 Z" fill="url(#topCyanGlow)" />
+                <path d="M 0,0 L 440,0 C 455,180 480,320 480,480 C 480,640 455,820 430,1000 L 0,1000 Z" fill="url(#bottomPinkGlow)" />
 
-                <!-- Delicate 1.5px Stroke Along the Curve Separating the Panels -->
-                <path d="M 880,0 C 940,200 990,380 1000,560 C 1005,660 970,820 870,1000" fill="none" stroke="rgba(203, 213, 225, 0.85)" stroke-width="1.5" />
+                <!-- Delicate Stroke along the Curve -->
+                <path d="M 440,0 C 455,180 480,320 480,480 C 480,640 455,820 430,1000" fill="none" stroke="rgba(203, 213, 225, 0.9)" stroke-width="1.8" />
             </svg>
+        </div>
+
+        <!-- =============================================================== -->
+        <!-- 1. LEFT COLUMN: HERO SHOWCASE (PORTAL FASKES & NAKES)           -->
+        <!-- =============================================================== -->
+        <div class="w-full lg:w-[44%] xl:w-[43%] min-h-[520px] lg:min-h-screen relative px-6 sm:px-10 lg:px-12 xl:px-14 py-6 sm:py-8 lg:py-10 flex flex-col justify-between ambient-glow-mobile lg:bg-transparent z-10">
 
             <!-- Top Row: Logo & Tenaga Kesehatan + Pill Badge (Didekatkan Bersebelahan) -->
             <div class="flex items-center gap-3.5 sm:gap-4 relative z-10">
@@ -136,29 +143,19 @@
                 </div>
             </div>
 
-            <!-- Middle Section: Image Showcase Card & Typography (Dikesampingkan / Rata Kiri) -->
-            <div class="my-auto py-6 sm:py-8 max-w-[420px] mx-auto w-full flex flex-col items-start relative z-10">
+            <!-- Middle Section: Image Showcase Card (Tulisan pencegahan stunting dikesampingkan / dihilangkan sesuai permintaan user) -->
+            <div class="my-auto py-6 sm:py-8 max-w-[400px] mx-auto w-full flex flex-col items-center justify-center relative z-10">
 
                 <!-- Card Photo: Dokter Memeriksa Anak di Timbangan Digital -->
-                <div class="relative w-full max-w-[340px] sm:max-w-[365px] rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-xl shadow-slate-200/60 border border-white/90 bg-white group">
+                <div class="relative w-full max-w-[340px] sm:max-w-[380px] rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-xl shadow-slate-200/60 border border-white/90 bg-white group">
                     <img
                         src="{{ asset('images/growth-measurement-hd.png') }}"
                         alt="Pemantauan Gizi Anak & Pencegahan Stunting NutriGrow"
-                        class="w-full h-[240px] sm:h-[275px] object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                        class="w-full h-[260px] sm:h-[300px] object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
                         onerror="this.onerror=null; this.src='{{ asset('images/growth-measurement.jpg') }}';"
                     />
                     <!-- Subtle Glass Highlight on Top -->
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-white/10 pointer-events-none"></div>
-                </div>
-
-                <!-- Headings & Description (Dikesampingkan / Rata Kiri Sesuai Gambar Referensi) -->
-                <div class="text-left mt-6 sm:mt-7 w-full max-w-[340px] sm:max-w-[365px]">
-                    <h2 class="text-xl sm:text-[24px] font-extrabold text-[#0f172a] tracking-tight leading-snug text-left">
-                        Pemantauan Gizi Anak &amp; Pencegahan Stunting
-                    </h2>
-                    <p class="text-xs sm:text-[13px] text-slate-500 mt-2.5 leading-relaxed font-normal text-left">
-                        Portal terpadu khusus admin dan tenaga kesehatan faskes untuk mengelola data tumbuh kembang, memantau riwayat gizi anak, serta pelaporan intervensi medis secara akurat.
-                    </p>
                 </div>
 
             </div>
@@ -181,7 +178,7 @@
         <!-- =============================================================== -->
         <!-- 2. RIGHT COLUMN: ADMIN LOGIN FORM                               -->
         <!-- =============================================================== -->
-        <div class="w-full lg:w-[52%] xl:w-1/2 min-h-screen bg-white px-6 sm:px-10 lg:px-12 xl:px-16 py-6 sm:py-8 lg:py-10 flex flex-col justify-between relative">
+        <div class="w-full lg:w-[56%] xl:w-[57%] min-h-screen bg-white lg:bg-transparent px-6 sm:px-10 lg:px-12 xl:px-16 py-6 sm:py-8 lg:py-10 flex flex-col justify-between relative z-10">
 
             <!-- Top Right Bar: Switch to User / Parent Login -->
             <div class="w-full flex items-center justify-end relative z-10 mb-4 sm:mb-6">
