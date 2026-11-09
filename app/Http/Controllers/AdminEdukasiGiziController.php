@@ -287,4 +287,70 @@ class AdminEdukasiGiziController extends Controller
 
         return redirect()->route('admin.edukasi.index')->with('success', 'Artikel edukasi gizi baru berhasil ditambahkan.');
     }
+
+    /**
+     * Perbarui Artikel Edukasi Gizi.
+     */
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'phase' => 'required|string|in:pra-hamil,hamil,anak',
+            'author' => 'required|string|max:255',
+            'read_time' => 'required|string|max:50',
+            'status' => 'required|string|in:terbit,draft',
+            'summary' => 'required|string|max:1500',
+        ]);
+
+        $articles = session()->get('admin_articles', $this->getDefaultArticles());
+        $phase = $validated['phase'];
+        $phaseConfig = $this->getPhaseConfig($phase);
+        $isPublished = $validated['status'] === 'terbit';
+
+        Carbon::setLocale('id');
+
+        $updated = false;
+        foreach ($articles as &$art) {
+            if ($art['id'] == $id) {
+                $art['title'] = $validated['title'];
+                $art['full_title'] = $validated['title'];
+                $art['phase'] = $phase;
+                $art['phase_label'] = $phaseConfig['label'];
+                $art['phase_icon'] = $phaseConfig['icon'];
+                $art['phase_badge'] = $phaseConfig['badge'];
+                $art['author'] = $validated['author'];
+                $art['read_time'] = $validated['read_time'];
+                $art['status'] = $validated['status'];
+                $art['status_label'] = $isPublished ? 'Terbit' : 'Draft';
+                $art['status_note'] = $isPublished ? 'Tampil ke aplikasi' : 'Hanya tim nakes';
+                if ($isPublished && ($art['publish_date'] === '-' || empty($art['publish_date']))) {
+                    $art['publish_date'] = Carbon::now()->translatedFormat('d M Y');
+                    $art['publish_time'] = Carbon::now()->format('H:i') . ' WIB';
+                }
+                $art['summary'] = $validated['summary'];
+                $updated = true;
+                break;
+            }
+        }
+
+        if ($updated) {
+            session()->put('admin_articles', $articles);
+            return redirect()->route('admin.edukasi.index')->with('success', 'Artikel edukasi gizi berhasil diperbarui.');
+        }
+
+        return redirect()->route('admin.edukasi.index')->withErrors(['error' => 'Artikel tidak ditemukan.']);
+    }
+
+    /**
+     * Hapus Artikel Edukasi Gizi.
+     */
+    public function destroy($id)
+    {
+        $articles = session()->get('admin_articles', $this->getDefaultArticles());
+        $newArticles = array_values(array_filter($articles, fn($art) => $art['id'] != $id));
+
+        session()->put('admin_articles', $newArticles);
+
+        return redirect()->route('admin.edukasi.index')->with('success', 'Artikel berhasil dihapus dari sistem edukasi gizi.');
+    }
 }

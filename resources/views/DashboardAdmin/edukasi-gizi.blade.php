@@ -597,6 +597,7 @@
                                     <th class="py-3.5 px-4">KATEGORI FASE</th>
                                     <th class="py-3.5 px-4">TANGGAL PUBLIKASI</th>
                                     <th class="py-3.5 px-4">STATUS PUBLIKASI</th>
+                                    <th class="py-3.5 px-4 text-center">AKSI</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 text-xs text-slate-700" id="articlesTableBody">
@@ -674,10 +675,39 @@
                                         @endif
                                     </td>
 
+                                    <!-- Kolom 5: Aksi (Perbarui & Hapus) -->
+                                    <td class="py-4 px-4 whitespace-nowrap text-center" onclick="event.stopPropagation()">
+                                        <div class="flex items-center justify-center gap-1">
+                                            <!-- Button Edit / Perbarui -->
+                                            <button
+                                                type="button"
+                                                onclick="openEditArticleModal({{ json_encode($article) }})"
+                                                class="p-1.5 rounded-lg text-slate-500 hover:text-[#0284c7] hover:bg-sky-50 transition cursor-pointer"
+                                                title="Perbarui / Ubah Artikel"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </button>
+
+                                            <!-- Button Hapus -->
+                                            <button
+                                                type="button"
+                                                onclick="openDeleteArticleModal({{ $article['id'] }}, '{{ addslashes($article['title']) }}')"
+                                                class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                                                title="Hapus Artikel"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center py-10 text-slate-400 text-xs">
+                                    <td colspan="5" class="text-center py-10 text-slate-400 text-xs">
                                         Tidak ada artikel edukasi gizi yang ditemukan.
                                     </td>
                                 </tr>
@@ -892,6 +922,99 @@
     </div>
 
     <!-- =================================================================== -->
+    <!-- MODAL 2: PERBARUI ARTIKEL EDUKASI GIZI (EDIT/UPDATE)                -->
+    <!-- =================================================================== -->
+    <div id="editArticleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-sky-50 text-[#0284c7] flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Perbarui Artikel Edukasi Gizi</h3>
+                        <p class="text-xs text-slate-500">Ubah materi edukasi, sasaran fase, dan status publikasi</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeEditArticleModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="editArticleForm" method="POST" action="" class="mt-5 space-y-4">
+                @csrf
+                @method('PUT')
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Judul Artikel <span class="text-rose-500">*</span></label>
+                    <input type="text" name="title" id="editArticleTitleInput" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Kategori Fase Sasaran <span class="text-rose-500">*</span></label>
+                        <select name="phase" id="editArticlePhaseInput" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
+                            <option value="anak">Anak &amp; Balita (0-59 Bulan)</option>
+                            <option value="hamil">Ibu Hamil</option>
+                            <option value="pra-hamil">Calon Ibu / Pra-Hamil</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Penulis / Nakes Verifikator <span class="text-rose-500">*</span></label>
+                        <input type="text" name="author" id="editArticleAuthorInput" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Estimasi Waktu Baca <span class="text-rose-500">*</span></label>
+                        <input type="text" name="read_time" id="editArticleReadTimeInput" required placeholder="Contoh: 5 mnt baca" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Status Publikasi <span class="text-rose-500">*</span></label>
+                        <select name="status" id="editArticleStatusInput" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
+                            <option value="terbit">Terbit (Tampil ke aplikasi Pengguna)</option>
+                            <option value="draft">Draft (Hanya tim nakes &amp; telaah)</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Ringkasan Materi / Panduan Medis <span class="text-rose-500">*</span></label>
+                    <textarea name="summary" id="editArticleSummaryInput" rows="4" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"></textarea>
+                </div>
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+                    <button type="button" onclick="closeEditArticleModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer">Batal</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0284c7] hover:bg-sky-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 3: KONFIRMASI HAPUS ARTIKEL                                   -->
+    <!-- =================================================================== -->
+    <div id="deleteArticleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center border border-slate-100">
+            <div class="w-12 h-12 rounded-2xl bg-rose-50 text-[#e11d48] mx-auto flex items-center justify-center mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </div>
+            <h3 class="text-base font-bold text-slate-900">Hapus Artikel Edukasi?</h3>
+            <p id="deleteArticleTitleDisplay" class="text-xs font-semibold text-slate-700 mt-1 italic leading-snug"></p>
+            <p class="text-[11px] text-slate-500 mt-2">Artikel ini akan dihapus dari sistem publikasi faskes dan tidak lagi tampil pada aplikasi pengguna.</p>
+            <form id="deleteArticleForm" method="POST" action="" class="mt-6 flex items-center justify-center gap-3">
+                @csrf
+                @method('DELETE')
+                <button type="button" onclick="closeDeleteArticleModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer">Batal</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#e11d48] hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">Ya, Hapus</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 4: DETAIL & PRATINJAU ARTIKEL                                 -->
+    <!-- =================================================================== -->    <!-- =================================================================== -->
     <!-- MODAL 2: DETAIL & PRATINJAU ARTIKEL                                 -->
     <!-- =================================================================== -->
     <div id="articleDetailModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
@@ -934,14 +1057,18 @@
                     </div>
                 </div>
 
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
-                    <button
-                        type="button"
-                        onclick="closeArticleDetail()"
-                        class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
-                    >
-                        Tutup
-                    </button>
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2.5">
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="openEditFromDetail()" class="px-4 py-2 rounded-xl bg-sky-50 text-[#0284c7] hover:bg-sky-100 border border-sky-200/80 text-xs font-bold transition cursor-pointer flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            <span>Ubah Artikel</span>
+                        </button>
+                        <button type="button" onclick="openDeleteFromDetail()" class="px-4 py-2 rounded-xl bg-rose-50 text-[#e11d48] hover:bg-rose-100 border border-rose-200/80 text-xs font-bold transition cursor-pointer flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            <span>Hapus</span>
+                        </button>
+                    </div>
+                    <button type="button" onclick="closeArticleDetail()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">Tutup</button>
                 </div>
             </div>
         </div>
@@ -1110,6 +1237,52 @@
             document.getElementById('addArticleModal').classList.add('hidden');
         }
 
+        // Open Edit Article Modal
+        function openEditArticleModal(article) {
+            document.getElementById('editArticleTitleInput').value = article.full_title || article.title;
+            document.getElementById('editArticlePhaseInput').value = article.phase;
+            document.getElementById('editArticleAuthorInput').value = article.author;
+            document.getElementById('editArticleReadTimeInput').value = article.read_time;
+            document.getElementById('editArticleStatusInput').value = article.status;
+            document.getElementById('editArticleSummaryInput').value = article.summary;
+            const form = document.getElementById('editArticleForm');
+            form.action = /admin/edukasi-gizi/\;
+            document.getElementById('editArticleModal').classList.remove('hidden');
+        }
+
+        // Close Edit Article Modal
+        function closeEditArticleModal() {
+            document.getElementById('editArticleModal').classList.add('hidden');
+        }
+
+        // Open Delete Article Modal
+        function openDeleteArticleModal(id, title) {
+            document.getElementById('deleteArticleTitleDisplay').textContent = '"' + title + '"';
+            const form = document.getElementById('deleteArticleForm');
+            form.action = /admin/edukasi-gizi/\;
+            document.getElementById('deleteArticleModal').classList.remove('hidden');
+        }
+
+        // Close Delete Article Modal
+        function closeDeleteArticleModal() {
+            document.getElementById('deleteArticleModal').classList.add('hidden');
+        }
+
+        // Actions from Detail Modal
+        function openEditFromDetail() {
+            if (activeDetailArticle) {
+                closeArticleDetail();
+                openEditArticleModal(activeDetailArticle);
+            }
+        }
+
+        function openDeleteFromDetail() {
+            if (activeDetailArticle) {
+                closeArticleDetail();
+                openDeleteArticleModal(activeDetailArticle.id, activeDetailArticle.title);
+            }
+        }
+
         // Preview File Name
         function previewThumbnailName(input) {
             if (input.files && input.files[0]) {
@@ -1162,4 +1335,5 @@
     </script>
 </body>
 </html>
+
 

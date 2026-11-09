@@ -75,6 +75,14 @@ Route::prefix('admin')->group(function () {
     Route::get('/data-edukasi-gizi', [AdminEdukasiGiziController::class, 'index'])->name('admin.edukasi.alias');
     Route::post('/edukasi-gizi', [AdminEdukasiGiziController::class, 'store'])->name('admin.edukasi.store');
 
+    // Data Edukasi Gizi: Ubah & Hapus Artikel (PBI-020)
+    // URL: PUT    /admin/edukasi-gizi/{id}  → perbarui artikel
+    // URL: POST   /admin/edukasi-gizi/{id}  → perbarui artikel (alias untuk browser yang tidak support PUT)
+    // URL: DELETE /admin/edukasi-gizi/{id}  → hapus artikel
+    Route::put('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'update'])->name('admin.edukasi.update');
+    Route::post('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'update'])->name('admin.edukasi.update.post');
+    Route::delete('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'destroy'])->name('admin.edukasi.destroy');
+
     // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {
         return redirect()->route('admin.login');
