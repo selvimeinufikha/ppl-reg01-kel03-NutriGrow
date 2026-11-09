@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminEdukasiGiziController;
 use App\Http\Controllers\DashboardPenggunaController;
 
 /*
@@ -66,6 +67,13 @@ Route::prefix('admin')->group(function () {
 
     // Dashboard Admin (URL: /admin/dashboard)
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
+    // Data Edukasi Gizi: Lihat & Tambah Artikel (PBI-019)
+    // URL: GET  /admin/edukasi-gizi  → tampilkan daftar artikel
+    // URL: POST /admin/edukasi-gizi  → simpan artikel baru
+    Route::get('/edukasi-gizi', [AdminEdukasiGiziController::class, 'index'])->name('admin.edukasi.index');
+    Route::get('/data-edukasi-gizi', [AdminEdukasiGiziController::class, 'index'])->name('admin.edukasi.alias');
+    Route::post('/edukasi-gizi', [AdminEdukasiGiziController::class, 'store'])->name('admin.edukasi.store');
 
     // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {
