@@ -658,20 +658,30 @@
                                         @endif
                                     </td>
 
-                                    <!-- Kolom 4: Status Publikasi -->
-                                    <td class="py-4 px-4 whitespace-nowrap">
+                                    <!-- Kolom 4: Status Publikasi (dengan Quick Toggle) -->
+                                    <td class="py-4 px-4 whitespace-nowrap" onclick="event.stopPropagation()">
                                         @if($article['status'] === 'terbit')
-                                            <div class="flex items-center gap-1.5 font-bold text-slate-900">
-                                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                                <span>Terbit</span>
-                                            </div>
-                                            <div class="text-[10.5px] text-slate-400">{{ $article['status_note'] }}</div>
+                                            <form method="POST" action="{{ url('/admin/edukasi-gizi/' . $article['id'] . '/toggle-status') }}" class="inline">
+                                                @csrf
+                                                <button type="submit" class="text-left group/status cursor-pointer" title="Klik untuk ubah ke Draft">
+                                                    <div class="flex items-center gap-1.5 font-bold text-emerald-700 group-hover/status:text-amber-600 transition">
+                                                        <span class="w-2 h-2 rounded-full bg-emerald-500 group-hover/status:bg-amber-500 transition"></span>
+                                                        <span>Terbit</span>
+                                                    </div>
+                                                    <div class="text-[10.5px] text-slate-400 group-hover/status:text-amber-500 transition">{{ $article['status_note'] }}</div>
+                                                </button>
+                                            </form>
                                         @else
-                                            <div class="flex items-center gap-1.5 font-bold text-slate-600">
-                                                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
-                                                <span>Draft</span>
-                                            </div>
-                                            <div class="text-[10.5px] text-slate-400">{{ $article['status_note'] }}</div>
+                                            <form method="POST" action="{{ url('/admin/edukasi-gizi/' . $article['id'] . '/toggle-status') }}" class="inline">
+                                                @csrf
+                                                <button type="submit" class="text-left group/status cursor-pointer" title="Klik untuk Terbitkan">
+                                                    <div class="flex items-center gap-1.5 font-bold text-slate-500 group-hover/status:text-emerald-600 transition">
+                                                        <span class="w-2 h-2 rounded-full bg-slate-400 group-hover/status:bg-emerald-500 transition"></span>
+                                                        <span>Draft</span>
+                                                    </div>
+                                                    <div class="text-[10.5px] text-slate-400 group-hover/status:text-emerald-500 transition">{{ $article['status_note'] }}</div>
+                                                </button>
+                                            </form>
                                         @endif
                                     </td>
 
@@ -1246,7 +1256,7 @@
             document.getElementById('editArticleStatusInput').value = article.status;
             document.getElementById('editArticleSummaryInput').value = article.summary;
             const form = document.getElementById('editArticleForm');
-            form.action = /admin/edukasi-gizi/\;
+            form.action = `/admin/edukasi-gizi/${article.id}`;
             document.getElementById('editArticleModal').classList.remove('hidden');
         }
 
@@ -1259,7 +1269,7 @@
         function openDeleteArticleModal(id, title) {
             document.getElementById('deleteArticleTitleDisplay').textContent = '"' + title + '"';
             const form = document.getElementById('deleteArticleForm');
-            form.action = /admin/edukasi-gizi/\;
+            form.action = `/admin/edukasi-gizi/${id}`;
             document.getElementById('deleteArticleModal').classList.remove('hidden');
         }
 
@@ -1335,5 +1345,6 @@
     </script>
 </body>
 </html>
+
 
 

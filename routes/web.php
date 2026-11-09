@@ -83,6 +83,10 @@ Route::prefix('admin')->group(function () {
     Route::post('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'update'])->name('admin.edukasi.update.post');
     Route::delete('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'destroy'])->name('admin.edukasi.destroy');
 
+    // Data Edukasi Gizi: Atur Status Publikasi (PBI-021)
+    // URL: POST /admin/edukasi-gizi/{id}/toggle-status → toggle terbit/draft langsung dari tabel
+    Route::post('/edukasi-gizi/{id}/toggle-status', [AdminEdukasiGiziController::class, 'toggleStatus'])->name('admin.edukasi.toggle-status');
+
     // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {
         return redirect()->route('admin.login');

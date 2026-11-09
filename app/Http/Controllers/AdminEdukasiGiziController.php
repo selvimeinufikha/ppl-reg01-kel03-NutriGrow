@@ -353,4 +353,49 @@ class AdminEdukasiGiziController extends Controller
 
         return redirect()->route('admin.edukasi.index')->with('success', 'Artikel berhasil dihapus dari sistem edukasi gizi.');
     }
+
+    /**
+     * Toggle Status Publikasi Artikel (terbit ↔ draft).
+     * URL: POST /admin/edukasi-gizi/{id}/toggle-status
+     */
+    public function toggleStatus($id)
+    {
+        $articles = session()->get('admin_articles', $this->getDefaultArticles());
+
+        Carbon::setLocale('id');
+
+        $toggled = false;
+        foreach ($articles as &$art) {
+            if ($art['id'] == $id) {
+                if ($art['status'] === 'terbit') {
+                    // Ubah ke Draft
+                    $art['status'] = 'draft';
+                    $art['status_label'] = 'Draft';
+                    $art['status_note'] = 'Hanya tim nakes';
+                } else {
+                    // Terbitkan
+                    $art['status'] = 'terbit';
+                    $art['status_label'] = 'Terbit';
+                    $art['status_note'] = 'Tampil ke aplikasi';
+                    if ($art['publish_date'] === '-' || empty($art['publish_date'])) {
+                        $art['publish_date'] = Carbon::now()->translatedFormat('d M Y');
+                        $art['publish_time'] = Carbon::now()->format('H:i') . ' WIB';
+                    }
+                }
+                $toggled = true;
+                $newStatus = $art['status'];
+                break;
+            }
+        }
+
+        if ($toggled) {
+            session()->put('admin_articles', $articles);
+            $msg = $newStatus === 'terbit'
+                ? 'Artikel berhasil diterbitkan dan kini tampil di aplikasi pengguna.'
+                : 'Artikel berhasil disimpan sebagai Draft.';
+            return redirect()->route('admin.edukasi.index')->with('success', $msg);
+        }
+
+        return redirect()->route('admin.edukasi.index')->withErrors(['error' => 'Artikel tidak ditemukan.']);
+    }
 }
