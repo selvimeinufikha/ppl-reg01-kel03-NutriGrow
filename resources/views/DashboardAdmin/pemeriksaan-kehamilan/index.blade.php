@@ -68,6 +68,58 @@
         .animate-scale-up {
             animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
+        /* Lucu & Playful Animation untuk Ikon Tempat Sampah (PBI-014) */
+        @keyframes cuteTrashBounce {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) rotate(-18deg);
+            }
+            35% {
+                opacity: 1;
+                transform: scale(1.22) rotate(14deg);
+            }
+            55% {
+                transform: scale(0.92) rotate(-10deg);
+            }
+            75% {
+                transform: scale(1.08) rotate(5deg);
+            }
+            90% {
+                transform: scale(0.98) rotate(-2deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes cuteLidWiggle {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            20% {
+                transform: translateY(-5px) rotate(-16deg);
+            }
+            45% {
+                transform: translateY(-1.5px) rotate(10deg);
+            }
+            70% {
+                transform: translateY(-4px) rotate(-8deg);
+            }
+            85% {
+                transform: translateY(-0.5px) rotate(3deg);
+            }
+        }
+
+        .animate-cute-trash {
+            animation: cuteTrashBounce 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .animate-cute-lid {
+            animation: cuteLidWiggle 1.4s ease-in-out infinite 0.35s;
+            transform-origin: 25% 85%;
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen bg-[#f8fafc]">
@@ -535,8 +587,18 @@
                                     $ibu = $item->ibu;
                                     $kehamilan = $item->kehamilan;
                                     $gestasiBadge = $item->gestasi_badge;
+                                    $lilaRisk = $item->lila_risk;
+                                    $hbRisk = $item->hb_risk;
                                     $inisial = $ibu ? $ibu->inisial : 'IH';
                                     
+                                    // Deteksi tingkat risiko klinis per baris
+                                    $hasHighRisk = $lilaRisk['status'] === 'kek_berat' || $hbRisk['status'] === 'anemia_berat' || $item->status_tekanan_darah === 'hipertensi';
+                                    $hasMediumRisk = $lilaRisk['is_kek'] || $hbRisk['is_anemia'] || $item->status_tekanan_darah === 'pra_hipertensi';
+                                    
+                                    $rowRiskClass = $hasHighRisk 
+                                        ? 'border-l-4 border-l-red-500 bg-red-50/20' 
+                                        : ($hasMediumRisk ? 'border-l-4 border-l-rose-400 bg-rose-50/10' : 'border-l-4 border-l-transparent');
+
                                     // Variasi warna inisial avatar
                                     $colorMap = [
                                         'RS' => 'bg-sky-100 text-sky-700',
@@ -548,7 +610,7 @@
                                     ];
                                     $avatarClass = $colorMap[$inisial] ?? 'bg-sky-100 text-sky-700';
                                 @endphp
-                                <tr class="hover:bg-slate-50/70 transition">
+                                <tr class="hover:bg-slate-50/70 transition {{ $rowRiskClass }}">
                                     <!-- Nama Ibu Hamil & Gravida -->
                                     <td class="py-4 px-4 sm:px-6">
                                         <div class="flex items-center gap-3">
@@ -556,11 +618,24 @@
                                                 {{ $inisial }}
                                             </div>
                                             <div>
-                                                <div class="flex items-center gap-2">
+                                                <div class="flex items-center gap-2 flex-wrap">
                                                     <span class="font-bold text-slate-900 text-xs">{{ $ibu ? $ibu->name : 'Ny. Pasien' }}</span>
                                                     <span class="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-[9.5px] border border-slate-200">
                                                         {{ $kehamilan ? ($kehamilan->gravida ?: 'G1P0A0') : 'G1P0A0' }}
                                                     </span>
+                                                    @if($lilaRisk['is_kek'] && $hbRisk['is_anemia'])
+                                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-black bg-red-100 text-red-800 border border-red-300">
+                                                            🚨 KEK &amp; Anemia
+                                                        </span>
+                                                    @elseif($lilaRisk['is_kek'])
+                                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                                                            ⚠️ Risiko KEK
+                                                        </span>
+                                                    @elseif($hbRisk['is_anemia'])
+                                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-100 text-red-800 border border-red-200">
+                                                            ⚠️ Anemia
+                                                        </span>
+                                                    @endif
                                                 </div>
                                                 <p class="text-[11px] text-slate-400 mt-0.5">
                                                     NIK: {{ $ibu && $ibu->nik ? $ibu->nik : '3171025508920001' }} • {{ $ibu && $ibu->usia_tahun ? $ibu->usia_tahun . ' thn' : '30 thn' }}
@@ -607,11 +682,13 @@
 
                                     <!-- Tekanan Darah -->
                                     <td class="py-4 px-4 whitespace-nowrap">
-                                        <div class="font-bold text-xs {{ $item->status_tekanan_darah === 'pra_hipertensi' ? 'text-red-600' : 'text-slate-800' }}">
+                                        <div class="font-bold text-xs {{ in_array($item->status_tekanan_darah, ['pra_hipertensi', 'hipertensi']) ? 'text-red-600' : 'text-slate-800' }}">
                                             {{ $item->tekanan_darah }} <span class="font-normal text-[10px] text-slate-400">mmHg</span>
                                         </div>
                                         <div class="text-[10.5px] font-semibold mt-0.5">
-                                            @if($item->status_tekanan_darah === 'pra_hipertensi')
+                                            @if($item->status_tekanan_darah === 'hipertensi')
+                                                <span class="text-red-700 font-extrabold">• Hipertensi</span>
+                                            @elseif($item->status_tekanan_darah === 'pra_hipertensi')
                                                 <span class="text-rose-600 font-bold">• Pra-Hipertensi</span>
                                             @elseif($item->status_tekanan_darah === 'optimal')
                                                 <span class="text-emerald-700 font-bold">• Optimal</span>
@@ -623,34 +700,60 @@
                                         </div>
                                     </td>
 
-                                    <!-- LiLA -->
+                                    <!-- LiLA (Penanda Risiko KEK Standar Kemenkes RI: LiLA < 23.5 cm) -->
                                     <td class="py-4 px-4 whitespace-nowrap">
-                                        <div class="font-bold text-slate-800 text-xs">
-                                            {{ number_format($item->lila, 1) }} cm
+                                        <div class="flex items-center gap-1.5 font-bold text-xs {{ $lilaRisk['is_kek'] ? 'text-rose-700' : 'text-slate-800' }}">
+                                            <span>{{ number_format($item->lila, 1) }} cm</span>
+                                            @if($lilaRisk['is_kek'])
+                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-rose-100 text-rose-700 text-[10px] font-black" title="{{ $lilaRisk['kategori'] }}: Selisih -{{ $lilaRisk['selisih'] }} cm dari standar batas Kemenkes 23.5 cm">!</span>
+                                            @endif
                                         </div>
-                                        <div class="text-[10.5px] font-semibold mt-0.5">
-                                            @if($item->status_kek === 'risiko_kek')
-                                                <span class="text-rose-600 font-bold">Risiko KEK</span>
+                                        <div class="mt-1">
+                                            @if($item->lila < 21.0)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-extrabold bg-red-100 text-red-800 border border-red-300 shadow-2xs">
+                                                    🚨 KEK Berat (-{{ $lilaRisk['selisih'] }} cm)
+                                                </span>
+                                            @elseif($lilaRisk['is_kek'])
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                                    ⚠️ Risiko KEK (-{{ $lilaRisk['selisih'] }} cm)
+                                                </span>
                                             @else
-                                                <span class="text-slate-500">&ge; 23.5 cm (Aman)</span>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    ✓ &ge; 23.5 cm (Aman)
+                                                </span>
                                             @endif
                                         </div>
                                     </td>
 
-                                    <!-- Hb -->
+                                    <!-- Hb (Penanda Risiko Anemia Gestasional Standar WHO/Kemenkes RI) -->
                                     <td class="py-4 px-4 whitespace-nowrap">
-                                        <div class="font-bold text-xs {{ str_starts_with($item->status_anemia, 'anemia_') ? 'text-red-600' : 'text-slate-800' }}">
-                                            {{ $item->hb ? number_format($item->hb, 1) . ' g/dL' : '-' }}
+                                        <div class="flex items-center gap-1.5 font-bold text-xs {{ $hbRisk['is_anemia'] ? 'text-red-700' : 'text-slate-800' }}">
+                                            <span>{{ $item->hb ? number_format($item->hb, 1) . ' g/dL' : '-' }}</span>
+                                            @if($hbRisk['is_anemia'])
+                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-red-100 text-red-700 text-[10px] font-black" title="{{ $hbRisk['kategori'] }}: Selisih -{{ $hbRisk['selisih'] }} g/dL dari ambang batas">!</span>
+                                            @endif
                                         </div>
-                                        <div class="text-[10.5px] font-semibold mt-0.5">
-                                            @if($item->status_anemia === 'anemia_ringan')
-                                                <span class="text-rose-600 font-bold">Anemia Ringan</span>
-                                            @elseif($item->status_anemia === 'anemia_sedang')
-                                                <span class="text-red-700 font-bold">Anemia Sedang</span>
-                                            @elseif($item->status_anemia === 'anemia_berat')
-                                                <span class="text-red-800 font-black">Anemia Berat</span>
+                                        <div class="mt-1">
+                                            @if($hbRisk['status'] === 'anemia_berat')
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-black bg-red-100 text-red-800 border border-red-300 animate-pulse">
+                                                    🚨 Anemia Berat (&lt;7)
+                                                </span>
+                                            @elseif($hbRisk['status'] === 'anemia_sedang')
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-red-50 text-red-700 border border-red-200">
+                                                    ⚠️ Anemia Sedang
+                                                </span>
+                                            @elseif($hbRisk['status'] === 'anemia_ringan')
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                                    ⚠️ Anemia Ringan
+                                                </span>
+                                            @elseif($hbRisk['status'] === 'belum_diperiksa')
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                                    - Belum Periksa
+                                                </span>
                                             @else
-                                                <span class="text-slate-500">&ge; 11.0 g/dL</span>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    ✓ Normal (&ge;{{ number_format($hbRisk['threshold'], 1) }})
+                                                </span>
                                             @endif
                                         </div>
                                     </td>
@@ -658,27 +761,30 @@
                                     <!-- Aksi / Hapus / Detail -->
                                     <td class="py-4 px-4 text-center whitespace-nowrap">
                                         <div class="inline-flex items-center gap-1.5">
+                                            <!-- Tombol Lihat Detail (Biru Langit Aktif) -->
                                             <button
                                                 type="button"
                                                 onclick="lihatDetail({{ json_encode($item) }})"
-                                                class="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 transition"
-                                                title="Lihat Detail Rekomendasi"
+                                                class="w-8 h-8 rounded-xl bg-sky-50 text-[#0284c7] border border-sky-200 hover:bg-[#0284c7] hover:text-white hover:border-[#0284c7] hover:shadow-sm transition-all duration-200 flex items-center justify-center shrink-0"
+                                                title="Lihat Detail Pemeriksaan & Deteksi Risiko"
                                             >
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                                 </svg>
                                             </button>
 
-                                            <form method="POST" action="{{ route('admin.pemeriksaan.destroy', $item->id) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus rekam pemeriksaan ini?');" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="Hapus Rekam">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                    </svg>
-                                                </button>
-                                            </form>
+                                            <!-- Tombol Hapus (Merah Mawar Aktif - Buka Modal Konfirmasi) -->
+                                            <button
+                                                type="button"
+                                                onclick="konfirmasiHapus('{{ route('admin.pemeriksaan.destroy', $item->id) }}', '{{ addslashes($ibu ? $ibu->name : 'Ibu Hamil') }}')"
+                                                class="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white hover:border-rose-600 hover:shadow-sm transition-all duration-200 flex items-center justify-center shrink-0"
+                                                title="Hapus Rekam Pemeriksaan"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -1139,28 +1245,148 @@
     </div>
 
     <!-- =================================================================== -->
-    <!-- 8. MODAL DETAIL REKOMENDASI KLINIS                                  -->
+    <!-- 8. MODAL DETAIL REKOMENDASI & DETEKSI RISIKO KLINIS (PBI-014)        -->
     <!-- =================================================================== -->
     <div id="modalDetailPemeriksaan" class="fixed inset-0 z-50 overflow-y-auto hidden">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeDetailModal()"></div>
         <div class="min-h-screen px-4 py-8 flex items-center justify-center">
-            <div class="relative bg-white rounded-3xl max-w-lg w-full shadow-2xl p-6 border border-slate-100 z-10 space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <h3 class="text-base font-bold text-slate-900" id="detailNamaIbu">Detail Rekomendasi Klinis</h3>
-                    <button onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-700 text-lg">&times;</button>
-                </div>
-                <div class="space-y-3 text-xs">
-                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-                        <p class="font-bold text-slate-800">Catatan &amp; Tindakan Nakes:</p>
-                        <p id="detailCatatan" class="text-slate-600 leading-relaxed"></p>
+            <div class="relative bg-white rounded-3xl max-w-2xl w-full shadow-2xl p-6 sm:p-7 border border-slate-100 z-10 space-y-4 animate-scale-up max-h-[92vh] overflow-y-auto custom-scrollbar">
+                
+                <!-- Modal Header -->
+                <div class="flex items-start justify-between pb-3.5 border-b border-slate-100">
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-base sm:text-lg font-black text-slate-900" id="detailNamaIbu">Detail Hasil Pemeriksaan</h3>
+                            <span id="detailGravidaBadge" class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-[10px] border border-slate-200">G1P0A0</span>
+                        </div>
+                        <p class="text-[11.5px] text-slate-500 mt-1" id="detailMetaPasien">
+                            NIK: - • No. KIA: - • Usia: - thn
+                        </p>
                     </div>
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-sky-50 border border-sky-100 text-sky-900">
-                        <span class="font-bold">Jadwal Kontrol Berikutnya:</span>
-                        <span id="detailJadwalKontrol" class="font-extrabold text-[#0284c7]"></span>
+                    <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center text-lg font-bold transition shrink-0">&times;</button>
+                </div>
+
+                <!-- 1. Banner Ringkasan Deteksi Risiko Terpadu -->
+                <div id="detailRiskBanner" class="p-3.5 sm:p-4 rounded-2xl flex items-start gap-3 transition">
+                    <div id="detailRiskBannerIcon" class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs shadow-xs">
+                        !
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <h4 id="detailRiskBannerTitle" class="font-extrabold text-xs sm:text-sm">Status Deteksi Risiko Klinis</h4>
+                            <span id="detailRiskLevelBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">Tingkat Risiko</span>
+                        </div>
+                        <p id="detailRiskBannerDesc" class="text-[11.5px] mt-1 leading-relaxed"></p>
                     </div>
                 </div>
-                <div class="pt-3 border-t border-slate-100 text-right">
-                    <button onclick="closeDetailModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs">Tutup</button>
+
+                <!-- 2. Dua Kartu Komponen Penanda Risiko (LiLA & Hb) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    
+                    <!-- Kartu Deteksi Risiko LiLA (Penapisan KEK Standar Kemenkes RI) -->
+                    <div id="detailCardLila" class="p-4 rounded-2xl border transition space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                <span class="text-xs font-bold text-slate-700">Penapisan KEK (LiLA)</span>
+                            </div>
+                            <span id="detailBadgeLila" class="px-2 py-0.5 rounded-full text-[9.5px] font-bold">Risiko KEK</span>
+                        </div>
+                        <div class="flex items-baseline justify-between pt-0.5">
+                            <div>
+                                <span class="text-2xl font-black text-slate-900" id="detailValLila">21.5</span>
+                                <span class="text-xs font-bold text-slate-500 ml-0.5">cm</span>
+                            </div>
+                            <span class="text-[10.5px] text-slate-500 font-medium">Batas: &ge; 23.5 cm</span>
+                        </div>
+                        <div id="detailSelisihLilaBox" class="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2.5 py-1.5 rounded-xl border border-rose-200 flex items-center gap-1.5">
+                            <span id="detailIconLila">⚠️</span>
+                            <span id="detailSelisihLila">Selisih -2.0 cm dari batas Kemenkes</span>
+                        </div>
+                        <div class="text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed">
+                            <strong class="text-slate-800 block text-[10.5px] mb-0.5">Rekomendasi Penanganan KEK:</strong>
+                            <span id="detailRekomendasiLila">Intervensi PMT pemulihan berbasis pangan lokal/biskuit dan pantau kenaikan BB.</span>
+                        </div>
+                    </div>
+
+                    <!-- Kartu Deteksi Risiko Hb (Penapisan Anemia Standar WHO/Kemenkes) -->
+                    <div id="detailCardHb" class="p-4 rounded-2xl border transition space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                <span class="text-xs font-bold text-slate-700">Penapisan Anemia (Hb)</span>
+                            </div>
+                            <span id="detailBadgeHb" class="px-2 py-0.5 rounded-full text-[9.5px] font-bold">Anemia Ringan</span>
+                        </div>
+                        <div class="flex items-baseline justify-between pt-0.5">
+                            <div>
+                                <span class="text-2xl font-black text-slate-900" id="detailValHb">10.2</span>
+                                <span class="text-xs font-bold text-slate-500 ml-0.5">g/dL</span>
+                            </div>
+                            <span class="text-[10.5px] text-slate-500 font-medium" id="detailThresholdHb">Batas: &ge; 11.0 g/dL</span>
+                        </div>
+                        <div id="detailSelisihHbBox" class="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2.5 py-1.5 rounded-xl border border-rose-200 flex items-center gap-1.5">
+                            <span id="detailIconHb">⚠️</span>
+                            <span id="detailSelisihHb">Selisih -0.8 g/dL dari batas normal</span>
+                        </div>
+                        <div class="text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed">
+                            <strong class="text-slate-800 block text-[10.5px] mb-0.5">Rekomendasi Terapi Anemia:</strong>
+                            <span id="detailRekomendasiHb">Tingkatkan kepatuhan konsumsi 1 tablet Tambah Darah (TTD) tiap malam.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Ringkasan Parameter Tanda Vital & Janin -->
+                <div class="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200/80">
+                    <p class="text-[10.5px] font-bold text-slate-700 mb-2 uppercase tracking-wider">Tanda Vital &amp; Parameter Obstetri:</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                        <div class="bg-white p-2.5 rounded-xl border border-slate-100 shadow-2xs">
+                            <span class="text-[10px] text-slate-400 font-semibold block">Tekanan Darah</span>
+                            <span class="text-xs font-black text-slate-800 block mt-0.5" id="detailValTd">120/80</span>
+                            <span class="text-[9.5px] font-bold block mt-0.5" id="detailBadgeTd">Optimal</span>
+                        </div>
+                        <div class="bg-white p-2.5 rounded-xl border border-slate-100 shadow-2xs">
+                            <span class="text-[10px] text-slate-400 font-semibold block">Berat Badan</span>
+                            <span class="text-xs font-black text-slate-800 block mt-0.5" id="detailValBb">58.0 kg</span>
+                            <span class="text-[9.5px] font-semibold block mt-0.5" id="detailBadgeDeltaBb">+0.5 kg</span>
+                        </div>
+                        <div class="bg-white p-2.5 rounded-xl border border-slate-100 shadow-2xs">
+                            <span class="text-[10px] text-slate-400 font-semibold block">Tinggi Fundus</span>
+                            <span class="text-xs font-black text-slate-800 block mt-0.5" id="detailValTfu">24 cm</span>
+                            <span class="text-[9.5px] text-slate-500 font-medium block mt-0.5">Sesuai gestasi</span>
+                        </div>
+                        <div class="bg-white p-2.5 rounded-xl border border-slate-100 shadow-2xs">
+                            <span class="text-[10px] text-slate-400 font-semibold block">Denyut Janin</span>
+                            <span class="text-xs font-black text-slate-800 block mt-0.5" id="detailValDjj">142 dpm</span>
+                            <span class="text-[9.5px] text-emerald-600 font-bold block mt-0.5">Normal (120-160)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Catatan Klinis & Jadwal Kontrol -->
+                <div class="space-y-2.5 text-xs">
+                    <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <p class="font-bold text-slate-800 text-[11px]">Catatan &amp; Tindakan Nakes:</p>
+                            <span class="text-[10px] text-slate-400 font-medium" id="detailNakesPemeriksa">Pemeriksa: Nakes</span>
+                        </div>
+                        <p id="detailCatatan" class="text-slate-600 leading-relaxed text-[11.5px] pt-0.5"></p>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3.5 rounded-2xl bg-sky-50 border border-sky-100 text-sky-900">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-[#0284c7]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="font-bold text-xs">Jadwal Kontrol Berikutnya:</span>
+                        </div>
+                        <span id="detailJadwalKontrol" class="font-extrabold text-[#0284c7] text-xs sm:text-sm"></span>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="pt-2 border-t border-slate-100 flex items-center justify-end">
+                    <button onclick="closeDetailModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">Tutup</button>
                 </div>
             </div>
         </div>
@@ -1200,6 +1426,82 @@
                     </svg>
                     <span>Selesai &amp; Lihat Data</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL POPUP KONFIRMASI HAPUS (PERSIS MOCKUP DENGAN ANIMASI CUTE)   -->
+    <!-- =================================================================== -->
+    <div id="modalKonfirmasiHapus" class="fixed inset-0 z-50 overflow-y-auto hidden items-center justify-center p-4">
+        <!-- Backdrop Blur -->
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="closeHapusModal()"></div>
+
+        <!-- Modal Card in Center -->
+        <div class="relative bg-white rounded-[28px] max-w-sm sm:max-w-md w-full shadow-2xl border border-slate-100 p-6 sm:p-8 z-10 text-center transform transition-all animate-scale-up">
+            
+            <!-- Tombol Close (X) di Pojok Kanan Atas Sesuai Mockup -->
+            <button
+                type="button"
+                onclick="closeHapusModal()"
+                class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 transition p-1 rounded-full hover:bg-slate-100"
+                aria-label="Tutup"
+            >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+
+            <!-- Lingkaran Pink dengan Animasi Lucu Goyang & Tutup Tong Sampah Pop-up -->
+            <div id="hapusIconBounce" class="mx-auto w-16 h-16 rounded-full bg-[#fce7f3] text-[#e11d48] flex items-center justify-center mb-5 animate-cute-trash shadow-xs">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- Tutup Tong Sampah yang Bergoyang Lucu -->
+                    <path class="animate-cute-lid" d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <!-- Badan Tong Sampah -->
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6M14 11v6"/>
+                </svg>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-900 tracking-tight">Hapus Rekam Pemeriksaan?</h3>
+            <p class="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed px-1">
+                Apakah Anda yakin ingin menghapus data rekam medis untuk <strong id="hapusNamaPasien" class="text-slate-900 font-bold">Pasien</strong>?
+            </p>
+
+            <!-- Box Peringatan Segitiga Merah Sesuai Mockup -->
+            <div class="mt-4 p-3.5 rounded-2xl bg-[#fee2e2]/70 border border-[#fecaca] flex items-start gap-3 text-left">
+                <div class="w-5 h-5 rounded-full bg-[#ef4444] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <p class="text-xs text-[#b91c1c] font-medium leading-relaxed pt-0.5">
+                    Tindakan ini permanen. Data riwayat &amp; deteksi risiko akan dihapus dari sistem.
+                </p>
+            </div>
+
+            <!-- Action Buttons: Batal & Ya, Hapus (Persis Mockup) -->
+            <div class="mt-6 grid grid-cols-2 gap-3.5">
+                <button
+                    type="button"
+                    onclick="closeHapusModal()"
+                    class="w-full py-3 px-5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold shadow-2xs transition"
+                >
+                    Batal
+                </button>
+                <form id="formHapusPemeriksaan" method="POST" action="" class="w-full">
+                    @csrf
+                    @method('DELETE')
+                    <button
+                        type="submit"
+                        class="w-full py-3 px-5 rounded-2xl bg-[#e11d48] hover:bg-[#be123c] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition flex items-center justify-center gap-2"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        <span>Ya, Hapus</span>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -1381,16 +1683,191 @@
             document.getElementById('inputTglKontrol').value = `${yyyy}-${mm}-${dd}`;
         }
 
-        // Modal Detail Rekomendasi
+        // Modal Detail Pemeriksaan & Deteksi Risiko Klinis (PBI-014)
         function lihatDetail(data) {
-            document.getElementById('detailNamaIbu').innerText = `Catatan Medis: ${data.ibu ? data.ibu.name : 'Ibu Hamil'}`;
+            const ibu = data.ibu || {};
+            const kehamilan = data.kehamilan || {};
+            const nakes = data.nakes || {};
+            const lilaRisk = data.lila_risk || {};
+            const hbRisk = data.hb_risk || {};
+
+            // 1. Identitas Pasien
+            document.getElementById('detailNamaIbu').innerText = ibu.name || 'Ibu Hamil';
+            document.getElementById('detailGravidaBadge').innerText = kehamilan.gravida || 'G1P0A0';
+            document.getElementById('detailMetaPasien').innerText = 
+                `NIK: ${ibu.nik || '-'} • No. KIA: ${ibu.no_kia || '-'} • Usia: ${ibu.usia_tahun ? ibu.usia_tahun + ' thn' : '-'} • Gestasi: ${data.usia_gestasi_minggu || 20} mgg (Trimester ${data.trimester || 2})`;
+
+            // 2. Banner Deteksi Risiko Terpadu
+            const banner = document.getElementById('detailRiskBanner');
+            const bannerIcon = document.getElementById('detailRiskBannerIcon');
+            const bannerTitle = document.getElementById('detailRiskBannerTitle');
+            const bannerLevel = document.getElementById('detailRiskLevelBadge');
+            const bannerDesc = document.getElementById('detailRiskBannerDesc');
+
+            const isKek = Boolean(lilaRisk.is_kek);
+            const isAnemia = Boolean(hbRisk.is_anemia);
+            const isHipertensi = data.status_tekanan_darah === 'hipertensi';
+            const isPraHipertensi = data.status_tekanan_darah === 'pra_hipertensi';
+
+            if (isKek || isAnemia || isHipertensi) {
+                banner.className = 'p-3.5 sm:p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-start gap-3 transition';
+                bannerIcon.className = 'w-7 h-7 rounded-full bg-rose-600 text-white flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs shadow-xs';
+                bannerIcon.innerText = '!';
+                
+                const isHigh = (lilaRisk.status === 'kek_berat' || hbRisk.status === 'anemia_berat' || isHipertensi);
+                bannerLevel.className = isHigh 
+                    ? 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-800 border border-red-300'
+                    : 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-300';
+                bannerLevel.innerText = isHigh ? '🚨 Risiko Tinggi' : '⚠️ Risiko Sedang';
+                
+                let warnings = [];
+                if (isKek) warnings.push(lilaRisk.kategori || 'Risiko KEK');
+                if (isAnemia) warnings.push(hbRisk.kategori || 'Anemia');
+                if (isHipertensi) warnings.push('Hipertensi Gestasional');
+
+                bannerTitle.className = 'font-extrabold text-xs sm:text-sm text-rose-950';
+                bannerTitle.innerText = `Terdeteksi Risiko Klinis: ${warnings.join(' & ')}`;
+                bannerDesc.className = 'text-[11.5px] mt-1 leading-relaxed text-rose-800';
+                bannerDesc.innerText = 'Pasien memerlukan tindakan intervensi gizi intensif dan pengawasan klinis berkala sesuai standar Kemenkes RI.';
+            } else if (isPraHipertensi) {
+                banner.className = 'p-3.5 sm:p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3 transition';
+                bannerIcon.className = 'w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs shadow-xs';
+                bannerIcon.innerText = '!';
+                bannerLevel.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300';
+                bannerLevel.innerText = '⚠️ Waspada Pra-Hipertensi';
+                bannerTitle.className = 'font-extrabold text-xs sm:text-sm text-amber-950';
+                bannerTitle.innerText = `Waspada Tekanan Darah (${data.tekanan_darah} mmHg)`;
+                bannerDesc.className = 'text-[11.5px] mt-1 leading-relaxed text-amber-800';
+                bannerDesc.innerText = 'LiLA dan Hb optimal. Pantau kenaikan tekanan darah dan anjurkan istirahat cukup serta pembatasan asupan natrium tinggi.';
+            } else {
+                banner.className = 'p-3.5 sm:p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-start gap-3 transition';
+                bannerIcon.className = 'w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs shadow-xs';
+                bannerIcon.innerText = '✓';
+                bannerLevel.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300';
+                bannerLevel.innerText = '✓ Status Baik';
+                bannerTitle.className = 'font-extrabold text-xs sm:text-sm text-emerald-950';
+                bannerTitle.innerText = 'Hasil Pemeriksaan Dalam Batas Normal';
+                bannerDesc.className = 'text-[11.5px] mt-1 leading-relaxed text-emerald-800';
+                bannerDesc.innerText = 'Status gizi LiLA adekuat (≥ 23.5 cm) dan kadar hemoglobin optimal. Tidak ada indikasi komplikasi kehamilan.';
+            }
+
+            // 3. Kartu Deteksi Risiko LiLA
+            const cardLila = document.getElementById('detailCardLila');
+            const badgeLila = document.getElementById('detailBadgeLila');
+            const selisihLilaBox = document.getElementById('detailSelisihLilaBox');
+            document.getElementById('detailValLila').innerText = parseFloat(data.lila || 0).toFixed(1);
+            badgeLila.innerText = lilaRisk.kategori || (isKek ? 'Risiko KEK' : 'Nutrisi Cukup');
+            
+            if (isKek) {
+                cardLila.className = 'p-4 rounded-2xl border border-rose-200 bg-rose-50/40 transition space-y-2.5';
+                badgeLila.className = `px-2 py-0.5 rounded-full text-[9.5px] font-bold ${lilaRisk.badge_class || 'bg-rose-50 text-rose-700 border border-rose-200'}`;
+                selisihLilaBox.className = 'text-[11px] font-semibold text-rose-700 bg-rose-50 px-2.5 py-1.5 rounded-xl border border-rose-200 flex items-center gap-1.5';
+                document.getElementById('detailIconLila').innerText = lilaRisk.icon || '⚠️';
+                document.getElementById('detailSelisihLila').innerText = `Selisih -${lilaRisk.selisih || (23.5 - data.lila).toFixed(1)} cm dari standar Kemenkes (23.5 cm)`;
+            } else {
+                cardLila.className = 'p-4 rounded-2xl border border-emerald-100 bg-white transition space-y-2.5';
+                badgeLila.className = 'px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+                selisihLilaBox.className = 'text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1.5';
+                document.getElementById('detailIconLila').innerText = '✓';
+                document.getElementById('detailSelisihLila').innerText = 'Status Nutrisi Baik (LiLA ≥ 23.5 cm)';
+            }
+            document.getElementById('detailRekomendasiLila').innerText = lilaRisk.rekomendasi || (isKek ? 'Intervensi PMT pemulihan kaya protein hewani (telur, ikan, ayam).' : 'Pertahankan pola makan bergizi seimbang.');
+
+            // 4. Kartu Deteksi Risiko Hb
+            const cardHb = document.getElementById('detailCardHb');
+            const badgeHb = document.getElementById('detailBadgeHb');
+            const selisihHbBox = document.getElementById('detailSelisihHbBox');
+            const hbVal = data.hb ? parseFloat(data.hb).toFixed(1) : '-';
+            document.getElementById('detailValHb').innerText = hbVal;
+            const hbThreshold = hbRisk.threshold || (data.trimester === 2 ? 10.5 : 11.0);
+            document.getElementById('detailThresholdHb').innerText = `Batas: ≥ ${hbThreshold.toFixed(1)} g/dL`;
+            badgeHb.innerText = hbRisk.kategori || (isAnemia ? 'Anemia' : 'Normal');
+
+            if (isAnemia) {
+                cardHb.className = 'p-4 rounded-2xl border border-rose-200 bg-rose-50/40 transition space-y-2.5';
+                badgeHb.className = `px-2 py-0.5 rounded-full text-[9.5px] font-bold ${hbRisk.badge_class || 'bg-red-50 text-red-700 border border-red-200'}`;
+                selisihHbBox.className = 'text-[11px] font-semibold text-rose-700 bg-rose-50 px-2.5 py-1.5 rounded-xl border border-rose-200 flex items-center gap-1.5';
+                document.getElementById('detailIconHb').innerText = hbRisk.icon || '⚠️';
+                document.getElementById('detailSelisihHb').innerText = `Defisit -${hbRisk.selisih || (hbThreshold - data.hb).toFixed(1)} g/dL dari ambang batas`;
+            } else {
+                cardHb.className = 'p-4 rounded-2xl border border-emerald-100 bg-white transition space-y-2.5';
+                badgeHb.className = 'px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+                selisihHbBox.className = 'text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1.5';
+                document.getElementById('detailIconHb').innerText = '✓';
+                document.getElementById('detailSelisihHb').innerText = `Kadar Hb Baik (≥ ${hbThreshold.toFixed(1)} g/dL)`;
+            }
+            document.getElementById('detailRekomendasiHb').innerText = hbRisk.rekomendasi || (isAnemia ? 'Tingkatkan dosis Tablet Tambah Darah (TTD) dan konsumsi vitamin C.' : 'Lanjutkan suplementasi TTD profilaksis rutin.');
+
+            // 5. Tanda Vital Tambahan
+            document.getElementById('detailValTd').innerText = data.tekanan_darah || '-';
+            const badgeTd = document.getElementById('detailBadgeTd');
+            if (isHipertensi) {
+                badgeTd.innerText = 'Hipertensi';
+                badgeTd.className = 'text-[9.5px] font-extrabold text-red-600 block mt-0.5';
+            } else if (isPraHipertensi) {
+                badgeTd.innerText = 'Pra-Hipertensi';
+                badgeTd.className = 'text-[9.5px] font-bold text-amber-600 block mt-0.5';
+            } else {
+                badgeTd.innerText = 'Optimal';
+                badgeTd.className = 'text-[9.5px] font-bold text-emerald-600 block mt-0.5';
+            }
+
+            document.getElementById('detailValBb').innerText = `${parseFloat(data.berat_badan || 0).toFixed(1)} kg`;
+            const deltaBb = data.perubahan_bb_formatted || (data.perubahan_bb ? `${data.perubahan_bb > 0 ? '+' : ''}${data.perubahan_bb} kg` : 'Basis awal');
+            document.getElementById('detailBadgeDeltaBb').innerText = deltaBb;
+            document.getElementById('detailValTfu').innerText = data.tfu ? `${parseFloat(data.tfu).toFixed(1)} cm` : '-';
+            document.getElementById('detailValDjj').innerText = data.djj ? `${data.djj} dpm` : '-';
+
+            // 6. Catatan Klinis & Jadwal Kontrol
+            document.getElementById('detailNakesPemeriksa').innerText = `Pemeriksa: ${nakes.name || 'Tenaga Kesehatan'}`;
             document.getElementById('detailCatatan').innerText = data.catatan_klinis || 'Tidak ada catatan klinis khusus.';
-            document.getElementById('detailJadwalKontrol').innerText = data.tgl_kontrol_berikutnya ? data.tgl_kontrol_berikutnya : 'Sesuai instruksi nakes';
+            
+            let tglKontrolFormatted = data.tgl_kontrol_berikutnya || 'Sesuai instruksi nakes';
+            if (data.tgl_kontrol_berikutnya) {
+                try {
+                    const parts = data.tgl_kontrol_berikutnya.split('-');
+                    if (parts.length === 3) {
+                        const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+                        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                        tglKontrolFormatted = dateObj.toLocaleDateString('id-ID', options);
+                    }
+                } catch (e) {}
+            }
+            document.getElementById('detailJadwalKontrol').innerText = tglKontrolFormatted;
+
             document.getElementById('modalDetailPemeriksaan').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeDetailModal() {
             document.getElementById('modalDetailPemeriksaan').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Modal Pop-up Konfirmasi Hapus
+        function konfirmasiHapus(actionUrl, namaPasien) {
+            document.getElementById('hapusNamaPasien').innerText = namaPasien || 'Pasien';
+            document.getElementById('formHapusPemeriksaan').action = actionUrl;
+            
+            const modal = document.getElementById('modalKonfirmasiHapus');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+
+            // Mainkan Animasi Lucu Ikon Tong Sampah Setiap Kali Pop-up Dibuka
+            const iconBounce = document.getElementById('hapusIconBounce');
+            if (iconBounce) {
+                iconBounce.classList.remove('animate-cute-trash');
+                void iconBounce.offsetWidth; // Trigger reflow agar animasi selalu jalan
+                iconBounce.classList.add('animate-cute-trash');
+            }
+        }
+
+        function closeHapusModal() {
+            const modal = document.getElementById('modalKonfirmasiHapus');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
         }
 
         // Tutup Modal Pop-up Berhasil Simpan

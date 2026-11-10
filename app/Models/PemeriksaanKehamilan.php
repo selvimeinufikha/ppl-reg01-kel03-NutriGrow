@@ -38,6 +38,12 @@ class PemeriksaanKehamilan extends Model
         'tgl_kontrol_berikutnya',
     ];
 
+    protected $appends = [
+        'lila_risk',
+        'hb_risk',
+        'gestasi_badge',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -89,8 +95,98 @@ class PemeriksaanKehamilan extends Model
     }
 
     /**
+     * PBI-014: Fungsi Pengecekan Nilai LiLA (Lingkar Lengan Atas)
+     * Standar Kemenkes RI: LiLA < 23.5 cm menunjukkan Risiko KEK (Kekurangan Energi Kronis).
+     */
+    public static function cekRisikoLila(float $lila): array
+    {
+        $threshold = 23.5;
+        $isKek = $lila < $threshold;
+
+        if ($lila < 21.0) {
+            $status = 'kek_berat';
+            $kategori = 'KEK Berat';
+            $badgeClass = 'bg-red-50 text-red-700 border border-red-200';
+            $icon = '🚨';
+            $rekomendasi = 'Prioritas tinggi: Rujuk segera ke dokter spesialis gizi klinis / Sp.OG dan jadwalkan PMT pemulihan intensif.';
+        } elseif ($lila < 23.5) {
+            $status = 'risiko_kek';
+            $kategori = 'Risiko KEK';
+            $badgeClass = 'bg-rose-50 text-rose-700 border border-rose-200';
+            $icon = '⚠️';
+            $rekomendasi = 'Intervensi PMT biskuit/pangan lokal kaya protein hewani (telur, hati ayam, ikan) dan pantau kenaikan BB tiap 2 minggu.';
+        } else {
+            $status = 'normal';
+            $kategori = 'Nutrisi Cukup';
+            $badgeClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+            $icon = '✓';
+            $rekomendasi = 'Status gizi baik (LiLA ≥ 23.5 cm). Pertahankan asupan makanan bergizi seimbang kaya protein & mikronutrien.';
+        }
+
+        return [
+            'is_kek' => $isKek,
+            'status' => $status,
+            'kategori' => $kategori,
+            'threshold' => $threshold,
+            'selisih' => $isKek ? round($threshold - $lila, 1) : 0,
+            'badge_class' => $badgeClass,
+            'icon' => $icon,
+            'rekomendasi' => $rekomendasi,
+        ];
+    }
+
+    /**
+     * PBI-014: Fungsi Pengecekan Kadar Hemoglobin (Hb)
+     * Standar WHO & Kemenkes RI:
+     * - Trimester 1 & 3: Hb < 11.0 g/dL -> Anemia
+     * - Trimester 2: Hb < 10.5 g/dL -> Anemia
+     */
+    public static function cekRisikoHb(float $hb, int $gestasi = 20): array
+    {
+        $threshold = ($gestasi >= 14 && $gestasi <= 27) ? 10.5 : 11.0;
+        $isAnemia = $hb < $threshold;
+
+        if ($hb < 7.0) {
+            $status = 'anemia_berat';
+            $kategori = 'Anemia Berat';
+            $badgeClass = 'bg-red-100 text-red-800 border border-red-300 font-black';
+            $icon = '🚨';
+            $rekomendasi = 'Kondisi darurat obstetri (Hb < 7.0 g/dL): Rujuk segera ke Rumah Sakit untuk evaluasi transfusi darah / terapi besi parenteral.';
+        } elseif ($hb < 10.0) {
+            $status = 'anemia_sedang';
+            $kategori = 'Anemia Sedang';
+            $badgeClass = 'bg-red-50 text-red-700 border border-red-200 font-bold';
+            $icon = '⚠️';
+            $rekomendasi = 'Berikan terapi Tablet Tambah Darah (TTD) dosis ganda 2x1 tablet/hari disertai konsumsi buah tinggi vitamin C untuk absorpsi optimal.';
+        } elseif ($hb < $threshold) {
+            $status = 'anemia_ringan';
+            $kategori = 'Anemia Ringan';
+            $badgeClass = 'bg-rose-50 text-rose-700 border border-rose-200 font-bold';
+            $icon = '⚠️';
+            $rekomendasi = 'Tingkatkan kepatuhan minum 1 tablet TTD setiap malam hari dan evaluasi ulang kadar Hb dalam 4 minggu ke depan.';
+        } else {
+            $status = 'normal';
+            $kategori = 'Normal';
+            $badgeClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+            $icon = '✓';
+            $rekomendasi = 'Kadar hemoglobin optimal (Hb ≥ ' . number_format($threshold, 1) . ' g/dL). Lanjutkan suplementasi 90 tablet TTD profilaksis rutin.';
+        }
+
+        return [
+            'is_anemia' => $isAnemia,
+            'status' => $status,
+            'kategori' => $kategori,
+            'threshold' => $threshold,
+            'selisih' => $isAnemia ? round($threshold - $hb, 1) : 0,
+            'badge_class' => $badgeClass,
+            'icon' => $icon,
+            'rekomendasi' => $rekomendasi,
+        ];
+    }
+
+    /**
      * Evaluasi Klinis Standar Kemenkes RI & WHO.
-     * Menghitung status risiko KEK, Anemia, Tekanan Darah, dan kesimpulan.
+     * Mengintegrasikan deteksi risiko KEK, Anemia, Tekanan Darah, dan kesimpulan.
      */
     public static function evaluateKlinis(
         float $lila,
@@ -99,29 +195,24 @@ class PemeriksaanKehamilan extends Model
         ?int $diastol = null,
         int $gestasi = 20
     ): array {
-        // 1. Status KEK berdasarkan Lingkar Lengan Atas (LiLA)
-        // Standar Kemenkes: LiLA < 23.5 cm menunjukkan Kurang Energi Kronis (KEK)
-        $isKek = $lila < 23.5;
-        $statusKek = $isKek ? 'risiko_kek' : 'normal';
+        // 1. Deteksi Risiko KEK
+        $lilaResult = self::cekRisikoLila($lila);
+        $statusKek = $lilaResult['status'];
+        $isKek = $lilaResult['is_kek'];
 
-        // 2. Status Anemia berdasarkan Hemoglobin (Hb)
-        // Standar WHO/Kemenkes:
-        // Trimester 1 & 3: Hb < 11.0 g/dL -> Anemia
-        // Trimester 2: Hb < 10.5 g/dL -> Anemia
-        $statusAnemia = 'normal';
-        $anemiaThreshold = ($gestasi >= 14 && $gestasi <= 27) ? 10.5 : 11.0;
-
-        if ($hb !== null && $hb > 0) {
-            if ($hb < 7.0) {
-                $statusAnemia = 'anemia_berat';
-            } elseif ($hb < 10.0) {
-                $statusAnemia = 'anemia_sedang';
-            } elseif ($hb < $anemiaThreshold) {
-                $statusAnemia = 'anemia_ringan';
-            } else {
-                $statusAnemia = 'normal';
-            }
-        }
+        // 2. Deteksi Risiko Anemia
+        $hbResult = $hb !== null ? self::cekRisikoHb($hb, $gestasi) : [
+            'is_anemia' => false,
+            'status' => 'normal',
+            'kategori' => 'Normal',
+            'threshold' => 11.0,
+            'selisih' => 0,
+            'badge_class' => 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+            'icon' => '✓',
+            'rekomendasi' => 'Pemeriksaan laboratorium Hb disarankan.',
+        ];
+        $statusAnemia = $hbResult['status'];
+        $isAnemia = $hbResult['is_anemia'];
 
         // 3. Status Tekanan Darah
         $statusTd = 'optimal';
@@ -140,10 +231,10 @@ class PemeriksaanKehamilan extends Model
         // 4. Kesimpulan Risiko Gabungan
         $risikoLabels = [];
         if ($isKek) {
-            $risikoLabels[] = 'Risiko KEK';
+            $risikoLabels[] = $lilaResult['kategori'];
         }
-        if (str_starts_with($statusAnemia, 'anemia_')) {
-            $risikoLabels[] = $statusAnemia === 'anemia_berat' ? 'Anemia Berat' : ($statusAnemia === 'anemia_sedang' ? 'Anemia Sedang' : 'Anemia Ringan');
+        if ($isAnemia) {
+            $risikoLabels[] = $hbResult['kategori'];
         }
         if ($statusTd === 'hipertensi') {
             $risikoLabels[] = 'Hipertensi';
@@ -153,15 +244,55 @@ class PemeriksaanKehamilan extends Model
 
         $kesimpulan = empty($risikoLabels) ? 'Normal' : implode(', ', $risikoLabels);
 
+        // Tingkat prioritas intervensi klinis
+        $tingkatRisiko = 'Normal';
+        if ($statusKek === 'kek_berat' || $statusAnemia === 'anemia_berat' || $statusTd === 'hipertensi') {
+            $tingkatRisiko = 'Tinggi';
+        } elseif ($isKek || $isAnemia || $statusTd === 'pra_hipertensi') {
+            $tingkatRisiko = 'Sedang';
+        }
+
         return [
             'status_kek' => $statusKek,
             'status_anemia' => $statusAnemia,
             'status_tekanan_darah' => $statusTd,
             'kesimpulan_risiko' => $kesimpulan,
+            'tingkat_risiko' => $tingkatRisiko,
             'is_kek' => $isKek,
-            'is_anemia' => str_starts_with($statusAnemia, 'anemia_'),
+            'is_anemia' => $isAnemia,
             'is_hipertensi' => in_array($statusTd, ['pra_hipertensi', 'hipertensi']),
+            'lila_info' => $lilaResult,
+            'hb_info' => $hbResult,
         ];
+    }
+
+    /**
+     * Accessor detail risiko LiLA.
+     */
+    public function getLilaRiskAttribute(): array
+    {
+        return self::cekRisikoLila((float) $this->lila);
+    }
+
+    /**
+     * Accessor detail risiko Hb.
+     */
+    public function getHbRiskAttribute(): array
+    {
+        if ($this->hb === null || (float)$this->hb <= 0) {
+            return [
+                'is_anemia' => false,
+                'status' => 'belum_diperiksa',
+                'kategori' => 'Belum Diperiksa',
+                'threshold' => 11.0,
+                'selisih' => 0,
+                'badge_class' => 'bg-slate-100 text-slate-600 border border-slate-200',
+                'icon' => 'ℹ️',
+                'rekomendasi' => 'Pemeriksaan laboratorium hemoglobin (Hb) disarankan untuk skrining anemia prenatal.',
+            ];
+        }
+
+        return self::cekRisikoHb((float) $this->hb, (int) $this->usia_gestasi_minggu);
     }
 
     /**
@@ -216,4 +347,3 @@ class PemeriksaanKehamilan extends Model
         }
     }
 }
-
