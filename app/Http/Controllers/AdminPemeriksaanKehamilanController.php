@@ -95,6 +95,37 @@ class AdminPemeriksaanKehamilanController extends Controller
             }
         }
 
+        // Filter Penelusuran Berdasarkan Pengguna/Kehamilan Tertentu (PBI-015)
+        $selectedKehamilanId = $request->input('kehamilan_id');
+        $selectedUserId = $request->input('user_id');
+        $selectedPasienInfo = null;
+
+        if ($selectedKehamilanId) {
+            $query->where('kehamilan_id', $selectedKehamilanId);
+            $kehamilanObj = Kehamilan::with('ibu')->find($selectedKehamilanId);
+            if ($kehamilanObj) {
+                $selectedPasienInfo = [
+                    'kehamilan_id' => $kehamilanObj->id,
+                    'user_id' => $kehamilanObj->user_id,
+                    'nama' => $kehamilanObj->ibu ? $kehamilanObj->ibu->name : 'Ibu Hamil',
+                    'nik' => $kehamilanObj->ibu ? $kehamilanObj->ibu->nik : '-',
+                    'gravida' => $kehamilanObj->gravida ?: 'G1P0A0',
+                ];
+            }
+        } elseif ($selectedUserId) {
+            $query->where('user_id', $selectedUserId);
+            $userObj = User::find($selectedUserId);
+            if ($userObj) {
+                $selectedPasienInfo = [
+                    'kehamilan_id' => null,
+                    'user_id' => $userObj->id,
+                    'nama' => $userObj->name,
+                    'nik' => $userObj->nik ?: '-',
+                    'gravida' => '-',
+                ];
+            }
+        }
+
         // Data Pemeriksaan dengan Paginasi
         $pemeriksaans = $query->paginate(6)->withQueryString();
 
@@ -170,7 +201,9 @@ class AdminPemeriksaanKehamilanController extends Controller
             'statistics',
             'pemeriksaans',
             'daftarIbuHamil',
-            'tab'
+            'tab',
+            'selectedKehamilanId',
+            'selectedPasienInfo'
         ));
     }
 
@@ -363,17 +396,203 @@ class AdminPemeriksaanKehamilanController extends Controller
     }
 
     /**
-     * Hapus Rekam Pemeriksaan Kehamilan.
+     * Detail Rekam Pemeriksaan Kehamilan (JSON API).
+     * URL: GET /admin/pemeriksaan-kehamilan/{id}
+     */
+    public function show(int $id): JsonResponse
+    {
+        $pemeriksaan = PemeriksaanKehamilan::with(['ibu', 'kehamilan', 'nakes'])->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $pemeriksaan,
+        ]);
+    }
+
+    /**
+     * Ambil Data Pemeriksaan untuk Formulir Edit (JSON API).
+     * URL: GET /admin/pemeriksaan-kehamilan/{id}/edit
+     */
+    public function edit(int $id): JsonResponse
+    {
+        $pemeriksaan = PemeriksaanKehamilan::with(['ibu', 'kehamilan', 'nakes'])->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $pemeriksaan,
+        ]);
+    }
+
+    /**
+     * Perbarui Rekam Pemeriksaan Kehamilan (PBI-015: Backend Update & Re-Evaluation).
+     * URL: PUT /admin/pemeriksaan-kehamilan/{id}
+     */
+    public function update(Request $request, int $id): RedirectResponse|JsonResponse
+    {
+        $pemeriksaan = PemeriksaanKehamilan::with(['ibu', 'kehamilan'])->findOrFail($id);
+        $kehamilan = $pemeriksaan->kehamilan;
+
+        // 1. Validasi Input (Menolak nilai kosong atau tidak wajar)
+        $validated = $request->validate([
+            'tgl_periksa' => 'required|date',
+            'usia_gestasi_minggu' => 'required|integer|min:1|max:44',
+            'berat_badan' => 'required|numeric|min:35|max:180',
+            'tekanan_darah' => [
+                'required',
+                'regex:/^\d{2,3}\/\d{2,3}$/',
+                function ($attribute, $value, $fail) {
+                    $parts = explode('/', $value);
+                    $sistol = (int) ($parts[0] ?? 0);
+                    $diastol = (int) ($parts[1] ?? 0);
+                    if ($sistol < 70 || $sistol > 240) {
+                        $fail('Nilai tekanan darah sistol tidak wajar (harus di antara 70 - 240 mmHg).');
+                    }
+                    if ($diastol < 40 || $diastol > 150) {
+                        $fail('Nilai tekanan darah diastol tidak wajar (harus di antara 40 - 150 mmHg).');
+                    }
+                    if ($sistol <= $diastol) {
+                        $fail('Nilai tekanan sistol harus lebih tinggi daripada tekanan diastol.');
+                    }
+                },
+            ],
+            'lila' => 'required|numeric|min:15|max:50',
+            'hb' => 'required|numeric|min:4|max:20',
+            'tfu' => 'required|numeric|min:5|max:50',
+            'djj' => 'required|integer|min:60|max:220',
+            'catatan_klinis' => 'required|string|min:3|max:1500',
+            'tgl_kontrol_berikutnya' => 'required|date|after_or_equal:tgl_periksa',
+        ], [
+            'tgl_periksa.required' => 'Tanggal pemeriksaan wajib diisi.',
+            'tgl_periksa.date' => 'Format tanggal pemeriksaan tidak valid.',
+            'usia_gestasi_minggu.required' => 'Usia gestasi dalam minggu wajib diisi.',
+            'usia_gestasi_minggu.integer' => 'Usia gestasi harus berupa angka bulat.',
+            'usia_gestasi_minggu.min' => 'Usia gestasi minimal 1 minggu.',
+            'usia_gestasi_minggu.max' => 'Usia gestasi tidak wajar (maksimal 44 minggu).',
+            'berat_badan.required' => 'Berat badan ibu wajib diisi.',
+            'berat_badan.numeric' => 'Berat badan harus berupa angka numerik.',
+            'berat_badan.min' => 'Nilai berat badan tidak wajar (minimal 35 kg).',
+            'berat_badan.max' => 'Nilai berat badan tidak wajar (maksimal 180 kg).',
+            'tekanan_darah.required' => 'Tekanan darah wajib diisi.',
+            'tekanan_darah.regex' => 'Format tekanan darah harus sistol/diastol (contoh: 120/80).',
+            'lila.required' => 'Pengukuran LiLA (Lingkar Lengan Atas) wajib diisi untuk penapisan KEK.',
+            'lila.numeric' => 'Nilai LiLA harus berupa angka numerik.',
+            'lila.min' => 'Nilai LiLA tidak wajar (minimal 15.0 cm).',
+            'lila.max' => 'Nilai LiLA tidak wajar (maksimal 50.0 cm).',
+            'hb.required' => 'Kadar hemoglobin (Hb) wajib diisi untuk penapisan anemia.',
+            'hb.numeric' => 'Kadar hemoglobin (Hb) harus berupa angka numerik.',
+            'hb.min' => 'Kadar hemoglobin (Hb) tidak wajar (minimal 4.0 g/dL).',
+            'hb.max' => 'Kadar hemoglobin (Hb) tidak wajar (maksimal 20.0 g/dL).',
+            'tfu.required' => 'Tinggi fundus uteri (TFU) wajib diisi.',
+            'tfu.numeric' => 'Tinggi fundus uteri (TFU) harus berupa angka numerik.',
+            'tfu.min' => 'Tinggi fundus (TFU) tidak wajar (minimal 5.0 cm).',
+            'tfu.max' => 'Tinggi fundus (TFU) tidak wajar (maksimal 50.0 cm).',
+            'djj.required' => 'Denyut jantung janin (DJJ) wajib diisi.',
+            'djj.integer' => 'Denyut jantung janin (DJJ) harus berupa angka bulat.',
+            'djj.min' => 'Denyut jantung janin (DJJ) tidak wajar (minimal 60 dpm).',
+            'djj.max' => 'Denyut jantung janin (DJJ) tidak wajar (maksimal 220 dpm).',
+            'catatan_klinis.required' => 'Catatan & rekomendasi klinis petugas wajib diisi.',
+            'catatan_klinis.min' => 'Catatan klinis minimal 3 karakter.',
+            'tgl_kontrol_berikutnya.required' => 'Tanggal jadwal kontrol berikutnya wajib diisi.',
+            'tgl_kontrol_berikutnya.date' => 'Format tanggal kontrol berikutnya tidak valid.',
+            'tgl_kontrol_berikutnya.after_or_equal' => 'Tanggal kontrol berikutnya tidak boleh lebih lampau dari tanggal pemeriksaan.',
+        ]);
+
+        // 2. Parsing Sistol dan Diastol
+        $parts = explode('/', $validated['tekanan_darah']);
+        $sistol = isset($parts[0]) ? (int) trim($parts[0]) : null;
+        $diastol = isset($parts[1]) ? (int) trim($parts[1]) : null;
+
+        $lila = (float) $validated['lila'];
+        $hb = !empty($validated['hb']) ? (float) $validated['hb'] : null;
+        $gestasi = (int) $validated['usia_gestasi_minggu'];
+
+        // 3. Tentukan Trimester
+        if ($gestasi <= 13) {
+            $trimester = 1;
+        } elseif ($gestasi <= 27) {
+            $trimester = 2;
+        } else {
+            $trimester = 3;
+        }
+
+        // 4. Hitung Perubahan Berat Badan dibanding pemeriksaan sebelumnya yang bukan record ini
+        $bbSekarang = (float) $validated['berat_badan'];
+        $pemeriksaanSebelumnya = null;
+        if ($kehamilan) {
+            $pemeriksaanSebelumnya = PemeriksaanKehamilan::where('kehamilan_id', $kehamilan->id)
+                ->where('id', '!=', $pemeriksaan->id)
+                ->whereDate('tgl_periksa', '<=', $validated['tgl_periksa'])
+                ->orderBy('tgl_periksa', 'desc')
+                ->first();
+        }
+
+        $perubahanBb = null;
+        if ($pemeriksaanSebelumnya) {
+            $perubahanBb = round($bbSekarang - (float) $pemeriksaanSebelumnya->berat_badan, 2);
+        } elseif ($kehamilan && $kehamilan->berat_badan_pra_hamil) {
+            $perubahanBb = round($bbSekarang - (float) $kehamilan->berat_badan_pra_hamil, 2);
+        }
+
+        // 5. Evaluasi Ulang Klinis Standar Kemenkes RI & WHO
+        $evaluasi = PemeriksaanKehamilan::evaluateKlinis($lila, $hb, $sistol, $diastol, $gestasi);
+
+        // 6. Simpan Pembaruan
+        $pemeriksaan->update([
+            'tgl_periksa' => $validated['tgl_periksa'],
+            'usia_gestasi_minggu' => $gestasi,
+            'trimester' => $trimester,
+            'berat_badan' => $bbSekarang,
+            'perubahan_bb' => $perubahanBb,
+            'tekanan_darah' => $validated['tekanan_darah'],
+            'sistol' => $sistol,
+            'diastol' => $diastol,
+            'lila' => $lila,
+            'hb' => $hb,
+            'tfu' => !empty($validated['tfu']) ? (float) $validated['tfu'] : null,
+            'djj' => !empty($validated['djj']) ? (int) $validated['djj'] : null,
+            'status_kek' => $evaluasi['status_kek'],
+            'status_anemia' => $evaluasi['status_anemia'],
+            'status_tekanan_darah' => $evaluasi['status_tekanan_darah'],
+            'kesimpulan_risiko' => $evaluasi['kesimpulan_risiko'],
+            'catatan_klinis' => $validated['catatan_klinis'],
+            'tgl_kontrol_berikutnya' => $validated['tgl_kontrol_berikutnya'],
+        ]);
+
+        $namaIbu = $pemeriksaan->ibu ? $pemeriksaan->ibu->name : 'Pasien';
+        $pesanSukses = "Perubahan rekam pemeriksaan kehamilan untuk {$namaIbu} berhasil disimpan!";
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $pesanSukses,
+                'data' => $pemeriksaan,
+            ]);
+        }
+
+        return redirect()->route('admin.pemeriksaan.index')->with('success', $pesanSukses);
+    }
+
+    /**
+     * Hapus Rekam Pemeriksaan Kehamilan (PBI-015: Backend Delete).
      * URL: DELETE /admin/pemeriksaan-kehamilan/{id}
      */
-    public function destroy(int $id): RedirectResponse
+    public function destroy(Request $request, int $id): RedirectResponse|JsonResponse
     {
         $pemeriksaan = PemeriksaanKehamilan::findOrFail($id);
         $namaIbu = $pemeriksaan->ibu ? $pemeriksaan->ibu->name : 'Ibu Hamil';
         $pemeriksaan->delete();
 
+        $pesanSukses = "Rekam pemeriksaan untuk {$namaIbu} berhasil dihapus.";
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $pesanSukses,
+            ]);
+        }
+
         return redirect()->route('admin.pemeriksaan.index')
-            ->with('success', "Rekam pemeriksaan untuk {$namaIbu} berhasil dihapus.");
+            ->with('success', $pesanSukses);
     }
 }
 

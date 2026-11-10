@@ -69,6 +69,27 @@
             animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
+        /* Custom Dropdown Styling: Hover Warna Biru Muda Cantik */
+        .custom-dropdown-option {
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+        .custom-dropdown-option:hover {
+            background-color: #e0f2fe !important; /* sky-100 (biru muda) */
+            color: #0369a1 !important; /* sky-700 */
+        }
+        .custom-dropdown-option.is-selected {
+            background-color: #e0f2fe !important; /* sky-100 */
+            color: #0369a1 !important; /* sky-700 */
+            font-weight: 700 !important;
+        }
+        /* Fallback bila browser mendukung styling option */
+        select option:hover,
+        select option:focus,
+        select option:checked {
+            background-color: #e0f2fe !important;
+            color: #0369a1 !important;
+        }
+
         /* Lucu & Playful Animation untuk Ikon Tempat Sampah (PBI-014) */
         @keyframes cuteTrashBounce {
             0% {
@@ -476,8 +497,8 @@
                 <!-- =========================================================== -->
                 <!-- 4. TOOLBAR FILTER & SEARCH                                  -->
                 <!-- =========================================================== -->
-                <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs space-y-3.5">
-                    <form method="GET" action="{{ route('admin.pemeriksaan.index') }}" class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                <div class="relative z-20 bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs space-y-3.5">
+                    <form id="formFilterPemeriksaan" method="GET" action="{{ route('admin.pemeriksaan.index') }}" class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                         <!-- Search Box -->
                         <div class="relative flex-1">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
@@ -494,33 +515,133 @@
                             >
                         </div>
 
-                        <!-- Dropdown Filters -->
-                        <div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0">
-                            <!-- Bulan -->
-                            <div class="relative shrink-0">
-                                <select name="bulan" onchange="this.form.submit()" class="pl-3 pr-8 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:bg-white focus:outline-hidden focus:border-sky-500 transition appearance-none">
-                                    <option value="10">Bulan Ini: Oktober 2025</option>
-                                    <option value="11" {{ request('bulan') == '11' ? 'selected' : '' }}>November 2025</option>
-                                    <option value="09" {{ request('bulan') == '09' ? 'selected' : '' }}>September 2025</option>
-                                    <option value="all" {{ request('bulan') == 'all' ? 'selected' : '' }}>Semua Bulan</option>
-                                </select>
-                                <span class="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none text-slate-400">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-                                </span>
+                        <!-- Dropdown Filters (Custom Dropdown: Hover Warna Biru Muda) -->
+                        <div class="flex items-center gap-2 overflow-visible pb-1 lg:pb-0">
+                            <!-- 1. Dropdown Bulan -->
+                            <div class="relative shrink-0 custom-dropdown" id="dropdownBulanWrapper">
+                                <input type="hidden" name="bulan" id="inputFilterBulan" value="{{ request('bulan', '10') }}">
+                                <button
+                                    type="button"
+                                    onclick="toggleCustomDropdown('dropdownBulanMenu', event)"
+                                    class="flex items-center justify-between gap-2.5 pl-3 pr-2.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 focus:bg-white focus:outline-hidden focus:border-sky-500 transition cursor-pointer"
+                                    id="dropdownBulanBtn"
+                                >
+                                    <span id="dropdownBulanLabel">
+                                        @if(request('bulan') == '11') November 2025
+                                        @elseif(request('bulan') == '09') September 2025
+                                        @elseif(request('bulan') == 'all') Semua Bulan
+                                        @else Bulan Ini: Oktober 2025
+                                        @endif
+                                    </span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400 transition-transform shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                
+                                <div id="dropdownBulanMenu" class="hidden absolute left-0 top-full mt-1.5 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 p-1.5 z-50 animate-scale-up space-y-0.5">
+                                    <div onclick="pilihCustomDropdown('inputFilterBulan', '10', 'Bulan Ini: Oktober 2025', 'dropdownBulanLabel', true)" class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center justify-between {{ request('bulan', '10') == '10' ? 'is-selected' : 'text-slate-700' }}">
+                                        <span>Bulan Ini: Oktober 2025</span>
+                                        @if(request('bulan', '10') == '10')<span class="text-sky-600 font-bold">✓</span>@endif
+                                    </div>
+                                    <div onclick="pilihCustomDropdown('inputFilterBulan', '11', 'November 2025', 'dropdownBulanLabel', true)" class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center justify-between {{ request('bulan') == '11' ? 'is-selected' : 'text-slate-700' }}">
+                                        <span>November 2025</span>
+                                        @if(request('bulan') == '11')<span class="text-sky-600 font-bold">✓</span>@endif
+                                    </div>
+                                    <div onclick="pilihCustomDropdown('inputFilterBulan', '09', 'September 2025', 'dropdownBulanLabel', true)" class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center justify-between {{ request('bulan') == '09' ? 'is-selected' : 'text-slate-700' }}">
+                                        <span>September 2025</span>
+                                        @if(request('bulan') == '09')<span class="text-sky-600 font-bold">✓</span>@endif
+                                    </div>
+                                    <div onclick="pilihCustomDropdown('inputFilterBulan', 'all', 'Semua Bulan', 'dropdownBulanLabel', true)" class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center justify-between {{ request('bulan') == 'all' ? 'is-selected' : 'text-slate-700' }}">
+                                        <span>Semua Bulan</span>
+                                        @if(request('bulan') == 'all')<span class="text-sky-600 font-bold">✓</span>@endif
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Filter Risiko -->
-                            <div class="relative shrink-0">
-                                <select name="filter_risiko" onchange="this.form.submit()" class="pl-3 pr-8 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:bg-white focus:outline-hidden focus:border-sky-500 transition appearance-none">
-                                    <option value="">Filter Risiko</option>
-                                    <option value="kek" {{ request('filter_risiko') == 'kek' ? 'selected' : '' }}>Risiko KEK (LiLA &lt; 23.5)</option>
-                                    <option value="anemia" {{ request('filter_risiko') == 'anemia' ? 'selected' : '' }}>Risiko Anemia (Hb &lt; 11.0)</option>
-                                    <option value="hipertensi" {{ request('filter_risiko') == 'hipertensi' ? 'selected' : '' }}>Pra-Hipertensi / Hipertensi</option>
-                                    <option value="normal" {{ request('filter_risiko') == 'normal' ? 'selected' : '' }}>Kondisi Normal</option>
-                                </select>
-                                <span class="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none text-slate-400">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-                                </span>
+                            <!-- 2. Dropdown Filter Pasien / Kehamilan (Persis Mockup Gambar Pengguna) -->
+                            <div class="relative shrink-0 custom-dropdown" id="dropdownPasienWrapper">
+                                <input type="hidden" name="kehamilan_id" id="inputFilterKehamilan" value="{{ request('kehamilan_id') }}">
+                                <button
+                                    type="button"
+                                    onclick="toggleCustomDropdown('dropdownPasienMenu', event)"
+                                    class="flex items-center justify-between gap-2.5 pl-3 pr-2.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 focus:bg-white focus:outline-hidden focus:border-sky-500 transition max-w-[210px] sm:max-w-none cursor-pointer"
+                                    id="dropdownPasienBtn"
+                                >
+                                    <span id="dropdownPasienLabel" class="truncate">
+                                        @php
+                                            $currentPasienLabel = 'Semua Pasien Ibu Hamil';
+                                            if (request('kehamilan_id')) {
+                                                foreach($daftarIbuHamil as $opt) {
+                                                    if ((string)$opt['kehamilan_id'] === (string)request('kehamilan_id')) {
+                                                        $currentPasienLabel = $opt['nama'] . ' (' . $opt['gravida'] . ')';
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        @endphp
+                                        {{ $currentPasienLabel }}
+                                    </span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400 transition-transform shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                
+                                <div id="dropdownPasienMenu" class="hidden absolute left-0 top-full mt-1.5 w-64 max-h-64 overflow-y-auto custom-scrollbar bg-white rounded-2xl shadow-xl border border-slate-100 p-1.5 z-50 animate-scale-up space-y-0.5">
+                                    <div onclick="pilihCustomDropdown('inputFilterKehamilan', '', 'Semua Pasien Ibu Hamil', 'dropdownPasienLabel', true)" class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center justify-between {{ !request('kehamilan_id') ? 'is-selected' : 'text-slate-700' }}">
+                                        <span>Semua Pasien Ibu Hamil</span>
+                                        @if(!request('kehamilan_id'))<span class="text-sky-600 font-bold">✓</span>@endif
+                                    </div>
+                                    @foreach($daftarIbuHamil as $ibuOpt)
+                                        @php
+                                            $isSel = (string)request('kehamilan_id') === (string)$ibuOpt['kehamilan_id'];
+                                            $optLabel = $ibuOpt['nama'] . ' (' . $ibuOpt['gravida'] . ')';
+                                        @endphp
+                                        <div onclick="pilihCustomDropdown('inputFilterKehamilan', '{{ $ibuOpt['kehamilan_id'] }}', '{{ addslashes($optLabel) }}', 'dropdownPasienLabel', true)" class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center justify-between {{ $isSel ? 'is-selected' : 'text-slate-700' }}">
+                                            <span class="truncate">{{ $optLabel }}</span>
+                                            @if($isSel)<span class="text-sky-600 font-bold shrink-0 ml-1">✓</span>@endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- 3. Dropdown Filter Risiko -->
+                            <div class="relative shrink-0 custom-dropdown" id="dropdownRisikoWrapper">
+                                <input type="hidden" name="filter_risiko" id="inputFilterRisiko" value="{{ request('filter_risiko') }}">
+                                <button
+                                    type="button"
+                                    onclick="toggleCustomDropdown('dropdownRisikoMenu', event)"
+                                    class="flex items-center justify-between gap-2.5 pl-3 pr-2.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 focus:bg-white focus:outline-hidden focus:border-sky-500 transition cursor-pointer"
+                                    id="dropdownRisikoBtn"
+                                >
+                                    <span id="dropdownRisikoLabel">
+                                        @if(request('filter_risiko') == 'kek') Risiko KEK (LiLA &lt; 23.5)
+                                        @elseif(request('filter_risiko') == 'anemia') Risiko Anemia (Hb &lt; 11.0)
+                                        @elseif(request('filter_risiko') == 'hipertensi') Pra-Hipertensi / Hipertensi
+                                        @elseif(request('filter_risiko') == 'normal') Kondisi Normal
+                                        @else Filter Risiko
+                                        @endif
+                                    </span>
+                                    <svg class="w-3.5 h-3.5 text-slate-400 transition-transform shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                
+                                <div id="dropdownRisikoMenu" class="hidden absolute left-0 top-full mt-1.5 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 p-1.5 z-50 animate-scale-up space-y-0.5">
+                                    <div onclick="pilihCustomDropdown('inputFilterRisiko', '', 'Filter Risiko', 'dropdownRisikoLabel', true)" class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center justify-between {{ !request('filter_risiko') ? 'is-selected' : 'text-slate-700' }}">
+                                        <span>Semua Risiko</span>
+                                        @if(!request('filter_risiko'))<span class="text-sky-600 font-bold">✓</span>@endif
+                                    </div>
+                                    <div onclick="pilihCustomDropdown('inputFilterRisiko', 'kek', 'Risiko KEK (LiLA < 23.5)', 'dropdownRisikoLabel', true)" class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center justify-between {{ request('filter_risiko') == 'kek' ? 'is-selected' : 'text-slate-700' }}">
+                                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Risiko KEK (LiLA &lt; 23.5)</span>
+                                        @if(request('filter_risiko') == 'kek')<span class="text-sky-600 font-bold">✓</span>@endif
+                                    </div>
+                                    <div onclick="pilihCustomDropdown('inputFilterRisiko', 'anemia', 'Risiko Anemia (Hb < 11.0)', 'dropdownRisikoLabel', true)" class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center justify-between {{ request('filter_risiko') == 'anemia' ? 'is-selected' : 'text-slate-700' }}">
+                                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500"></span> Risiko Anemia (Hb &lt; 11.0)</span>
+                                        @if(request('filter_risiko') == 'anemia')<span class="text-sky-600 font-bold">✓</span>@endif
+                                    </div>
+                                    <div onclick="pilihCustomDropdown('inputFilterRisiko', 'hipertensi', 'Pra-Hipertensi / Hipertensi', 'dropdownRisikoLabel', true)" class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center justify-between {{ request('filter_risiko') == 'hipertensi' ? 'is-selected' : 'text-slate-700' }}">
+                                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Pra-Hipertensi / Hipertensi</span>
+                                        @if(request('filter_risiko') == 'hipertensi')<span class="text-sky-600 font-bold">✓</span>@endif
+                                    </div>
+                                    <div onclick="pilihCustomDropdown('inputFilterRisiko', 'normal', 'Kondisi Normal', 'dropdownRisikoLabel', true)" class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center justify-between {{ request('filter_risiko') == 'normal' ? 'is-selected' : 'text-slate-700' }}">
+                                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Kondisi Normal</span>
+                                        @if(request('filter_risiko') == 'normal')<span class="text-sky-600 font-bold">✓</span>@endif
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Reset Button -->
@@ -531,6 +652,24 @@
                             </a>
                         </div>
                     </form>
+
+                    <!-- Banner Info Penelusuran Pasien Aktif (PBI-015) -->
+                    @if(isset($selectedPasienInfo) && $selectedPasienInfo)
+                    <div class="p-3.5 rounded-2xl bg-sky-50 border border-sky-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs animate-scale-up">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-7 h-7 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">🔎</span>
+                            <div>
+                                <span class="text-slate-600">Menelusuri Riwayat Pemeriksaan:</span>
+                                <strong class="text-sky-950 font-black ml-1">{{ $selectedPasienInfo['nama'] }}</strong>
+                                <span class="text-sky-700 font-semibold ml-1">({{ $selectedPasienInfo['gravida'] }} • NIK: {{ $selectedPasienInfo['nik'] }})</span>
+                            </div>
+                        </div>
+                        <a href="{{ route('admin.pemeriksaan.index') }}" class="px-3 py-1.5 rounded-xl bg-white border border-sky-300 text-sky-700 font-bold hover:bg-sky-100 transition shrink-0 self-start sm:self-auto flex items-center gap-1">
+                            <span>✕</span>
+                            <span>Tampilkan Semua Pasien</span>
+                        </a>
+                    </div>
+                    @endif
 
                     <!-- Filter Pill Tabs Sesuai Mockup -->
                     <div class="flex items-center gap-2 overflow-x-auto pt-1 pb-1 border-t border-slate-100">
@@ -637,9 +776,14 @@
                                                         </span>
                                                     @endif
                                                 </div>
-                                                <p class="text-[11px] text-slate-400 mt-0.5">
-                                                    NIK: {{ $ibu && $ibu->nik ? $ibu->nik : '3171025508920001' }} • {{ $ibu && $ibu->usia_tahun ? $ibu->usia_tahun . ' thn' : '30 thn' }}
-                                                </p>
+                                                <div class="flex items-center justify-between gap-2 mt-0.5">
+                                                    <p class="text-[11px] text-slate-400">
+                                                        NIK: {{ $ibu && $ibu->nik ? $ibu->nik : '3171025508920001' }} • {{ $ibu && $ibu->usia_tahun ? $ibu->usia_tahun . ' thn' : '30 thn' }}
+                                                    </p>
+                                                    <a href="{{ route('admin.pemeriksaan.index', ['kehamilan_id' => $item->kehamilan_id]) }}" class="text-[10px] font-bold text-sky-600 hover:text-sky-800 transition inline-flex items-center gap-0.5 hover:underline" title="Telusuri seluruh riwayat pemeriksaan kehamilan ibu ini">
+                                                        <span>Riwayat</span> &rarr;
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -774,6 +918,18 @@
                                                 </svg>
                                             </button>
 
+                                            <!-- Tombol Edit (Kuning Amber Aktif - PBI-015: Kelola Pemeriksaan) -->
+                                            <button
+                                                type="button"
+                                                onclick="bukaModalEdit({{ json_encode($item) }})"
+                                                class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-500 hover:text-white hover:border-amber-500 hover:shadow-sm transition-all duration-200 flex items-center justify-center shrink-0"
+                                                title="Edit Rekam Pemeriksaan"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </button>
+
                                             <!-- Tombol Hapus (Merah Mawar Aktif - Buka Modal Konfirmasi) -->
                                             <button
                                                 type="button"
@@ -891,17 +1047,18 @@
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                            <!-- Pilih Ibu Hamil -->
-                            <div class="space-y-1 sm:col-span-1">
+                            <!-- Pilih Ibu Hamil (Custom Dropdown dengan Hover Biru Muda) -->
+                            <div class="space-y-1 sm:col-span-1 relative custom-dropdown" id="dropdownModalTambahPasienWrapper">
                                 <label class="block text-xs font-bold text-slate-700">
                                     Pilih Ibu Hamil <span class="text-rose-500">*</span>
                                 </label>
+                                <!-- Form backing native select hidden -->
                                 <select
                                     id="inputKehamilanId"
                                     name="kehamilan_id"
                                     required
                                     onchange="onPasienSelected(this.value)"
-                                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition"
+                                    class="sr-only"
                                 >
                                     <option value="">Pilih nama ibu hamil (NIK / No. KIA)...</option>
                                     @foreach($daftarIbuHamil as $ibuOption)
@@ -916,6 +1073,31 @@
                                         </option>
                                     @endforeach
                                 </select>
+
+                                <button
+                                    type="button"
+                                    onclick="toggleCustomDropdown('dropdownModalTambahPasienMenu', event)"
+                                    class="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition text-left cursor-pointer"
+                                    id="dropdownModalTambahPasienBtn"
+                                >
+                                    <span id="dropdownModalTambahPasienLabel" class="truncate text-slate-500">Pilih nama ibu hamil (NIK / No. KIA)...</span>
+                                    <svg class="w-4 h-4 text-slate-400 transition-transform shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+
+                                <div id="dropdownModalTambahPasienMenu" class="hidden absolute left-0 right-0 top-full mt-1.5 max-h-56 overflow-y-auto custom-scrollbar bg-white rounded-2xl shadow-xl border border-slate-100 p-1.5 z-50 animate-scale-up space-y-0.5">
+                                    @foreach($daftarIbuHamil as $ibuOption)
+                                        <div
+                                            onclick="pilihPasienModalTambah('{{ $ibuOption['kehamilan_id'] }}', '{{ addslashes($ibuOption['nama'] . ' (NIK: ' . $ibuOption['nik'] . ')') }}')"
+                                            class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl text-slate-700 cursor-pointer transition flex items-center justify-between"
+                                        >
+                                            <div>
+                                                <span class="font-bold text-slate-900 block">{{ $ibuOption['nama'] }}</span>
+                                                <span class="text-[10.5px] text-slate-400 block mt-0.5">NIK: {{ $ibuOption['nik'] }} • {{ $ibuOption['gravida'] }}</span>
+                                            </div>
+                                            <span class="text-sky-600 text-xs font-bold shrink-0 ml-2">✓</span>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
 
                             <!-- Status Gravida & HPL (Terisi Otomatis) -->
@@ -1245,6 +1427,277 @@
     </div>
 
     <!-- =================================================================== -->
+    <!-- 7B. MODAL EDIT REKAM PEMERIKSAAN KEHAMILAN (PBI-015)                -->
+    <!-- =================================================================== -->
+    <div id="modalEditPemeriksaan" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="closeEditModal()"></div>
+
+        <div class="min-h-screen px-4 py-6 sm:py-10 flex items-center justify-center">
+            <div class="relative bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 p-6 sm:p-8 z-10 space-y-6 max-h-[92vh] overflow-y-auto custom-scrollbar">
+
+                <!-- Header Modal -->
+                <div class="flex items-start justify-between pb-4 border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg shrink-0">
+                            ✏️
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black text-slate-900 tracking-tight">Edit Rekam Pemeriksaan Kehamilan</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Perbarui hasil penimbangan, tanda vital, dan catatan klinis</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="closeEditModal()" class="p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition" aria-label="Tutup modal">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Form Edit -->
+                <form id="formEditPemeriksaan" method="POST" action="" class="space-y-6" onsubmit="event.preventDefault(); konfirmasiSimpanPerubahan();">
+                    @csrf
+                    @method('PUT')
+
+                    <input type="hidden" id="editPemeriksaanId" name="pemeriksaan_id" value="">
+
+                    <!-- 1. INFORMASI PASIEN & KEHAMILAN -->
+                    <div class="space-y-3.5">
+                        <div class="flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[11px] font-black flex items-center justify-center">1</span>
+                            <h4 class="text-xs font-black uppercase tracking-wider text-slate-700">INFORMASI PASIEN</h4>
+                        </div>
+
+                        <!-- Card Info Pasien (Readonly Reference) -->
+                        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-semibold block uppercase">Nama Pasien:</span>
+                                <span class="text-xs font-bold text-slate-900" id="editPasienNama">Ny. Pasien</span>
+                                <span class="text-[11px] text-slate-500 block mt-0.5" id="editPasienNik">NIK: -</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-semibold block uppercase">Gravida &amp; HPL:</span>
+                                <span class="text-xs font-bold text-slate-900" id="editPasienGravidaHpl">G1P0A0 • HPL -</span>
+                                <span class="text-[11px] text-slate-500 block mt-0.5" id="editPasienNoKia">No. KIA: -</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                            <!-- Tanggal Pemeriksaan -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold text-slate-700">
+                                    Tanggal Pemeriksaan <span class="text-rose-500">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    id="editTglPeriksa"
+                                    name="tgl_periksa"
+                                    required
+                                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-amber-500 transition"
+                                >
+                            </div>
+
+                            <!-- Usia Gestasi (Minggu) -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold text-slate-700">
+                                    Usia Gestasi (Minggu) <span class="text-rose-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <input
+                                        type="number"
+                                        id="editGestasi"
+                                        name="usia_gestasi_minggu"
+                                        min="1"
+                                        max="45"
+                                        required
+                                        oninput="liveEditClinicalAssessment()"
+                                        class="w-full pl-3.5 pr-14 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-amber-500 transition"
+                                    >
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-slate-400 font-medium pointer-events-none">
+                                        Minggu
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. ANTROPOMETRI & TANDA VITAL -->
+                    <div class="space-y-3.5 pt-2 border-t border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[11px] font-black flex items-center justify-center">2</span>
+                            <h4 class="text-xs font-black uppercase tracking-wider text-slate-700">ANTROPOMETRI &amp; TANDA VITAL</h4>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <!-- Berat Badan -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold text-slate-700">Berat Badan Ibu <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <input type="number" step="0.1" id="editBb" name="berat_badan" min="35" max="180" required oninput="liveEditClinicalAssessment()" class="w-full pl-3.5 pr-12 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-amber-500 transition">
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-slate-400 font-medium pointer-events-none">kg</span>
+                                </div>
+                            </div>
+
+                            <!-- Tekanan Darah -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold text-slate-700">Tekanan Darah <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <input type="text" id="editTd" name="tekanan_darah" placeholder="120/80" required oninput="liveEditClinicalAssessment()" class="w-full pl-3.5 pr-16 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-amber-500 transition">
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-slate-400 font-medium pointer-events-none">mmHg</span>
+                                </div>
+                            </div>
+
+                            <!-- LiLA -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold text-slate-700">LiLA (Lingkar Lengan Atas) <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <input type="number" step="0.1" id="editLila" name="lila" min="15" max="50" required oninput="liveEditClinicalAssessment()" class="w-full pl-3.5 pr-12 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-amber-500 transition">
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-slate-400 font-medium pointer-events-none">cm</span>
+                                </div>
+                            </div>
+
+                            <!-- Hb -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold text-slate-700">Kadar Hemoglobin (Hb) <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <input type="number" step="0.1" id="editHb" name="hb" min="4" max="20" required oninput="liveEditClinicalAssessment()" class="w-full pl-3.5 pr-14 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-amber-500 transition">
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-slate-400 font-medium pointer-events-none">g/dL</span>
+                                </div>
+                            </div>
+
+                            <!-- TFU -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold text-slate-700">Tinggi Fundus Uteri (TFU) <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <input type="number" step="0.1" id="editTfu" name="tfu" min="5" max="50" required oninput="liveEditClinicalAssessment()" class="w-full pl-3.5 pr-12 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-amber-500 transition">
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-slate-400 font-medium pointer-events-none">cm</span>
+                                </div>
+                            </div>
+
+                            <!-- DJJ -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold text-slate-700">Denyut Jantung Janin (DJJ) <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <input type="number" id="editDjj" name="djj" min="60" max="220" required oninput="liveEditClinicalAssessment()" class="w-full pl-3.5 pr-14 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-amber-500 transition">
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-slate-400 font-medium pointer-events-none">dpm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Decision Support Preview Box -->
+                        <div id="editRiskPreviewBox" class="p-3.5 rounded-2xl bg-sky-50/80 border border-sky-200/80 flex items-start gap-3 transition-colors duration-300">
+                            <div id="editRiskIconContainer" class="w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">✓</div>
+                            <div class="text-xs">
+                                <p id="editRiskTitle" class="font-bold text-sky-950">Status Parameter Evaluasi</p>
+                                <p id="editRiskDescription" class="text-slate-600 mt-0.5 leading-relaxed">Nilai LiLA dan Hb terpantau baik.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. CATATAN & TINDAKAN LANJUT -->
+                    <div class="space-y-3.5 pt-2 border-t border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[11px] font-black flex items-center justify-center">3</span>
+                            <h4 class="text-xs font-black uppercase tracking-wider text-slate-700">CATATAN &amp; TINDAKAN LANJUT</h4>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-slate-700">Catatan &amp; Rekomendasi Klinis Nakes <span class="text-rose-500">*</span></label>
+                            <textarea id="editCatatan" name="catatan_klinis" rows="2" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-amber-500 transition resize-none"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 items-end">
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold text-slate-700">Tanggal Kontrol Berikutnya <span class="text-rose-500">*</span></label>
+                                <input type="date" id="editTglKontrol" name="tgl_kontrol_berikutnya" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-amber-500 transition">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="tambahMingguEditKontrol(2)" class="flex-1 py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-bold transition text-center">+2 Minggu</button>
+                                <button type="button" onclick="tambahMingguEditKontrol(4)" class="flex-1 py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-bold transition text-center">+4 Minggu</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons Form -->
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                        <button type="button" onclick="closeEditModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Batal</button>
+                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold shadow-md hover:shadow-lg transition flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            <span>Simpan Perubahan</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL POPUP KONFIRMASI SIMPAN PERUBAHAN (PBI-015)                   -->
+    <!-- =================================================================== -->
+    <div id="modalKonfirmasiEdit" class="fixed inset-0 z-[60] overflow-y-auto hidden items-center justify-center p-4">
+        <!-- Backdrop Blur -->
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="closeKonfirmasiEditModal()"></div>
+
+        <!-- Modal Card in Center -->
+        <div class="relative bg-white rounded-[28px] max-w-sm sm:max-w-md w-full shadow-2xl border border-slate-100 p-6 sm:p-8 z-10 text-center transform transition-all animate-scale-up">
+            
+            <!-- Close Button -->
+            <button
+                type="button"
+                onclick="closeKonfirmasiEditModal()"
+                class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 transition p-1 rounded-full hover:bg-slate-100"
+                aria-label="Tutup"
+            >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+
+            <!-- Circular Icon Blue/Amber Check -->
+            <div class="mx-auto w-16 h-16 rounded-full bg-sky-50 text-[#0284c7] flex items-center justify-center mb-5 ring-8 ring-sky-50/70 shadow-inner">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-900 tracking-tight">Simpan Perubahan Pemeriksaan?</h3>
+            <p class="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed px-1">
+                Apakah Anda yakin ingin memperbarui data rekam medis untuk <strong id="konfirmasiEditNamaPasien" class="text-slate-900 font-bold">Pasien</strong>?
+            </p>
+
+            <div class="mt-4 p-3.5 rounded-2xl bg-sky-50/70 border border-sky-100 flex items-start gap-3 text-left">
+                <div class="w-5 h-5 rounded-full bg-sky-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs text-xs font-bold">
+                    ℹ️
+                </div>
+                <p class="text-xs text-sky-900 font-medium leading-relaxed pt-0.5">
+                    Perubahan nilai antropometri dan evaluasi risiko akan langsung tercermin pada riwayat dan dasbor pengguna.
+                </p>
+            </div>
+
+            <!-- Action Buttons: Batal & Ya, Simpan -->
+            <div class="mt-6 grid grid-cols-2 gap-3.5">
+                <button
+                    type="button"
+                    onclick="closeKonfirmasiEditModal()"
+                    class="w-full py-3 px-5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold shadow-2xs transition"
+                >
+                    Periksa Kembali
+                </button>
+                <button
+                    type="button"
+                    onclick="submitFormEdit()"
+                    class="w-full py-3 px-5 rounded-2xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition flex items-center justify-center gap-2"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <span>Ya, Simpan</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
     <!-- 8. MODAL DETAIL REKOMENDASI & DETEKSI RISIKO KLINIS (PBI-014)        -->
     <!-- =================================================================== -->
     <div id="modalDetailPemeriksaan" class="fixed inset-0 z-50 overflow-y-auto hidden">
@@ -1384,9 +1837,19 @@
                     </div>
                 </div>
 
-                <!-- Modal Footer -->
-                <div class="pt-2 border-t border-slate-100 flex items-center justify-end">
-                    <button onclick="closeDetailModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">Tutup</button>
+                <!-- Modal Footer (PBI-015: Shortcut Penelusuran Riwayat Pasien & Edit) -->
+                <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                    <a id="detailLinkRiwayatIbu" href="#" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200/80 text-xs font-bold transition">
+                        <span>🔎 Telusuri Seluruh Riwayat Pasien Ini</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                    <div class="flex items-center justify-end gap-2">
+                        <button type="button" id="detailBtnEdit" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 text-xs font-bold transition flex items-center justify-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            <span>Edit Data</span>
+                        </button>
+                        <button type="button" onclick="closeDetailModal()" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition text-center">Tutup</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1510,6 +1973,76 @@
     <!-- 9. JAVASCRIPT LOGIC (MODAL, CLINICAL ASSESSMENT, QUICK SHORTCUTS)   -->
     <!-- =================================================================== -->
     <script>
+        // ===================================================================
+        // CUSTOM DROPDOWN SYSTEM (HOVER WARNA BIRU MUDA CANTIK)
+        // ===================================================================
+        function toggleCustomDropdown(menuId, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            const menu = document.getElementById(menuId);
+            if (!menu) return;
+            const isHidden = menu.classList.contains('hidden');
+
+            // Tutup dropdown lain yang sedang terbuka
+            closeAllCustomDropdowns();
+
+            if (isHidden) {
+                menu.classList.remove('hidden');
+            }
+        }
+
+        function closeAllCustomDropdowns() {
+            document.querySelectorAll('.custom-dropdown [id$="Menu"]').forEach(menu => {
+                menu.classList.add('hidden');
+            });
+        }
+
+        // Tutup dropdown jika klik di luar area
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.custom-dropdown')) {
+                closeAllCustomDropdowns();
+            }
+        });
+
+        // Tutup dropdown saat tombol Escape ditekan
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAllCustomDropdowns();
+            }
+        });
+
+        // Fungsi memilih opsi dropdown filter
+        function pilihCustomDropdown(inputId, value, labelText, labelElementId, submitForm = false) {
+            const input = document.getElementById(inputId);
+            const label = document.getElementById(labelElementId);
+            if (input) input.value = value;
+            if (label) {
+                label.innerText = labelText;
+            }
+            closeAllCustomDropdowns();
+            if (submitForm) {
+                const form = document.getElementById('formFilterPemeriksaan');
+                if (form) form.submit();
+            }
+        }
+
+        // Fungsi memilih pasien pada Modal Tambah Rekam Medis
+        function pilihPasienModalTambah(kehamilanId, labelText) {
+            const selectEl = document.getElementById('inputKehamilanId');
+            if (selectEl) {
+                selectEl.value = kehamilanId;
+                onPasienSelected(kehamilanId);
+            }
+            const label = document.getElementById('dropdownModalTambahPasienLabel');
+            if (label) {
+                label.innerText = labelText;
+                label.classList.remove('text-slate-500');
+                label.classList.add('text-slate-900', 'font-bold');
+            }
+            closeAllCustomDropdowns();
+        }
+
         // Toggle Mobile Sidebar
         function toggleSidebar() {
             const menu = document.getElementById('sidebarMenu');
@@ -1527,6 +2060,22 @@
             const selectEl = document.getElementById('inputKehamilanId');
             if (selectEl && selectEl.value) {
                 onPasienSelected(selectEl.value);
+                const selectedOpt = selectEl.options[selectEl.selectedIndex];
+                if (selectedOpt) {
+                    const label = document.getElementById('dropdownModalTambahPasienLabel');
+                    if (label) {
+                        label.innerText = selectedOpt.text;
+                        label.classList.remove('text-slate-500');
+                        label.classList.add('text-slate-900', 'font-bold');
+                    }
+                }
+            } else {
+                const label = document.getElementById('dropdownModalTambahPasienLabel');
+                if (label) {
+                    label.innerText = 'Pilih nama ibu hamil (NIK / No. KIA)...';
+                    label.classList.add('text-slate-500');
+                    label.classList.remove('text-slate-900', 'font-bold');
+                }
             }
             liveClinicalAssessment();
         }
@@ -1835,6 +2384,25 @@
             }
             document.getElementById('detailJadwalKontrol').innerText = tglKontrolFormatted;
 
+            // Hubungkan link Telusuri Riwayat & tombol Edit di Modal Detail
+            const detailLinkRiwayat = document.getElementById('detailLinkRiwayatIbu');
+            if (detailLinkRiwayat) {
+                if (data.kehamilan_id) {
+                    detailLinkRiwayat.href = "{{ route('admin.pemeriksaan.index') }}?kehamilan_id=" + data.kehamilan_id;
+                    detailLinkRiwayat.classList.remove('hidden');
+                } else {
+                    detailLinkRiwayat.classList.add('hidden');
+                }
+            }
+
+            const detailBtnEdit = document.getElementById('detailBtnEdit');
+            if (detailBtnEdit) {
+                detailBtnEdit.onclick = function() {
+                    closeDetailModal();
+                    bukaModalEdit(data);
+                };
+            }
+
             document.getElementById('modalDetailPemeriksaan').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
@@ -1842,6 +2410,203 @@
         function closeDetailModal() {
             document.getElementById('modalDetailPemeriksaan').classList.add('hidden');
             document.body.style.overflow = 'auto';
+        }
+
+        // ===================================================================
+        // LOGIKA MODAL EDIT REKAM PEMERIKSAAN KEHAMILAN (PBI-015)
+        // ===================================================================
+        let currentEditingPemeriksaan = null;
+
+        function bukaModalEdit(data) {
+            currentEditingPemeriksaan = data;
+            const form = document.getElementById('formEditPemeriksaan');
+            
+            // Set form action URL ke route update
+            form.action = "{{ url('/admin/pemeriksaan-kehamilan') }}/" + data.id;
+            document.getElementById('editPemeriksaanId').value = data.id;
+
+            // Isi Informasi Pasien (Readonly Card)
+            const ibu = data.ibu || {};
+            const kehamilan = data.kehamilan || {};
+            document.getElementById('editPasienNama').innerText = ibu.name || 'Ny. Pasien';
+            document.getElementById('editPasienNik').innerText = `NIK: ${ibu.nik || '-'}`;
+            document.getElementById('editPasienGravidaHpl').innerText = `${kehamilan.gravida || 'G1P0A0'} • HPL ${kehamilan.hpl || '-'}`;
+            document.getElementById('editPasienNoKia').innerText = `No. KIA: ${ibu.no_kia || '-'}`;
+
+            // Isi Nilai Formulir
+            document.getElementById('editTglPeriksa').value = data.tgl_periksa || '';
+            document.getElementById('editGestasi').value = data.usia_gestasi_minggu || '';
+            document.getElementById('editBb').value = data.berat_badan || '';
+            document.getElementById('editTd').value = data.tekanan_darah || '';
+            document.getElementById('editLila').value = data.lila || '';
+            document.getElementById('editHb').value = data.hb || '';
+            document.getElementById('editTfu').value = data.tfu || '';
+            document.getElementById('editDjj').value = data.djj || '';
+            document.getElementById('editCatatan').value = data.catatan_klinis || '';
+            document.getElementById('editTglKontrol').value = data.tgl_kontrol_berikutnya || '';
+
+            // Buka Modal
+            const modal = document.getElementById('modalEditPemeriksaan');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+
+            // Evaluasi Klinis Langsung pada data edit
+            liveEditClinicalAssessment();
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('modalEditPemeriksaan');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Live Clinical Decision Support Evaluation untuk Formulir Edit
+        function liveEditClinicalAssessment() {
+            const bbVal = parseFloat(document.getElementById('editBb').value) || 0;
+            const lilaVal = parseFloat(document.getElementById('editLila').value) || 0;
+            const hbVal = parseFloat(document.getElementById('editHb').value) || 0;
+            const tfuVal = parseFloat(document.getElementById('editTfu').value) || 0;
+            const djjVal = parseInt(document.getElementById('editDjj').value) || 0;
+            const tdVal = (document.getElementById('editTd').value || '').trim();
+            const gestasiVal = parseInt(document.getElementById('editGestasi').value) || 20;
+
+            const box = document.getElementById('editRiskPreviewBox');
+            const iconContainer = document.getElementById('editRiskIconContainer');
+            const titleEl = document.getElementById('editRiskTitle');
+            const descEl = document.getElementById('editRiskDescription');
+
+            if (!box || !iconContainer || !titleEl || !descEl) return;
+
+            // Parse Tekanan Darah (Sistol / Diastol)
+            let sistol = 120;
+            let diastol = 80;
+            let tdValid = false;
+            if (tdVal.includes('/')) {
+                const parts = tdVal.split('/');
+                sistol = parseInt(parts[0]) || 0;
+                diastol = parseInt(parts[1]) || 0;
+                tdValid = sistol > 0 && diastol > 0;
+            }
+
+            // Pengecekan Nilai Tidak Wajar
+            let outOfBounds = [];
+            if (bbVal > 0 && (bbVal < 35 || bbVal > 180)) {
+                outOfBounds.push(`BB (${bbVal} kg) tidak wajar (35-180 kg)`);
+            }
+            if (lilaVal > 0 && (lilaVal < 15 || lilaVal > 50)) {
+                outOfBounds.push(`LiLA (${lilaVal} cm) tidak wajar (15-50 cm)`);
+            }
+            if (hbVal > 0 && (hbVal < 4 || hbVal > 20)) {
+                outOfBounds.push(`Hb (${hbVal} g/dL) tidak wajar (4-20 g/dL)`);
+            }
+            if (tdValid && (sistol < 70 || sistol > 240 || diastol < 40 || diastol > 150 || sistol <= diastol)) {
+                outOfBounds.push(`TD (${tdVal}) tidak wajar`);
+            }
+            if (tfuVal > 0 && (tfuVal < 5 || tfuVal > 50)) {
+                outOfBounds.push(`TFU (${tfuVal} cm) tidak wajar (5-50 cm)`);
+            }
+            if (djjVal > 0 && (djjVal < 60 || djjVal > 220)) {
+                outOfBounds.push(`DJJ (${djjVal} dpm) tidak wajar (60-220 dpm)`);
+            }
+
+            if (outOfBounds.length > 0) {
+                box.className = 'p-3.5 rounded-2xl bg-amber-50/90 border border-amber-300 flex items-start gap-3 transition-colors duration-300';
+                iconContainer.className = 'w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs';
+                iconContainer.innerHTML = '!';
+
+                titleEl.className = 'font-bold text-amber-950';
+                titleEl.innerHTML = 'Peringatan: Nilai Tidak Wajar Terdeteksi';
+                descEl.innerHTML = `<span class="text-amber-800 font-semibold">${outOfBounds.join(', ')}.</span> Mohon periksa kembali input sebelum menyimpan.`;
+                return;
+            }
+
+            const isKek = lilaVal > 0 && lilaVal < 23.5;
+            const anemiaThreshold = (gestasiVal >= 14 && gestasiVal <= 27) ? 10.5 : 11.0;
+            const isAnemia = hbVal > 0 && hbVal < anemiaThreshold;
+            const isHipertensi = sistol >= 140 || diastol >= 90;
+            const isPraHipertensi = !isHipertensi && (sistol >= 120 || diastol >= 80);
+
+            if (isKek || isAnemia || isHipertensi) {
+                box.className = 'p-3.5 rounded-2xl bg-rose-50/90 border border-rose-200 flex items-start gap-3 transition-colors duration-300';
+                iconContainer.className = 'w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center shrink-0 mt-0.5';
+                iconContainer.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+
+                let warnings = [];
+                let rekomendasi = [];
+                if (isKek) {
+                    warnings.push(`Risiko KEK (LiLA ${lilaVal} cm &lt; 23.5 cm)`);
+                    rekomendasi.push('PMT pemulihan &amp; konseling gizi');
+                }
+                if (isAnemia) {
+                    warnings.push(`Anemia Gestasional (Hb ${hbVal} g/dL &lt; ${anemiaThreshold} g/dL)`);
+                    rekomendasi.push('Dosis Tablet Tambah Darah (TTD) &amp; vitamin C');
+                }
+                if (isHipertensi) {
+                    warnings.push(`Hipertensi Gestasional (${tdVal} mmHg)`);
+                    rekomendasi.push('Rujukan dokter spesialis Sp.OG');
+                }
+
+                titleEl.className = 'font-bold text-rose-900';
+                titleEl.innerHTML = warnings.join(' &amp; ');
+                descEl.innerHTML = `<strong>Rekomendasi Nakes:</strong> ${rekomendasi.join(', ')}.`;
+            } else if (isPraHipertensi) {
+                box.className = 'p-3.5 rounded-2xl bg-amber-50/90 border border-amber-200 flex items-start gap-3 transition-colors duration-300';
+                iconContainer.className = 'w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center shrink-0 mt-0.5';
+                iconContainer.innerHTML = '!';
+
+                titleEl.className = 'font-bold text-amber-900';
+                titleEl.innerHTML = `Waspada Tekanan Darah (${tdVal} mmHg)`;
+                descEl.innerHTML = 'LiLA &amp; Hb optimal. Pantau kenaikan tensi, istirahat cukup dan kurangi garam.';
+            } else {
+                box.className = 'p-3.5 rounded-2xl bg-sky-50/80 border border-sky-200/80 flex items-start gap-3 transition-colors duration-300';
+                iconContainer.className = 'w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center shrink-0 mt-0.5';
+                iconContainer.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>`;
+
+                titleEl.className = 'font-bold text-sky-950';
+                titleEl.innerHTML = 'Kondisi Parameter Terpantau Baik / Normal';
+                descEl.innerHTML = `LiLA adekuat (${lilaVal} cm) &amp; Hb normal (${hbVal > 0 ? hbVal + ' g/dL' : 'Normal'}). Tidak terindikasi komplikasi.`;
+            }
+        }
+
+        // Helper Tombol Shortcut Jadwal Kontrol pada Modal Edit (+2 Minggu, +4 Minggu)
+        function tambahMingguEditKontrol(minggu) {
+            const inputTglPeriksa = document.getElementById('editTglPeriksa');
+            const basisTgl = inputTglPeriksa.value ? new Date(inputTglPeriksa.value) : new Date();
+            
+            basisTgl.setDate(basisTgl.getDate() + (minggu * 7));
+            const yyyy = basisTgl.getFullYear();
+            const mm = String(basisTgl.getMonth() + 1).padStart(2, '0');
+            const dd = String(basisTgl.getDate()).padStart(2, '0');
+
+            document.getElementById('editTglKontrol').value = `${yyyy}-${mm}-${dd}`;
+        }
+
+        // Pop-up Konfirmasi Sebelum Simpan Perubahan (PBI-015: "Perubahan meminta konfirmasi")
+        function konfirmasiSimpanPerubahan() {
+            const form = document.getElementById('formEditPemeriksaan');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const namaPasien = document.getElementById('editPasienNama').innerText || 'Pasien';
+            document.getElementById('konfirmasiEditNamaPasien').innerText = namaPasien;
+
+            const modal = document.getElementById('modalKonfirmasiEdit');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeKonfirmasiEditModal() {
+            const modal = document.getElementById('modalKonfirmasiEdit');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function submitFormEdit() {
+            const form = document.getElementById('formEditPemeriksaan');
+            form.submit();
         }
 
         // Modal Pop-up Konfirmasi Hapus
