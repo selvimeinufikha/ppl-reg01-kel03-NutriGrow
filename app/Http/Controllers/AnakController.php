@@ -32,13 +32,16 @@ class AnakController extends Controller
 
     /**
      * Tampilkan daftar data anak keluarga (Halaman Utama Data Anak).
+     * Acceptance Criteria:
+     * - Satu akun dapat memiliki lebih dari satu anak.
+     * - Umur dihitung otomatis dari tanggal lahir.
      */
     public function index(Request $request)
     {
         $user = $this->getActiveUser();
         Carbon::setLocale('id');
 
-        // Query data anak milik user
+        // Query data anak milik user (mendukung multi-anak)
         $query = Anak::with('kehamilan')->where('user_id', $user->id);
 
         // Filter pencarian nama anak
@@ -52,33 +55,83 @@ class AnakController extends Controller
             $query->where('jenis_kelamin', $request->jenis_kelamin);
         }
 
+        // Urutkan: termuda (lahir paling baru) dulu
         $anaks = $query->orderBy('tanggal_lahir', 'desc')->get();
 
         // Hitung metrik ringkasan keluarga
-        $allChildren = Anak::where('user_id', $user->id)->get();
-        $totalAnak = $allChildren->count();
-        $totalLaki = $allChildren->where('jenis_kelamin', 'Laki-laki')->count();
+        $allChildren    = Anak::where('user_id', $user->id)->get();
+        $totalAnak      = $allChildren->count();
+        $totalLaki      = $allChildren->where('jenis_kelamin', 'Laki-laki')->count();
         $totalPerempuan = $allChildren->where('jenis_kelamin', 'Perempuan')->count();
 
         // Daftar kehamilan user untuk opsi dropdown tambah/edit anak
         $kehamilans = Kehamilan::where('user_id', $user->id)->orderBy('id', 'desc')->get();
 
         $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
-        $namaKeluarga = $user->name ?: 'Keluarga Pratama';
-        $faskesInfo = 'Posyandu Mawar 1 & Puskesmas Sejahtera';
+        $namaKeluarga   = $user->name ?: 'Keluarga Pratama';
+        $faskesInfo     = 'Posyandu Mawar 1 & Puskesmas Sejahtera';
 
         return view('DashboardPengguna.data-anak.index', [
-            'anaks' => $anaks,
-            'totalAnak' => $totalAnak,
-            'totalLaki' => $totalLaki,
+            'anaks'          => $anaks,
+            'totalAnak'      => $totalAnak,
+            'totalLaki'      => $totalLaki,
             'totalPerempuan' => $totalPerempuan,
-            'kehamilans' => $kehamilans,
-            'user' => $user,
-            'namaKeluarga' => $namaKeluarga,
+            'kehamilans'     => $kehamilans,
+            'user'           => $user,
+            'namaKeluarga'   => $namaKeluarga,
             'tanggalHariIni' => $tanggalHariIni,
-            'faskesInfo' => $faskesInfo,
-            'filterQ' => $request->q ?? '',
-            'filterGender' => $request->jenis_kelamin ?? '',
+            'faskesInfo'     => $faskesInfo,
+            'filterQ'        => $request->q ?? '',
+            'filterGender'   => $request->jenis_kelamin ?? '',
+        ]);
+    }
+
+    /**
+     * Tampilkan halaman daftar anak dalam format tabel (view alternatif / sub-halaman).
+     * Umur dihitung otomatis dari tanggal lahir melalui model accessor.
+     */
+    public function daftarAnak(Request $request)
+    {
+        $user = $this->getActiveUser();
+        Carbon::setLocale('id');
+
+        // Query semua anak milik user — mendukung lebih dari satu anak per akun
+        $query = Anak::with('kehamilan')->where('user_id', $user->id);
+
+        // Filter nama
+        if ($request->filled('q')) {
+            $query->where('nama', 'like', '%' . trim($request->q) . '%');
+        }
+
+        // Filter jenis kelamin
+        if ($request->filled('jenis_kelamin') && in_array($request->jenis_kelamin, ['Laki-laki', 'Perempuan'])) {
+            $query->where('jenis_kelamin', $request->jenis_kelamin);
+        }
+
+        // Urutkan berdasarkan tanggal lahir termuda
+        $anaks = $query->orderBy('tanggal_lahir', 'desc')->get();
+
+        // Statistik ringkasan
+        $allChildren    = Anak::where('user_id', $user->id)->get();
+        $totalAnak      = $allChildren->count();
+        $totalLaki      = $allChildren->where('jenis_kelamin', 'Laki-laki')->count();
+        $totalPerempuan = $allChildren->where('jenis_kelamin', 'Perempuan')->count();
+
+        $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
+        $namaKeluarga   = $user->name ?: 'Keluarga Pratama';
+        $faskesInfo     = 'Posyandu Mawar 1 & Puskesmas Sejahtera';
+
+        return view('DashboardPengguna.data-anak.daftar', [
+            'anaks'          => $anaks,
+            'totalAnak'      => $totalAnak,
+            'totalLaki'      => $totalLaki,
+            'totalPerempuan' => $totalPerempuan,
+            'user'           => $user,
+            'namaKeluarga'   => $namaKeluarga,
+            'tanggalHariIni' => $tanggalHariIni,
+            'faskesInfo'     => $faskesInfo,
+            'filterQ'        => $request->q ?? '',
+            'filterGender'   => $request->jenis_kelamin ?? '',
         ]);
     }
 
@@ -113,17 +166,39 @@ class AnakController extends Controller
      */
     public function store(Request $request)
     {
+        Carbon::setLocale('id');
+
+        // Preprocessing: Normalisasi input desimal & berat badan jika diisi dalam gram
+        $input = $request->all();
+        foreach (['berat_lahir', 'panjang_lahir', 'lingkar_kepala_lahir'] as $numField) {
+            if (isset($input[$numField]) && is_string($input[$numField])) {
+                $cleaned = trim(str_replace(',', '.', $input[$numField]));
+                $input[$numField] = $cleaned !== '' ? $cleaned : null;
+            }
+        }
+        if (isset($input['berat_lahir']) && is_numeric($input['berat_lahir']) && (float) $input['berat_lahir'] > 20) {
+            $input['berat_lahir'] = round(((float) $input['berat_lahir']) / 1000, 2);
+        }
+        foreach (['kehamilan_id', 'nik', 'tempat_lahir', 'anak_ke', 'golongan_darah', 'catatan'] as $optField) {
+            if (isset($input[$optField]) && trim((string) $input[$optField]) === '') {
+                $input[$optField] = null;
+            }
+        }
+        $request->merge($input);
+
+        $maxDate = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+
         $validated = $request->validate([
             'nama' => ['required', 'string', 'max:150'],
-            'tanggal_lahir' => ['required', 'date', 'before_or_equal:today'],
+            'tanggal_lahir' => ['required', 'date', 'before_or_equal:' . $maxDate],
             'jenis_kelamin' => ['required', 'in:Laki-laki,Perempuan'],
             'kehamilan_id' => ['nullable', 'exists:kehamilans,id'],
             'nik' => ['nullable', 'string', 'max:30'],
             'tempat_lahir' => ['nullable', 'string', 'max:100'],
             'anak_ke' => ['nullable', 'integer', 'min:1', 'max:20'],
-            'berat_lahir' => ['nullable', 'numeric', 'min:0.5', 'max:10'],
-            'panjang_lahir' => ['nullable', 'numeric', 'min:20', 'max:80'],
-            'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:15', 'max:60'],
+            'berat_lahir' => ['nullable', 'numeric', 'min:0.5', 'max:15'],
+            'panjang_lahir' => ['nullable', 'numeric', 'min:20', 'max:100'],
+            'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:15', 'max:70'],
             'golongan_darah' => ['nullable', 'string', 'max:10'],
             'catatan' => ['nullable', 'string', 'max:1000'],
         ], [
@@ -132,16 +207,23 @@ class AnakController extends Controller
             'nama.max' => 'Nama anak tidak boleh lebih dari 150 karakter.',
             'tanggal_lahir.required' => 'Tanggal lahir anak wajib diisi.',
             'tanggal_lahir.date' => 'Format tanggal lahir tidak valid.',
-            'tanggal_lahir.before_or_equal' => 'Tanggal lahir tidak boleh melebihi hari ini.',
+            'tanggal_lahir.before_or_equal' => 'Tanggal lahir tidak boleh melebihi hari ini (' . Carbon::now('Asia/Jakarta')->translatedFormat('d F Y') . ').',
             'jenis_kelamin.required' => 'Pilih jenis kelamin anak.',
             'jenis_kelamin.in' => 'Pilihan jenis kelamin harus Laki-laki atau Perempuan.',
             'kehamilan_id.exists' => 'Data kehamilan yang dipilih tidak ditemukan dalam sistem.',
             'anak_ke.integer' => 'Urutan anak harus berupa angka bulat positif.',
             'anak_ke.min' => 'Urutan anak minimal ke-1.',
-            'berat_lahir.numeric' => 'Berat lahir harus berupa angka desimal dalam kilogram (kg).',
-            'panjang_lahir.numeric' => 'Panjang lahir harus berupa angka desimal dalam sentimeter (cm).',
-            'lingkar_kepala_lahir.numeric' => 'Lingkar kepala lahir harus berupa angka desimal (cm).',
+            'berat_lahir.numeric' => 'Berat lahir harus berupa angka desimal dalam kilogram (contoh: 3.2 kg).',
+            'panjang_lahir.numeric' => 'Panjang lahir harus berupa angka desimal dalam sentimeter (contoh: 49.5 cm).',
+            'lingkar_kepala_lahir.numeric' => 'Lingkar kepala lahir harus berupa angka desimal (contoh: 33.5 cm).',
         ]);
+
+        // Sanitasi nilai nullable agar tidak melempar SQL error pada MySQL strict mode
+        foreach (['kehamilan_id', 'nik', 'tempat_lahir', 'anak_ke', 'berat_lahir', 'panjang_lahir', 'lingkar_kepala_lahir', 'golongan_darah', 'catatan'] as $col) {
+            if (!isset($validated[$col]) || $validated[$col] === '') {
+                $validated[$col] = null;
+            }
+        }
 
         $user = $this->getActiveUser();
         $validated['user_id'] = $user->id;
@@ -224,20 +306,40 @@ class AnakController extends Controller
      */
     public function update(Request $request, $id)
     {
+        Carbon::setLocale('id');
         $user = $this->getActiveUser();
         $anak = Anak::where('user_id', $user->id)->findOrFail($id);
 
+        $input = $request->all();
+        foreach (['berat_lahir', 'panjang_lahir', 'lingkar_kepala_lahir'] as $numField) {
+            if (isset($input[$numField]) && is_string($input[$numField])) {
+                $cleaned = trim(str_replace(',', '.', $input[$numField]));
+                $input[$numField] = $cleaned !== '' ? $cleaned : null;
+            }
+        }
+        if (isset($input['berat_lahir']) && is_numeric($input['berat_lahir']) && (float) $input['berat_lahir'] > 20) {
+            $input['berat_lahir'] = round(((float) $input['berat_lahir']) / 1000, 2);
+        }
+        foreach (['kehamilan_id', 'nik', 'tempat_lahir', 'anak_ke', 'golongan_darah', 'catatan'] as $optField) {
+            if (isset($input[$optField]) && trim((string) $input[$optField]) === '') {
+                $input[$optField] = null;
+            }
+        }
+        $request->merge($input);
+
+        $maxDate = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+
         $validated = $request->validate([
             'nama' => ['required', 'string', 'max:150'],
-            'tanggal_lahir' => ['required', 'date', 'before_or_equal:today'],
+            'tanggal_lahir' => ['required', 'date', 'before_or_equal:' . $maxDate],
             'jenis_kelamin' => ['required', 'in:Laki-laki,Perempuan'],
             'kehamilan_id' => ['nullable', 'exists:kehamilans,id'],
             'nik' => ['nullable', 'string', 'max:30'],
             'tempat_lahir' => ['nullable', 'string', 'max:100'],
             'anak_ke' => ['nullable', 'integer', 'min:1', 'max:20'],
-            'berat_lahir' => ['nullable', 'numeric', 'min:0.5', 'max:10'],
-            'panjang_lahir' => ['nullable', 'numeric', 'min:20', 'max:80'],
-            'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:15', 'max:60'],
+            'berat_lahir' => ['nullable', 'numeric', 'min:0.5', 'max:15'],
+            'panjang_lahir' => ['nullable', 'numeric', 'min:20', 'max:100'],
+            'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:15', 'max:70'],
             'golongan_darah' => ['nullable', 'string', 'max:10'],
             'catatan' => ['nullable', 'string', 'max:1000'],
         ], [
@@ -249,6 +351,12 @@ class AnakController extends Controller
             'jenis_kelamin.in' => 'Pilihan jenis kelamin harus Laki-laki atau Perempuan.',
             'kehamilan_id.exists' => 'Data kehamilan yang dipilih tidak ditemukan dalam sistem.',
         ]);
+
+        foreach (['kehamilan_id', 'nik', 'tempat_lahir', 'anak_ke', 'berat_lahir', 'panjang_lahir', 'lingkar_kepala_lahir', 'golongan_darah', 'catatan'] as $col) {
+            if (!isset($validated[$col]) || $validated[$col] === '') {
+                $validated[$col] = null;
+            }
+        }
 
         $anak->update($validated);
 

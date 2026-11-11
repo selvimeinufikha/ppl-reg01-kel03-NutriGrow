@@ -51,3 +51,6 @@ Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])
 // Rute Pengelolaan Data Anak (PBI-007)
 Route::resource('data-anak', AnakController::class);
 Route::get('/dashboard/data-anak', [AnakController::class, 'index'])->name('dashboard.data-anak');
+
+// Daftar Anak & Umur (sub-halaman tabel daftar anak)
+Route::get('/daftar-anak', [AnakController::class, 'daftarAnak'])->name('daftar-anak.index');

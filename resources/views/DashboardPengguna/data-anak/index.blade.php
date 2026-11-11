@@ -623,7 +623,10 @@
                         <label for="nama" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                             Nama Lengkap Anak <span class="text-rose-500">*</span>
                         </label>
-                        <input type="text" id="nama" name="nama" required value="{{ old('nama') }}" placeholder="Contoh: Kinan Pratama" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition">
+                        <input type="text" id="nama" name="nama" required value="{{ old('nama') }}" placeholder="Contoh: Kinan Pratama" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border @error('nama') border-rose-400 bg-rose-50/30 @else border-slate-200 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition">
+                        @error('nama')
+                            <p class="text-[11px] text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Grid: Jenis Kelamin & Tanggal Lahir (Acceptance Criteria) -->
@@ -643,6 +646,9 @@
                                     <span class="text-xs font-bold text-slate-800">Perempuan</span>
                                 </label>
                             </div>
+                            @error('jenis_kelamin')
+                                <p class="text-[11px] text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Tanggal Lahir (Required, Max Today - Acceptance Criteria) -->
@@ -650,8 +656,11 @@
                             <label for="tanggal_lahir" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                 Tanggal Lahir <span class="text-rose-500">*</span>
                             </label>
-                            <input type="date" id="tanggal_lahir" name="tanggal_lahir" required max="{{ date('Y-m-d') }}" value="{{ old('tanggal_lahir') }}" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition">
+                            <input type="date" id="tanggal_lahir" name="tanggal_lahir" required max="{{ date('Y-m-d') }}" value="{{ old('tanggal_lahir') }}" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border @error('tanggal_lahir') border-rose-400 bg-rose-50/30 @else border-slate-200 @enderror text-xs sm:text-sm text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition">
                             <p class="text-[10px] text-slate-400 mt-1">Tanggal tidak boleh melebihi hari ini ({{ date('d/m/Y') }}).</p>
+                            @error('tanggal_lahir')
+                                <p class="text-[11px] text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -882,15 +891,26 @@
         const tglInput = document.getElementById('tanggal_lahir');
         if (tglInput) {
             tglInput.addEventListener('change', function() {
-                const selected = new Date(this.value);
-                const today = new Date();
-                today.setHours(0,0,0,0);
-                if (selected > today) {
+                if (!this.value) return;
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const todayStr = `${year}-${month}-${day}`;
+
+                if (this.value > todayStr) {
                     alert('Tanggal lahir yang melebihi hari ini ditolak! Silakan masukkan tanggal yang valid.');
                     this.value = '';
                 }
             });
         }
+
+        // Jika terdapat error validasi dari backend, otomatis buka kembali modal agar pengguna dapat memperbaikinya
+        @if($errors->any())
+            document.addEventListener('DOMContentLoaded', function() {
+                openModalTambah();
+            });
+        @endif
     </script>
 </body>
 </html>

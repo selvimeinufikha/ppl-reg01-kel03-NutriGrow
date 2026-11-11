@@ -295,10 +295,14 @@
         const tglInput = document.getElementById('tanggal_lahir');
         if (tglInput) {
             tglInput.addEventListener('change', function() {
-                const selected = new Date(this.value);
-                const today = new Date();
-                today.setHours(0,0,0,0);
-                if (selected > today) {
+                if (!this.value) return;
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const todayStr = `${year}-${month}-${day}`;
+
+                if (this.value > todayStr) {
                     alert('Tanggal lahir yang melebihi hari ini ditolak! Silakan masukkan tanggal yang valid.');
                     this.value = '';
                 }

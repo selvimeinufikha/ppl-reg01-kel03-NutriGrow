@@ -41,6 +41,54 @@ class Anak extends Model
     }
 
     /**
+     * Mutator untuk memastikan nilai kosong disimpan sebagai NULL di MySQL strict mode.
+     */
+    public function setKehamilanIdAttribute($value)
+    {
+        $this->attributes['kehamilan_id'] = ($value !== null && $value !== '') ? $value : null;
+    }
+
+    public function setAnakKeAttribute($value)
+    {
+        $this->attributes['anak_ke'] = ($value !== null && $value !== '') ? (int) $value : null;
+    }
+
+    public function setBeratLahirAttribute($value)
+    {
+        $this->attributes['berat_lahir'] = ($value !== null && $value !== '') ? (float) $value : null;
+    }
+
+    public function setPanjangLahirAttribute($value)
+    {
+        $this->attributes['panjang_lahir'] = ($value !== null && $value !== '') ? (float) $value : null;
+    }
+
+    public function setLingkarKepalaLahirAttribute($value)
+    {
+        $this->attributes['lingkar_kepala_lahir'] = ($value !== null && $value !== '') ? (float) $value : null;
+    }
+
+    public function setNikAttribute($value)
+    {
+        $this->attributes['nik'] = ($value !== null && trim($value) !== '') ? trim($value) : null;
+    }
+
+    public function setTempatLahirAttribute($value)
+    {
+        $this->attributes['tempat_lahir'] = ($value !== null && trim($value) !== '') ? trim($value) : null;
+    }
+
+    public function setGolonganDarahAttribute($value)
+    {
+        $this->attributes['golongan_darah'] = ($value !== null && trim($value) !== '') ? trim($value) : null;
+    }
+
+    public function setCatatanAttribute($value)
+    {
+        $this->attributes['catatan'] = ($value !== null && trim($value) !== '') ? trim($value) : null;
+    }
+
+    /**
      * Relasi ke Akun Pengguna / Keluarga (Orang Tua).
      */
     public function user(): BelongsTo
@@ -65,7 +113,8 @@ class Anak extends Model
     }
 
     /**
-     * Format usia anak (e.g. "3 tahun 10 bulan", "6 bulan", "14 hari").
+     * Format usia anak (e.g. "3 tahun 10 bulan", "6 bulan 14 hari", "14 hari").
+     * Dihitung otomatis dari tanggal_lahir hingga hari ini.
      */
     public function getUsiaFormattedAttribute(): string
     {
@@ -74,13 +123,13 @@ class Anak extends Model
         }
 
         $birthDate = Carbon::parse($this->tanggal_lahir);
-        $now = Carbon::now();
+        $now       = Carbon::now();
 
         if ($birthDate->isFuture()) {
             return 'Belum lahir';
         }
 
-        $years = (int) $birthDate->diffInYears($now);
+        $years  = (int) $birthDate->diffInYears($now);
         $months = (int) $birthDate->copy()->addYears($years)->diffInMonths($now);
 
         if ($years > 0) {
@@ -94,6 +143,33 @@ class Anak extends Model
 
         $days = (int) $birthDate->diffInDays($now);
         return "{$days} hari";
+    }
+
+    /**
+     * Total usia dalam bulan (berguna untuk grafik tumbuh kembang & standar WHO).
+     */
+    public function getUsiaBulanAttribute(): int
+    {
+        if (!$this->tanggal_lahir) {
+            return 0;
+        }
+        return (int) Carbon::parse($this->tanggal_lahir)->diffInMonths(Carbon::now());
+    }
+
+    /**
+     * Kategori usia anak berdasarkan rentang umur.
+     * Referensi: WHO / Kemenkes RI.
+     */
+    public function getKategoriUsiaAttribute(): string
+    {
+        $bulan = $this->usia_bulan;
+
+        if ($bulan < 1)   return 'Neonatus (0-28 hari)';
+        if ($bulan < 12)  return 'Bayi (< 1 tahun)';
+        if ($bulan < 36)  return 'Batita (1-3 tahun)';
+        if ($bulan < 72)  return 'Balita (3-6 tahun)';
+        if ($bulan < 144) return 'Anak (6-12 tahun)';
+        return 'Remaja (> 12 tahun)';
     }
 
     /**
