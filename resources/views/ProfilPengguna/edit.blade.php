@@ -117,7 +117,16 @@
                     <span>Faskes: {{ $faskesName }}</span>
                 </div>
             </div>
-            <div class="text-xs font-bold text-slate-700">{{ $userName }}</div>
+            <div class="text-xs font-bold text-slate-700 flex items-center gap-2">
+                @if ($user->foto_profil_url)
+                    <img src="{{ $user->foto_profil_url }}" alt="{{ $userName }}" class="w-7 h-7 rounded-full object-cover ring-2 ring-pink-100">
+                @else
+                    <div class="w-7 h-7 rounded-full bg-brand-800 text-white flex items-center justify-center font-bold text-[10px]">
+                        {{ strtoupper(substr($userName, 0, 1)) }}
+                    </div>
+                @endif
+                <span>{{ $userName }}</span>
+            </div>
         </header>
 
         <!-- MAIN CONTAINER -->
@@ -160,9 +169,111 @@
 
             <!-- Form Card -->
             <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm">
-                <form action="{{ route('profil.update') }}" method="POST" class="space-y-6">
+                <form action="{{ route('profil.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
                     @method('PUT')
+
+                    <!-- ============================================== -->
+                    <!-- SECTION: KOMPONEN UNGGAH FOTO PROFIL (PBI-011) -->
+                    <!-- ============================================== -->
+                    <div class="pb-6 border-b border-slate-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider text-brand-700 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-brand-600"></span>
+                                <span>Foto Profil Pengguna</span>
+                            </h2>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Maks. 2 MB (JPG, PNG, WEBP)</span>
+                        </div>
+
+                        <!-- Alert error sisi client jika ukuran atau format tidak sesuai -->
+                        <div id="foto-client-error" class="hidden mb-4 bg-rose-50 border border-rose-200 text-rose-800 p-3.5 rounded-2xl text-xs font-semibold flex items-start gap-2.5">
+                            <svg class="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span id="foto-client-error-msg"></span>
+                        </div>
+
+                        @error('foto_profil')
+                            <div class="mb-4 bg-rose-50 border border-rose-200 text-rose-800 p-3.5 rounded-2xl text-xs font-semibold flex items-start gap-2.5">
+                                <svg class="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>{{ $message }}</span>
+                            </div>
+                        @enderror
+
+                        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 p-4 rounded-2xl bg-gradient-to-r from-pink-50/40 to-slate-50 border border-pink-100/70">
+                            <!-- Avatar Preview Container -->
+                            <div class="relative flex-shrink-0">
+                                <!-- Image element -->
+                                <img id="avatar-preview-img" 
+                                     src="{{ $user->foto_profil_url ?? '' }}" 
+                                     alt="Foto Profil {{ $user->name }}" 
+                                     class="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover ring-4 ring-white shadow-md {{ $user->foto_profil_url ? '' : 'hidden' }}">
+                                
+                                <!-- Fallback Initials Placeholder -->
+                                <div id="avatar-preview-placeholder" 
+                                     class="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-tr from-brand-800 via-brand-700 to-pink-600 text-white flex items-center justify-center font-black text-3xl shadow-md ring-4 ring-white {{ $user->foto_profil_url ? 'hidden' : '' }}">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+
+                                <!-- Badge Status Foto Baru -->
+                                <span id="badge-foto-baru" class="hidden absolute bottom-0 right-0 bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm ring-2 ring-white">
+                                    Baru
+                                </span>
+                            </div>
+
+                            <!-- Controls & Information -->
+                            <div class="flex-1 space-y-2.5 text-center sm:text-left">
+                                <div>
+                                    <p class="text-xs font-bold text-slate-800">Unggah Foto Profil Baru</p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">
+                                        Pilih foto wajah yang jelas. Foto yang diunggah akan otomatis terhubung ke akun profil Anda.
+                                    </p>
+                                </div>
+
+                                <!-- Action buttons -->
+                                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                                    <!-- Hidden file input -->
+                                    <input type="file" 
+                                           id="foto_profil" 
+                                           name="foto_profil" 
+                                           accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" 
+                                           class="hidden">
+                                    
+                                    <!-- Hidden input untuk penanda hapus foto -->
+                                    <input type="hidden" id="hapus_foto" name="hapus_foto" value="0">
+
+                                    <button type="button" 
+                                            onclick="document.getElementById('foto_profil').click()" 
+                                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-xs font-bold shadow-xs transition">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                        <span>Pilih Foto</span>
+                                    </button>
+
+                                    <!-- Tombol Hapus / Reset Foto -->
+                                    <button type="button" 
+                                            id="btn-hapus-foto" 
+                                            onclick="handleHapusFoto()" 
+                                            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:border-rose-300 text-slate-600 hover:text-rose-600 bg-white text-xs font-semibold transition {{ $user->foto_profil ? '' : 'hidden' }}">
+                                        <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        <span id="btn-hapus-foto-label">Hapus Foto</span>
+                                    </button>
+
+                                    <span id="foto-filename" class="text-[11px] font-medium text-slate-500 italic hidden"></span>
+                                </div>
+
+                                <!-- Guidelines / Ketentuan Sesuai Acceptance Criteria -->
+                                <div class="flex items-center gap-3 pt-1 text-[11px] text-slate-400">
+                                    <span class="flex items-center gap-1">
+                                        <svg class="w-3 h-3 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                        <span>Format: <strong>JPG, JPEG, PNG, WEBP</strong></span>
+                                    </span>
+                                    <span>&bull;</span>
+                                    <span class="flex items-center gap-1">
+                                        <svg class="w-3 h-3 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                        <span>Ukuran Maksimum: <strong>2 MB</strong></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Section: Informasi Pokok (Nama, Kontak, Alamat) -->
                     <div>
@@ -251,5 +362,154 @@
         </main>
     </div>
 
+    <!-- Client-side Validation & Live Preview Script (Acceptance Criteria PBI-011) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('foto_profil');
+            const previewImg = document.getElementById('avatar-preview-img');
+            const placeholder = document.getElementById('avatar-preview-placeholder');
+            const clientErrorBox = document.getElementById('foto-client-error');
+            const clientErrorMsg = document.getElementById('foto-client-error-msg');
+            const btnHapusFoto = document.getElementById('btn-hapus-foto');
+            const btnHapusFotoLabel = document.getElementById('btn-hapus-foto-label');
+            const hapusFotoInput = document.getElementById('hapus_foto');
+            const badgeBaru = document.getElementById('badge-foto-baru');
+            const filenameLabel = document.getElementById('foto-filename');
+
+            const originalPhotoUrl = @json($user->foto_profil_url);
+            const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+            const maxSizeBytes = 2 * 1024 * 1024; // 2 MB Sesuai Acceptance Criteria
+
+            function showError(msg) {
+                if (clientErrorBox && clientErrorMsg) {
+                    clientErrorMsg.textContent = msg;
+                    clientErrorBox.classList.remove('hidden');
+                }
+            }
+
+            function hideError() {
+                if (clientErrorBox && clientErrorMsg) {
+                    clientErrorBox.classList.add('hidden');
+                    clientErrorMsg.textContent = '';
+                }
+            }
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    hideError();
+                    const file = this.files[0];
+                    if (!file) return;
+
+                    // Reset flag penanda hapus
+                    if (hapusFotoInput) hapusFotoInput.value = '0';
+
+                    // 1. Validasi Ekstensi / Format File
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    if (!allowedExtensions.includes(ext)) {
+                        showError('Format file tidak sesuai! Format foto profil harus berupa JPG, JPEG, PNG, atau WEBP.');
+                        this.value = '';
+                        resetToOriginal();
+                        return;
+                    }
+
+                    // 2. Validasi Ukuran File (Maksimal 2 MB)
+                    if (file.size > maxSizeBytes) {
+                        showError('Ukuran file terlalu besar! Ukuran file foto profil tidak boleh melebihi 2 MB.');
+                        this.value = '';
+                        resetToOriginal();
+                        return;
+                    }
+
+                    // 3. Tampilkan Live Preview Real-time
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (previewImg) {
+                            previewImg.src = e.target.result;
+                            previewImg.classList.remove('hidden');
+                        }
+                        if (placeholder) {
+                            placeholder.classList.add('hidden');
+                        }
+                        if (badgeBaru) {
+                            badgeBaru.classList.remove('hidden');
+                        }
+                        if (btnHapusFoto) {
+                            btnHapusFoto.classList.remove('hidden');
+                        }
+                        if (btnHapusFotoLabel) {
+                            btnHapusFotoLabel.textContent = 'Batalkan Pilihan';
+                        }
+                        if (filenameLabel) {
+                            filenameLabel.textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+                            filenameLabel.classList.remove('hidden');
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            window.handleHapusFoto = function() {
+                hideError();
+                // Jika sedang memilih file baru tapi belum disimpan
+                if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                    fileInput.value = '';
+                    resetToOriginal();
+                    return;
+                }
+
+                // Jika ingin menghapus foto yang sudah tersimpan di database
+                if (confirm('Apakah Anda yakin ingin menghapus foto profil ini dan menggunakan inisial nama?')) {
+                    if (hapusFotoInput) hapusFotoInput.value = '1';
+                    if (previewImg) {
+                        previewImg.src = '';
+                        previewImg.classList.add('hidden');
+                    }
+                    if (placeholder) {
+                        placeholder.classList.remove('hidden');
+                    }
+                    if (badgeBaru) {
+                        badgeBaru.classList.add('hidden');
+                    }
+                    if (btnHapusFoto) {
+                        btnHapusFoto.classList.add('hidden');
+                    }
+                    if (filenameLabel) {
+                        filenameLabel.classList.add('hidden');
+                    }
+                }
+            };
+
+            function resetToOriginal() {
+                if (originalPhotoUrl) {
+                    if (previewImg) {
+                        previewImg.src = originalPhotoUrl;
+                        previewImg.classList.remove('hidden');
+                    }
+                    if (placeholder) {
+                        placeholder.classList.add('hidden');
+                    }
+                    if (btnHapusFoto) {
+                        btnHapusFoto.classList.remove('hidden');
+                    }
+                    if (btnHapusFotoLabel) {
+                        btnHapusFotoLabel.textContent = 'Hapus Foto';
+                    }
+                } else {
+                    if (previewImg) {
+                        previewImg.src = '';
+                        previewImg.classList.add('hidden');
+                    }
+                    if (placeholder) {
+                        placeholder.classList.remove('hidden');
+                    }
+                    if (btnHapusFoto) {
+                        btnHapusFoto.classList.add('hidden');
+                    }
+                }
+                if (badgeBaru) badgeBaru.classList.add('hidden');
+                if (filenameLabel) filenameLabel.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
 </html>

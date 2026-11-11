@@ -63,9 +63,11 @@ Route::prefix('data-kehamilan')->name('kehamilan.')->group(function () {
     Route::delete('/{id}', [KehamilanController::class, 'destroy'])->name('destroy');
 });
 
-// Rute Profil Pengguna (PBI-010: Kelola Profil Pengguna & Acuan Layanan Kesehatan)
+// Rute Profil Pengguna (PBI-010: Kelola Profil Pengguna & PBI-011: Upload Foto Profil)
 Route::prefix('profil')->name('profil.')->group(function () {
     Route::get('/', [ProfileController::class, 'index'])->name('index');
     Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
     Route::put('/', [ProfileController::class, 'update'])->name('update');
+    Route::post('/foto', [ProfileController::class, 'uploadFoto'])->name('foto.upload');
+    Route::delete('/foto', [ProfileController::class, 'hapusFoto'])->name('foto.destroy');
 });

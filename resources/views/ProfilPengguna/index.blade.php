@@ -124,9 +124,13 @@
                 </div>
             </div>
             <a href="{{ route('profil.index') }}" class="flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-brand-700 transition">
-                <div class="w-7 h-7 rounded-full bg-brand-800 text-white flex items-center justify-center font-bold text-[10px]">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                </div>
+                @if ($user->foto_profil_url)
+                    <img src="{{ $user->foto_profil_url }}" alt="{{ $user->name }}" class="w-7 h-7 rounded-full object-cover ring-2 ring-pink-100">
+                @else
+                    <div class="w-7 h-7 rounded-full bg-brand-800 text-white flex items-center justify-center font-bold text-[10px]">
+                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                    </div>
+                @endif
                 <span>{{ $user->name }}</span>
             </a>
         </header>
@@ -177,10 +181,19 @@
                 <div class="h-1.5 w-full bg-gradient-to-r from-brand-700 via-rose-500 to-pink-500 absolute top-0 left-0 right-0"></div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center pt-2">
-                    <!-- Avatar & Ringkasan Singkat -->
+                    <!-- Avatar & Ringkasan Singkat (PBI-011: Terhubung Foto Profil) -->
                     <div class="md:col-span-4 flex flex-col items-center text-center border-b md:border-b-0 md:border-r border-slate-100 pb-5 md:pb-0 md:pr-6">
-                        <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-brand-800 via-brand-700 to-pink-600 text-white flex items-center justify-center font-black text-2xl shadow-md ring-4 ring-pink-100 mb-3">
-                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                        <div class="relative group mb-3">
+                            @if ($user->foto_profil_url)
+                                <img src="{{ $user->foto_profil_url }}" alt="{{ $user->name }}" class="w-24 h-24 rounded-full object-cover shadow-md ring-4 ring-pink-100">
+                            @else
+                                <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-brand-800 via-brand-700 to-pink-600 text-white flex items-center justify-center font-black text-3xl shadow-md ring-4 ring-pink-100">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                            @endif
+                            <a href="{{ route('profil.edit') }}" title="Ubah Foto Profil" class="absolute bottom-0 right-0 bg-white hover:bg-pink-50 text-brand-700 p-1.5 rounded-full shadow-md border border-pink-200 transition">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </a>
                         </div>
                         <h2 class="text-base font-extrabold text-slate-900">{{ $user->name }}</h2>
                         <span class="inline-block mt-1 px-3 py-0.5 rounded-full text-[10px] font-extrabold bg-pink-50 text-brand-700 border border-pink-200">

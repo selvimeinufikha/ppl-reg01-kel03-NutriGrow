@@ -263,11 +263,15 @@
                 </div>
 
                 <!-- Profile Avatar -->
-                <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand-600 to-pink-500 text-white font-bold text-xs flex items-center justify-center shadow-xs">
-                        {{ strtoupper(substr($userName, 4, 1) ?: 'S') }}
-                    </div>
-                </div>
+                <a href="{{ route('profil.index') }}" class="flex items-center gap-2 hover:opacity-90 transition">
+                    @if (isset($user) && $user && $user->foto_profil_url)
+                        <img src="{{ $user->foto_profil_url }}" alt="{{ $userName }}" class="w-9 h-9 rounded-full object-cover ring-2 ring-pink-100 shadow-xs">
+                    @else
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand-600 to-pink-500 text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                            {{ strtoupper(substr($userName, 4, 1) ?: 'S') }}
+                        </div>
+                    @endif
+                </a>
             </div>
         </header>
 

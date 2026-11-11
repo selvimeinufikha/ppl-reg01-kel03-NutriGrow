@@ -90,4 +90,19 @@ class User extends Authenticatable
             $this->kecamatan
         );
     }
+
+    /**
+     * URL Foto Profil pengguna (terhubung dengan akun) atau null jika belum ada.
+     */
+    public function getFotoProfilUrlAttribute(): ?string
+    {
+        if ($this->foto_profil) {
+            if (str_starts_with($this->foto_profil, 'http')) {
+                return $this->foto_profil;
+            }
+            return asset('storage/' . $this->foto_profil);
+        }
+
+        return null;
+    }
 }
