@@ -44,8 +44,9 @@ class AdminAuthController extends Controller
             /** @var User $authUser */
             $authUser = Auth::user();
 
-            // Validasi hak akses faskes / admin
-            if (method_exists($authUser, 'isStaffOrAdmin') && !$authUser->isStaffOrAdmin()) {
+            // Validasi hak akses: Hanya admin & nakes yang boleh masuk portal ini
+            // (PBI-016: Acceptance Criteria — Admin memilih pengguna dan anak)
+            if (! $authUser->isStaffOrAdmin()) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
