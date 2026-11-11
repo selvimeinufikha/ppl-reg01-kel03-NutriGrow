@@ -46,4 +46,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relasi ke data Pasangan (Suami / Calon Ayah).
+     */
+    public function pasangan()
+    {
+        return $this->hasOne(Pasangan::class, 'user_id');
+    }
+
+    /**
+     * Relasi ke seluruh riwayat Kehamilan pengguna.
+     */
+    public function kehamilans()
+    {
+        return $this->hasMany(Kehamilan::class, 'user_id')->orderBy('kehamilan_ke', 'desc');
+    }
+
+    /**
+     * Relasi ke kehamilan aktif yang sedang berlangsung.
+     */
+    public function kehamilanAktif()
+    {
+        return $this->hasOne(Kehamilan::class, 'user_id')->where('status', 'berlangsung')->latestOfMany();
+    }
 }

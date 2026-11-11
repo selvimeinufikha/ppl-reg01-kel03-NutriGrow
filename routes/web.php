@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardPenggunaController;
+use App\Http\Controllers\KehamilanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,3 +48,12 @@ Route::get('/dashboard-admin', function () {
 
 Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
 Route::get('/dashboard', [DashboardPenggunaController::class, 'index'])->name('dashboard');
+
+// Rute Data Kehamilan (PBI-004: Pencatatan & Pemantauan Kehamilan)
+Route::prefix('data-kehamilan')->name('kehamilan.')->group(function () {
+    Route::get('/', [KehamilanController::class, 'index'])->name('index');
+    Route::get('/catat', [KehamilanController::class, 'create'])->name('create');
+    Route::post('/', [KehamilanController::class, 'store'])->name('store');
+    Route::get('/{id}', [KehamilanController::class, 'show'])->name('show');
+    Route::delete('/{id}', [KehamilanController::class, 'destroy'])->name('destroy');
+});

@@ -19,6 +19,7 @@ return [
         resource_path('HalamanLogin'),
         resource_path('DashboardPengguna'),
         resource_path('DashboardAdmiin'),
+        resource_path('DataKehamilan'),
         resource_path(),
     ],
 
