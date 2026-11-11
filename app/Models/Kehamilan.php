@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\PregnancyCalculatorService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -48,7 +49,17 @@ class Kehamilan extends Model
      */
     public static function hitungHpl(string|Carbon $hpht): Carbon
     {
-        return Carbon::parse($hpht)->copy()->addDays(280);
+        return PregnancyCalculatorService::hitungHpl($hpht);
+    }
+
+    /**
+     * Tanggal acuan perhitungan usia (hari ini atau saat melahirkan).
+     */
+    public function getTanggalAcuan(): Carbon
+    {
+        return ($this->status === 'melahirkan' && $this->tanggal_persalinan)
+            ? Carbon::parse($this->tanggal_persalinan)
+            : Carbon::now();
     }
 
     /**
@@ -84,26 +95,12 @@ class Kehamilan extends Model
             return '-';
         }
 
-        $endDate = ($this->status === 'melahirkan' && $this->tanggal_persalinan)
-            ? Carbon::parse($this->tanggal_persalinan)
-            : Carbon::now();
-
-        $hphtDate = Carbon::parse($this->hpht);
-
-        // Jika HPHT di masa depan, kembalikan 0
-        if ($endDate->lt($hphtDate)) {
-            return '0 Minggu 0 Hari';
-        }
-
-        $totalDays = $hphtDate->diffInDays($endDate);
-        $weeks = (int) floor($totalDays / 7);
-        $days = (int) ($totalDays % 7);
-
-        return "{$weeks} Minggu {$days} Hari";
+        $calc = PregnancyCalculatorService::hitungUsiaKehamilan($this->hpht, $this->getTanggalAcuan());
+        return $calc['formatted'];
     }
 
     /**
-     * Usia kehamilan dalam satuan minggu saja.
+     * Usia kehamilan dalam satuan minggu saja (integer).
      */
     public function getUsiaMingguAttribute(): int
     {
@@ -111,33 +108,65 @@ class Kehamilan extends Model
             return 0;
         }
 
-        $endDate = ($this->status === 'melahirkan' && $this->tanggal_persalinan)
-            ? Carbon::parse($this->tanggal_persalinan)
-            : Carbon::now();
-
-        $hphtDate = Carbon::parse($this->hpht);
-
-        if ($endDate->lt($hphtDate)) {
-            return 0;
-        }
-
-        return (int) floor($hphtDate->diffInDays($endDate) / 7);
+        $calc = PregnancyCalculatorService::hitungUsiaKehamilan($this->hpht, $this->getTanggalAcuan());
+        return $calc['minggu'];
     }
 
     /**
-     * Mendapatkan kategori Trimester kehamilan.
+     * Sisa hari usia kehamilan (integer).
+     */
+    public function getUsiaHariAttribute(): int
+    {
+        if (!$this->hpht) {
+            return 0;
+        }
+
+        $calc = PregnancyCalculatorService::hitungUsiaKehamilan($this->hpht, $this->getTanggalAcuan());
+        return $calc['hari'];
+    }
+
+    /**
+     * Persentase perkembangan kehamilan menuju HPL (0 - 100%).
+     */
+    public function getPersentaseAttribute(): float
+    {
+        if (!$this->hpht) {
+            return 0.0;
+        }
+
+        $calc = PregnancyCalculatorService::hitungUsiaKehamilan($this->hpht, $this->getTanggalAcuan());
+        return $calc['persentase'];
+    }
+
+    /**
+     * Sisa hari menuju HPL.
+     */
+    public function getSisaHariAttribute(): int
+    {
+        if (!$this->hpht) {
+            return 0;
+        }
+
+        $calc = PregnancyCalculatorService::hitungUsiaKehamilan($this->hpht, $this->getTanggalAcuan());
+        return $calc['sisa_hari'];
+    }
+
+    /**
+     * Label Trimester lengkap (contoh: "Trimester 2 (14–27 Mg)").
      */
     public function getTrimesterAttribute(): string
     {
-        $weeks = $this->usia_minggu;
+        $info = PregnancyCalculatorService::tentukanTrimester($this->usia_minggu);
+        return $info['label'];
+    }
 
-        if ($weeks <= 13) {
-            return 'Trimester 1 (1–13 Mg)';
-        } elseif ($weeks <= 27) {
-            return 'Trimester 2 (14–27 Mg)';
-        } else {
-            return 'Trimester 3 (28–40 Mg)';
-        }
+    /**
+     * Nomor Trimester (1, 2, atau 3).
+     */
+    public function getTrimesterNomorAttribute(): int
+    {
+        $info = PregnancyCalculatorService::tentukanTrimester($this->usia_minggu);
+        return $info['nomor'];
     }
 
     /**
@@ -145,15 +174,32 @@ class Kehamilan extends Model
      */
     public function getTrimesterBadgeAttribute(): string
     {
-        $weeks = $this->usia_minggu;
+        $info = PregnancyCalculatorService::tentukanTrimester($this->usia_minggu);
+        return $info['badge'];
+    }
 
-        if ($weeks <= 13) {
-            return 'T1 Aktif';
-        } elseif ($weeks <= 27) {
-            return 'T2 Aktif';
-        } else {
-            return 'T3 Aktif';
-        }
+    /**
+     * Deskripsi dan fokus kesehatan trimester saat ini.
+     */
+    public function getTrimesterInfoAttribute(): array
+    {
+        return PregnancyCalculatorService::tentukanTrimester($this->usia_minggu);
+    }
+
+    /**
+     * Milestone ukuran & perkembangan janin saat ini.
+     */
+    public function getMilestoneJaninAttribute(): array
+    {
+        return PregnancyCalculatorService::getMilestoneJanin($this->usia_minggu);
+    }
+
+    /**
+     * Rangkuman data kalkulasi lengkap.
+     */
+    public function getDetailKalkulasiAttribute(): array
+    {
+        return PregnancyCalculatorService::hitungLengkap($this->hpht, $this->getTanggalAcuan());
     }
 
     /**

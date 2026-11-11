@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kehamilan;
 use App\Models\Pasangan;
 use App\Models\User;
+use App\Services\PregnancyCalculatorService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -182,7 +183,7 @@ class KehamilanController extends Controller
         }
 
         // Hitung HPL otomatis dengan rumus Naegele: HPHT + 280 hari
-        $hpl = Kehamilan::hitungHpl($validated['hpht']);
+        $hpl = PregnancyCalculatorService::hitungHpl($validated['hpht']);
 
         // Generate kode gravida sederhana (misal: G2P1A0)
         $gravida = 'G' . $validated['kehamilan_ke'] . 'P' . max(0, $validated['kehamilan_ke'] - 1) . 'A0';
@@ -207,22 +208,67 @@ class KehamilanController extends Controller
     }
 
     /**
-     * Tampilkan detail data kehamilan tertentu.
+     * Tampilkan detail data kehamilan dan hasil kalkulasi usia & trimester.
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $user = $this->getActiveUser();
         $kehamilan = Kehamilan::with('pasangan')
             ->where('user_id', $user->id)
             ->findOrFail($id);
 
+        $calc = PregnancyCalculatorService::hitungLengkap($kehamilan->hpht, $kehamilan->getTanggalAcuan());
+
+        // Jika request via AJAX / API
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'data' => $kehamilan,
+                'usia_kehamilan' => $kehamilan->usia_kehamilan,
+                'usia_minggu' => $kehamilan->usia_minggu,
+                'usia_hari' => $kehamilan->usia_hari,
+                'trimester' => $kehamilan->trimester,
+                'trimester_nomor' => $kehamilan->trimester_nomor,
+                'trimester_badge' => $kehamilan->trimester_badge,
+                'hpl_formatted' => $kehamilan->hpl_formatted,
+                'hpht_formatted' => $kehamilan->hpht_formatted,
+                'kalkulasi' => $calc,
+            ]);
+        }
+
+        Carbon::setLocale('id');
+        $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
+
+        return view('DataKehamilan.detail', [
+            'kehamilan' => $kehamilan,
+            'calc' => $calc,
+            'user' => $user,
+            'userName' => $user->name,
+            'userId' => 'NGW-' . str_pad($user->id, 5, '0', STR_PAD_LEFT) . '-JKT',
+            'tanggalHariIni' => $tanggalHariIni,
+            'faskesName' => 'Posyandu Mawar 1 & Puskesmas Sejahtera',
+            'keluargaName' => 'Keluarga Pratama',
+        ]);
+    }
+
+    /**
+     * Endpoint API kalkulator kehamilan (hitung HPL, usia kehamilan, dan trimester dari HPHT).
+     */
+    public function kalkulator(Request $request)
+    {
+        $validated = $request->validate([
+            'hpht' => ['required', 'date', 'before_or_equal:today'],
+        ], [
+            'hpht.required' => 'Tanggal HPHT wajib diisi.',
+            'hpht.date' => 'Format tanggal HPHT tidak valid.',
+            'hpht.before_or_equal' => 'Tanggal HPHT tidak boleh melebihi tanggal hari ini.',
+        ]);
+
+        $hasil = PregnancyCalculatorService::hitungLengkap($validated['hpht']);
+
         return response()->json([
             'status' => 'success',
-            'data' => $kehamilan,
-            'usia_kehamilan' => $kehamilan->usia_kehamilan,
-            'trimester' => $kehamilan->trimester,
-            'hpl_formatted' => $kehamilan->hpl_formatted,
-            'hpht_formatted' => $kehamilan->hpht_formatted,
+            'data' => $hasil,
         ]);
     }
 
