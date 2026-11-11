@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardPenggunaController;
 use App\Http\Controllers\KehamilanController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,4 +61,11 @@ Route::prefix('data-kehamilan')->name('kehamilan.')->group(function () {
     Route::get('/{id}/edit', [KehamilanController::class, 'edit'])->name('edit');
     Route::put('/{id}', [KehamilanController::class, 'update'])->name('update');
     Route::delete('/{id}', [KehamilanController::class, 'destroy'])->name('destroy');
+});
+
+// Rute Profil Pengguna (PBI-010: Kelola Profil Pengguna & Acuan Layanan Kesehatan)
+Route::prefix('profil')->name('profil.')->group(function () {
+    Route::get('/', [ProfileController::class, 'index'])->name('index');
+    Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+    Route::put('/', [ProfileController::class, 'update'])->name('update');
 });

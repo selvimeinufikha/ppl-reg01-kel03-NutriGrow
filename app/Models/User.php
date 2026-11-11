@@ -22,6 +22,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'no_telepon',
+        'alamat',
+        'kota',
+        'kecamatan',
+        'kelurahan',
+        'nik',
+        'tanggal_lahir',
+        'foto_profil',
     ];
 
     /**
@@ -69,5 +77,17 @@ class User extends Authenticatable
     public function kehamilanAktif()
     {
         return $this->hasOne(Kehamilan::class, 'user_id')->where('status', 'berlangsung')->latestOfMany();
+    }
+
+    /**
+     * Rekomendasi fasilitas kesehatan berdasarkan acuan alamat profil pengguna (Acceptance Criteria).
+     */
+    public function getRekomendasiFaskesAttribute(): array
+    {
+        return \App\Services\HealthFacilityRecommendationService::getRekomendasi(
+            $this->alamat,
+            $this->kota,
+            $this->kecamatan
+        );
     }
 }
