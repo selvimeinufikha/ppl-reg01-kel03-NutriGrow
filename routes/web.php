@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardPenggunaController;
+use App\Http\Controllers\AnakController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +38,7 @@ Route::get('/reset-password', function () {
 Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
-// Rute Dashboard
+// Rute Dashboard Admin & Pengguna
 Route::get('/dashboard-admin', function () {
     if (view()->exists('DashboardAdmiin.index')) {
         return view('DashboardAdmiin.index');
@@ -44,9 +46,8 @@ Route::get('/dashboard-admin', function () {
     return redirect()->route('home');
 })->name('dashboard.admin');
 
-Route::get('/dashboard-pengguna', function () {
-    if (view()->exists('DashboardPengguna.index')) {
-        return view('DashboardPengguna.index');
-    }
-    return redirect()->route('home');
-})->name('dashboard.pengguna');
+Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
+
+// Rute Pengelolaan Data Anak (PBI-007)
+Route::resource('data-anak', AnakController::class);
+Route::get('/dashboard/data-anak', [AnakController::class, 'index'])->name('dashboard.data-anak');

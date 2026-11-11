@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -45,5 +46,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relasi ke seluruh data Anak dalam keluarga.
+     */
+    public function anaks(): HasMany
+    {
+        return $this->hasMany(Anak::class, 'user_id');
+    }
+
+    /**
+     * Relasi ke seluruh data Kehamilan.
+     */
+    public function kehamilans(): HasMany
+    {
+        return $this->hasMany(Kehamilan::class, 'user_id');
     }
 }
