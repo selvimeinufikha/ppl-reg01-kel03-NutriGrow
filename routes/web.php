@@ -63,11 +63,17 @@ Route::prefix('data-kehamilan')->name('kehamilan.')->group(function () {
     Route::delete('/{id}', [KehamilanController::class, 'destroy'])->name('destroy');
 });
 
-// Rute Profil Pengguna (PBI-010: Kelola Profil Pengguna & PBI-011: Upload Foto Profil)
+// Rute Profil Pengguna (PBI-010: Kelola Profil Pengguna, PBI-011: Upload Foto Profil, PBI-012: Ganti Kata Sandi)
 Route::prefix('profil')->name('profil.')->group(function () {
     Route::get('/', [ProfileController::class, 'index'])->name('index');
     Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
     Route::put('/', [ProfileController::class, 'update'])->name('update');
     Route::post('/foto', [ProfileController::class, 'uploadFoto'])->name('foto.upload');
     Route::delete('/foto', [ProfileController::class, 'hapusFoto'])->name('foto.destroy');
+    Route::get('/ganti-password', [ProfileController::class, 'editPassword'])->name('password.edit');
+    Route::put('/ganti-password', [ProfileController::class, 'updatePassword'])->name('password.update');
 });
+
+// Alias rute mandiri untuk ganti kata sandi
+Route::get('/ganti-password', [ProfileController::class, 'editPassword'])->name('password.change');
+Route::put('/ganti-password', [ProfileController::class, 'updatePassword'])->name('password.change.update');

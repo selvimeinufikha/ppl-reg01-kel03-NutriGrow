@@ -9,6 +9,7 @@ use App\Services\HealthFacilityRecommendationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
@@ -247,5 +248,82 @@ class ProfileController extends Controller
         }
 
         return redirect()->back()->with('success', 'Foto profil berhasil dihapus.');
+    }
+
+    /**
+     * Tampilkan formulir ganti kata sandi pengguna (PBI-012).
+     */
+    public function editPassword()
+    {
+        $user = $this->getActiveUser();
+        Carbon::setLocale('id');
+
+        $tanggalHariIni = Carbon::now()->locale('id')->translatedFormat('l, j F Y');
+
+        return view('ProfilPengguna.ganti-password', [
+            'user' => $user,
+            'userName' => $user->name,
+            'userId' => 'NGW-' . str_pad($user->id, 5, '0', STR_PAD_LEFT) . '-JKT',
+            'tanggalHariIni' => $tanggalHariIni,
+            'faskesName' => 'Posyandu Mawar 1 & Puskesmas Sejahtera',
+            'keluargaName' => 'Keluarga Pratama',
+        ]);
+    }
+
+    /**
+     * Proses verifikasi kata sandi lama, validasi, dan penyimpanan kata sandi baru (PBI-012).
+     * Acceptance Criteria:
+     * - Kata sandi baru minimal 8 karakter dan disimpan terenkripsi.
+     * - Penggantian meminta kata sandi lama yang benar.
+     */
+    public function updatePassword(Request $request)
+    {
+        $user = $this->getActiveUser();
+
+        // Normalisasi alias field input jika menggunakan bahasa Indonesia
+        if ($request->has('password_lama') && !$request->has('current_password')) {
+            $request->merge(['current_password' => $request->input('password_lama')]);
+        }
+        if ($request->has('password_baru') && !$request->has('password')) {
+            $request->merge(['password' => $request->input('password_baru')]);
+        }
+        if ($request->has('konfirmasi_password') && !$request->has('password_confirmation')) {
+            $request->merge(['password_confirmation' => $request->input('konfirmasi_password')]);
+        } elseif ($request->has('password_baru_confirmation') && !$request->has('password_confirmation')) {
+            $request->merge(['password_confirmation' => $request->input('password_baru_confirmation')]);
+        }
+
+        // 1. Validasi kata sandi lama dan baru
+        $validated = $request->validate([
+            'current_password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8', 'confirmed', 'different:current_password'],
+        ], [
+            'current_password.required' => 'Kata sandi saat ini (lama) wajib diisi.',
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.min' => 'Kata sandi baru minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
+            'password.different' => 'Kata sandi baru tidak boleh sama dengan kata sandi saat ini.',
+        ]);
+
+        // 2. Verifikasi kata sandi lama dengan hash di database (Acceptance Criteria 2)
+        if (!Hash::check($validated['current_password'], $user->password)) {
+            return back()->withErrors([
+                'current_password' => 'Kata sandi saat ini (lama) yang Anda masukkan tidak sesuai.',
+                'password_lama' => 'Kata sandi saat ini (lama) yang Anda masukkan tidak sesuai.',
+            ])->withInput($request->except(['current_password', 'password', 'password_confirmation', 'password_lama', 'password_baru', 'konfirmasi_password']));
+        }
+
+        // 3. Hash dan simpan kata sandi baru (Acceptance Criteria 1)
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Kata sandi Anda berhasil diperbarui!',
+            ]);
+        }
+
+        return redirect()->route('profil.index')->with('success', 'Kata sandi akun Anda berhasil diperbarui!');
     }
 }
