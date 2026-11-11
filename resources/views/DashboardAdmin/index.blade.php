@@ -152,10 +152,9 @@
                         <span>Data Pemeriksaan Kehamilan</span>
                     </a>
 
-                    <!-- 4. Data Tumbuh Kembang Anak -->
+                    <!-- 4. Data Tumbuh Kembang Anak (PBI-016) -->
                     <a
-                        href="javascript:void(0)"
-                        onclick="switchTableTab('balita')"
+                        href="{{ route('admin.pengukuran.index') }}"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -332,17 +331,16 @@
 
                     <!-- Two Action Buttons (Pink + Blue) -->
                     <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-                        <!-- Primary Pink: Catat Tumbuh Kembang -->
-                        <button
-                            type="button"
-                            onclick="openGrowthModal()"
+                        <!-- Primary Pink: Catat Tumbuh Kembang (PBI-016) -->
+                        <a
+                            href="{{ route('admin.pengukuran.index') }}"
                             class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#e11d48] hover:bg-[#be123c] active:bg-[#9f1239] text-white text-xs font-bold shadow-sm shadow-rose-500/25 transition transform hover:-translate-y-0.5 cursor-pointer"
                         >
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                             </svg>
                             <span>Catat Tumbuh Kembang</span>
-                        </button>
+                        </a>
 
                         <!-- Secondary Blue: Catat Pemeriksaan Kehamilan -->
                         <button

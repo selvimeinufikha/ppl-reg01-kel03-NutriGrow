@@ -152,10 +152,9 @@
                         <span>Data Pemeriksaan Kehamilan</span>
                     </a>
 
-                    <!-- 4. Data Tumbuh Kembang Anak -->
+                    <!-- 4. Data Tumbuh Kembang Anak (PBI-016) -->
                     <a
-                        href="javascript:void(0)"
-                        onclick="showFeatureNotice('Data Tumbuh Kembang Anak')"
+                        href="{{ route('admin.pengukuran.index') }}"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
