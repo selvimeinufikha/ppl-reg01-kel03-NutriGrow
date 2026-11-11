@@ -243,12 +243,23 @@ class AnakController extends Controller
     }
 
     /**
+     * Helper untuk memastikan pengelolaan data hanya untuk anak milik akun sendiri.
+     */
+    protected function authorizeChildOwnership(Anak $anak, User $user): void
+    {
+        if ((int) $anak->user_id !== (int) $user->id) {
+            abort(403, 'Akses ditolak. Anda hanya berhak mengelola data anak milik akun keluarga Anda sendiri.');
+        }
+    }
+
+    /**
      * Tampilkan detail lengkap profil anak.
      */
     public function show($id)
     {
         $user = $this->getActiveUser();
-        $anak = Anak::with('kehamilan')->where('user_id', $user->id)->findOrFail($id);
+        $anak = Anak::with('kehamilan')->findOrFail($id);
+        $this->authorizeChildOwnership($anak, $user);
 
         if (request()->wantsJson() || request()->ajax()) {
             return response()->json([
@@ -284,7 +295,9 @@ class AnakController extends Controller
         $user = $this->getActiveUser();
         Carbon::setLocale('id');
 
-        $anak = Anak::where('user_id', $user->id)->findOrFail($id);
+        $anak = Anak::findOrFail($id);
+        $this->authorizeChildOwnership($anak, $user);
+
         $kehamilans = Kehamilan::where('user_id', $user->id)->orderBy('id', 'desc')->get();
         $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
         $namaKeluarga = $user->name ?: 'Keluarga Pratama';
@@ -297,7 +310,7 @@ class AnakController extends Controller
             'namaKeluarga' => $namaKeluarga,
             'tanggalHariIni' => $tanggalHariIni,
             'faskesInfo' => $faskesInfo,
-            'maxDate' => Carbon::now()->format('Y-m-d'),
+            'maxDate' => Carbon::now('Asia/Jakarta')->format('Y-m-d'),
         ]);
     }
 
@@ -308,7 +321,8 @@ class AnakController extends Controller
     {
         Carbon::setLocale('id');
         $user = $this->getActiveUser();
-        $anak = Anak::where('user_id', $user->id)->findOrFail($id);
+        $anak = Anak::findOrFail($id);
+        $this->authorizeChildOwnership($anak, $user);
 
         $input = $request->all();
         foreach (['berat_lahir', 'panjang_lahir', 'lingkar_kepala_lahir'] as $numField) {
@@ -361,21 +375,24 @@ class AnakController extends Controller
         $anak->update($validated);
 
         return redirect()->route('data-anak.index')
-            ->with('success', "Data anak '{$anak->nama}' berhasil diperbarui!");
+            ->with('success', "Perubahan data anak '{$anak->nama}' berhasil disimpan!");
     }
 
     /**
      * Hapus data anak dari catatan keluarga.
+     * Acceptance Criteria:
+     * - Hanya berlaku untuk anak milik akun sendiri (403 jika milik orang lain).
      */
     public function destroy($id)
     {
         $user = $this->getActiveUser();
-        $anak = Anak::where('user_id', $user->id)->findOrFail($id);
-        $namaAnak = $anak->nama;
+        $anak = Anak::findOrFail($id);
+        $this->authorizeChildOwnership($anak, $user);
 
+        $namaAnak = $anak->nama;
         $anak->delete();
 
         return redirect()->route('data-anak.index')
-            ->with('success', "Data anak '{$namaAnak}' berhasil dihapus dari sistem.");
+            ->with('success', "Data anak '{$namaAnak}' berhasil dihapus dari catatan keluarga.");
     }
 }

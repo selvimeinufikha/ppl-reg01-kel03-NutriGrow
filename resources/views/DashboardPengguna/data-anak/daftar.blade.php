@@ -441,16 +441,12 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                     </svg>
                                                 </a>
-                                                <form action="{{ route('data-anak.destroy', $anak->id) }}" method="POST"
-                                                      onsubmit="return confirm('Hapus data {{ $anak->nama }}?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition" title="Hapus">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                        </svg>
-                                                    </button>
-                                                </form>
+                                                <button type="button" onclick="confirmDeleteAnak({{ $anak->id }}, '{{ addslashes($anak->nama) }}')"
+                                                        class="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition cursor-pointer" title="Hapus">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -512,12 +508,64 @@
         </main>
     </div>
 
+    <!-- ========================================== -->
+    <!-- MODAL: DIALOG KONFIRMASI PENGHAPUSAN ANAK  -->
+    <!-- ========================================== -->
+    <div id="modalHapusAnak" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-delete-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity" onclick="closeModalHapus()"></div>
+
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-rose-100 p-6 sm:p-7">
+                <!-- Icon Warning Bulat -->
+                <div class="flex items-center justify-center w-14 h-14 mx-auto rounded-full bg-rose-100 text-rose-600 mb-4 shadow-sm">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                </div>
+                
+                <h3 class="text-lg sm:text-xl font-extrabold text-center text-slate-900 mb-2" id="modal-delete-title">
+                    Hapus Data Anak?
+                </h3>
+                
+                <p class="text-xs sm:text-sm text-center text-slate-500 mb-6 leading-relaxed">
+                    Apakah Anda yakin ingin menghapus data anak <span id="namaAnakDihapus" class="font-extrabold text-slate-900"></span>?
+                    <span class="text-rose-600 text-xs mt-1.5 block font-medium">Tindakan ini permanen dan seluruh riwayat tumbuh kembang terkait anak ini akan ikut terhapus.</span>
+                </p>
+
+                <!-- Form Eksekusi Hapus -->
+                <form id="formHapusAnak" method="POST" action="">
+                    @csrf
+                    @method('DELETE')
+                    <div class="flex items-center justify-center gap-3">
+                        <button type="button" onclick="closeModalHapus()" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer">
+                            Batal
+                        </button>
+                        <button type="submit" class="w-1/2 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-bold shadow-md shadow-rose-600/20 transition cursor-pointer">
+                            Ya, Hapus Data
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         function toggleSidebar() {
             const sidebar  = document.getElementById('sidebar');
             const backdrop = document.getElementById('sidebarBackdrop');
             sidebar.classList.toggle('-translate-x-full');
             backdrop.classList.toggle('hidden');
+        }
+
+        function confirmDeleteAnak(id, name) {
+            document.getElementById('namaAnakDihapus').innerText = `"${name}"`;
+            document.getElementById('formHapusAnak').action = `/data-anak/${id}`;
+            document.getElementById('modalHapusAnak').classList.remove('hidden');
+        }
+
+        function closeModalHapus() {
+            document.getElementById('modalHapusAnak').classList.add('hidden');
         }
     </script>
 </body>

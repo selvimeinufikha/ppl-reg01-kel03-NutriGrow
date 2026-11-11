@@ -168,9 +168,10 @@ class AnakTest extends TestCase
     }
 
     /**
-     * Pengguna dapat mengubah (edit) data anak yang ada.
+     * Acceptance Criteria:
+     * Perubahan tersimpan dan langsung tampil pada daftar.
      */
-    public function test_pengguna_dapat_mengubah_data_anak(): void
+    public function test_perubahan_data_anak_tersimpan_dan_langsung_tampil_pada_daftar(): void
     {
         $anak = Anak::create([
             'user_id' => $this->user->id,
@@ -192,12 +193,53 @@ class AnakTest extends TestCase
             'nama' => 'Kinan Pratama Terupdate',
             'catatan' => 'Catatan diupdate',
         ]);
+
+        // Verifikasi perubahan langsung tampil pada halaman daftar
+        $responseDaftar = $this->actingAs($this->user)->get(route('data-anak.index'));
+        $responseDaftar->assertStatus(200);
+        $responseDaftar->assertSee('Kinan Pratama Terupdate');
     }
 
     /**
-     * Pengguna dapat menghapus data anak.
+     * Acceptance Criteria:
+     * Pengelolaan data hanya untuk anak milik akun sendiri (Pengguna lain tidak dapat mengubah data).
      */
-    public function test_pengguna_dapat_menghapus_data_anak(): void
+    public function test_pengguna_tidak_dapat_mengubah_data_anak_milik_orang_lain(): void
+    {
+        $otherUser = User::factory()->create([
+            'name' => 'Keluarga Lain',
+            'email' => 'other@nutrigrow.id',
+        ]);
+
+        $anakOtherUser = Anak::create([
+            'user_id' => $otherUser->id,
+            'nama' => 'Anak Orang Lain',
+            'jenis_kelamin' => 'Perempuan',
+            'tanggal_lahir' => '2023-05-10',
+        ]);
+
+        // User mencoba mengubah data anak milik otherUser
+        $response = $this->actingAs($this->user)->put(route('data-anak.update', $anakOtherUser->id), [
+            'nama' => 'Mencoba Bajak Nama',
+            'jenis_kelamin' => 'Perempuan',
+            'tanggal_lahir' => '2023-05-10',
+        ]);
+
+        // Harus ditolak dengan status 403 Forbidden
+        $response->assertStatus(403);
+
+        // Data di basis data tidak boleh berubah
+        $this->assertDatabaseHas('anaks', [
+            'id' => $anakOtherUser->id,
+            'nama' => 'Anak Orang Lain',
+        ]);
+    }
+
+    /**
+     * Acceptance Criteria:
+     * Penghapusan meminta konfirmasi dan hanya berlaku untuk anak milik akun sendiri.
+     */
+    public function test_pengguna_dapat_menghapus_data_anak_milik_sendiri(): void
     {
         $anak = Anak::create([
             'user_id' => $this->user->id,
@@ -209,8 +251,46 @@ class AnakTest extends TestCase
         $response = $this->actingAs($this->user)->delete(route('data-anak.destroy', $anak->id));
 
         $response->assertRedirect(route('data-anak.index'));
+        $response->assertSessionHas('success');
         $this->assertDatabaseMissing('anaks', [
             'id' => $anak->id,
+        ]);
+
+        // Verifikasi tidak lagi ada di dalam koleksi daftar anak
+        $responseDaftar = $this->actingAs($this->user)->get(route('data-anak.index'));
+        $responseDaftar->assertViewHas('anaks', function ($anaks) use ($anak) {
+            return !$anaks->contains('id', $anak->id);
+        });
+    }
+
+    /**
+     * Acceptance Criteria:
+     * Penghapusan hanya berlaku untuk anak milik akun sendiri (User tidak dapat menghapus anak user lain).
+     */
+    public function test_pengguna_tidak_dapat_menghapus_data_anak_milik_orang_lain(): void
+    {
+        $otherUser = User::factory()->create([
+            'name' => 'Keluarga Tetangga',
+            'email' => 'tetangga@nutrigrow.id',
+        ]);
+
+        $anakOtherUser = Anak::create([
+            'user_id' => $otherUser->id,
+            'nama' => 'Anak Tetangga Aman',
+            'jenis_kelamin' => 'Laki-laki',
+            'tanggal_lahir' => '2023-08-20',
+        ]);
+
+        // User mencoba menghapus anak milik otherUser
+        $response = $this->actingAs($this->user)->delete(route('data-anak.destroy', $anakOtherUser->id));
+
+        // Harus ditolak dengan status 403 Forbidden
+        $response->assertStatus(403);
+
+        // Data anak tetap ada di basis data
+        $this->assertDatabaseHas('anaks', [
+            'id' => $anakOtherUser->id,
+            'nama' => 'Anak Tetangga Aman',
         ]);
     }
 }
