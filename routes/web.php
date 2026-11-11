@@ -49,7 +49,7 @@ Route::get('/dashboard-admin', function () {
 Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
 Route::get('/dashboard', [DashboardPenggunaController::class, 'index'])->name('dashboard');
 
-// Rute Data Kehamilan (PBI-004 & PBI-005: Pencatatan, Usia Kehamilan & Trimester)
+// Rute Data Kehamilan (PBI-004, PBI-005, PBI-006: Pencatatan, Usia Kehamilan, Trimester, Perbarui & Hapus)
 Route::prefix('data-kehamilan')->name('kehamilan.')->group(function () {
     Route::get('/', [KehamilanController::class, 'index'])->name('index');
     Route::get('/catat', [KehamilanController::class, 'create'])->name('create');
@@ -57,5 +57,7 @@ Route::prefix('data-kehamilan')->name('kehamilan.')->group(function () {
     Route::post('/kalkulator', [KehamilanController::class, 'kalkulator'])->name('kalkulator');
     Route::get('/kalkulator', [KehamilanController::class, 'kalkulator'])->name('kalkulator.get');
     Route::get('/{id}', [KehamilanController::class, 'show'])->name('show');
+    Route::get('/{id}/edit', [KehamilanController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [KehamilanController::class, 'update'])->name('update');
     Route::delete('/{id}', [KehamilanController::class, 'destroy'])->name('destroy');
 });

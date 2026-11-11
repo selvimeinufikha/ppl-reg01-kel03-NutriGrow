@@ -154,7 +154,7 @@ class KehamilanController extends Controller
             'tinggi_badan' => ['nullable', 'numeric', 'min:50', 'max:250'],
             'berat_badan_pra_hamil' => ['nullable', 'numeric', 'min:20', 'max:200'],
             'catatan' => ['nullable', 'string', 'max:1000'],
-            'tanggal_persalinan' => ['nullable', 'date', 'after_or_equal:hpht'],
+            'tanggal_persalinan' => ['nullable', 'date', 'after_or_equal:hpht', 'before_or_equal:today'],
             'status_persalinan' => ['nullable', 'string', 'max:100'],
             'nama_anak' => ['nullable', 'string', 'max:255'],
         ], [
@@ -167,6 +167,7 @@ class KehamilanController extends Controller
             'status.required' => 'Status kehamilan wajib dipilih.',
             'status.in' => 'Status kehamilan harus bernilai berlangsung, melahirkan, atau keguguran.',
             'tanggal_persalinan.after_or_equal' => 'Tanggal persalinan tidak boleh mendahului tanggal HPHT.',
+            'tanggal_persalinan.before_or_equal' => 'Tanggal persalinan tidak boleh melebihi tanggal hari ini.',
         ]);
 
         // Tangani pemilihan / pembuatan pasangan
@@ -252,6 +253,93 @@ class KehamilanController extends Controller
     }
 
     /**
+     * Tampilkan formulir edit data kehamilan.
+     */
+    public function edit($id)
+    {
+        $user = $this->getActiveUser();
+        $kehamilan = Kehamilan::with('pasangan')
+            ->where('user_id', $user->id)
+            ->findOrFail($id);
+
+        $pasangans = Pasangan::where('user_id', $user->id)->get();
+        Carbon::setLocale('id');
+        $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
+
+        return view('DataKehamilan.edit', [
+            'kehamilan' => $kehamilan,
+            'pasangans' => $pasangans,
+            'user' => $user,
+            'userName' => $user->name,
+            'userId' => 'NGW-' . str_pad($user->id, 5, '0', STR_PAD_LEFT) . '-JKT',
+            'tanggalHariIni' => $tanggalHariIni,
+            'faskesName' => 'Posyandu Mawar 1 & Puskesmas Sejahtera',
+            'keluargaName' => 'Keluarga Pratama',
+        ]);
+    }
+
+    /**
+     * Perbarui data kehamilan dan status kehamilan (PBI-006).
+     */
+    public function update(Request $request, $id)
+    {
+        $user = $this->getActiveUser();
+        $kehamilan = Kehamilan::where('user_id', $user->id)->findOrFail($id);
+
+        // Validasi sesuai Acceptance Criteria
+        $validated = $request->validate([
+            'status' => ['required', 'in:berlangsung,melahirkan,keguguran'],
+            'hpht' => ['required', 'date', 'before_or_equal:today'],
+            'kehamilan_ke' => ['required', 'integer', 'min:1', 'max:20'],
+            'pasangan_id' => ['nullable', 'exists:pasangans,id'],
+            'tinggi_badan' => ['nullable', 'numeric', 'min:50', 'max:250'],
+            'berat_badan_pra_hamil' => ['nullable', 'numeric', 'min:20', 'max:200'],
+            'catatan' => ['nullable', 'string', 'max:1000'],
+            'tanggal_persalinan' => ['nullable', 'date', 'after_or_equal:hpht', 'before_or_equal:today'],
+            'status_persalinan' => ['nullable', 'string', 'max:100'],
+            'nama_anak' => ['nullable', 'string', 'max:255'],
+        ], [
+            'status.required' => 'Status kehamilan wajib dipilih.',
+            'status.in' => 'Status kehamilan harus dipilih antara Berlangsung, Melahirkan, atau Keguguran.',
+            'hpht.required' => 'Tanggal HPHT wajib diisi.',
+            'hpht.date' => 'Format tanggal HPHT tidak valid.',
+            'hpht.before_or_equal' => 'Tanggal HPHT tidak boleh melebihi tanggal hari ini.',
+            'kehamilan_ke.required' => 'Kehamilan ke berapa wajib diisi.',
+            'kehamilan_ke.integer' => 'Kehamilan ke berapa harus berupa angka.',
+            'kehamilan_ke.min' => 'Kehamilan ke berapa minimal 1.',
+            'tanggal_persalinan.after_or_equal' => 'Tanggal persalinan tidak boleh mendahului tanggal HPHT.',
+            'tanggal_persalinan.before_or_equal' => 'Tanggal persalinan tidak boleh melebihi tanggal hari ini.',
+        ]);
+
+        // Kalkulasi ulang HPL berdasarkan HPHT yang diperbarui
+        $hpl = PregnancyCalculatorService::hitungHpl($validated['hpht']);
+
+        $kehamilan->update([
+            'status' => $validated['status'],
+            'hpht' => $validated['hpht'],
+            'hpl' => $hpl->format('Y-m-d'),
+            'kehamilan_ke' => $validated['kehamilan_ke'],
+            'pasangan_id' => $validated['pasangan_id'] ?? $kehamilan->pasangan_id,
+            'tinggi_badan' => $validated['tinggi_badan'] ?? null,
+            'berat_badan_pra_hamil' => $validated['berat_badan_pra_hamil'] ?? null,
+            'catatan' => $validated['catatan'] ?? null,
+            'tanggal_persalinan' => $validated['status'] === 'melahirkan' ? ($validated['tanggal_persalinan'] ?? $kehamilan->tanggal_persalinan) : null,
+            'status_persalinan' => $validated['status'] === 'melahirkan' ? ($validated['status_persalinan'] ?? $kehamilan->status_persalinan ?? 'Aterm (Cukup Bulan)') : null,
+            'nama_anak' => $validated['status'] === 'melahirkan' ? ($validated['nama_anak'] ?? $kehamilan->nama_anak) : null,
+        ]);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => "Data Kehamilan Ke-{$kehamilan->kehamilan_ke} berhasil diperbarui!",
+                'data' => $kehamilan,
+            ]);
+        }
+
+        return redirect()->route('kehamilan.index')->with('success', "Data Kehamilan Ke-{$kehamilan->kehamilan_ke} berhasil diperbarui!");
+    }
+
+    /**
      * Endpoint API kalkulator kehamilan (hitung HPL, usia kehamilan, dan trimester dari HPHT).
      */
     public function kalkulator(Request $request)
@@ -273,7 +361,7 @@ class KehamilanController extends Controller
     }
 
     /**
-     * Hapus data kehamilan.
+     * Hapus data kehamilan (memerlukan konfirmasi pengguna).
      */
     public function destroy($id)
     {

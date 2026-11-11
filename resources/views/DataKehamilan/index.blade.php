@@ -545,17 +545,13 @@
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                         <span>Detail</span>
                                     </a>
-                                    <button type="button" onclick="editKehamilan({{ $item->id }})" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold transition">
+                                    <a href="{{ route('kehamilan.edit', $item->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold transition">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                         <span>Edit</span>
+                                    </a>
+                                    <button type="button" onclick="bukaDialogKonfirmasiHapus({{ $item->id }}, {{ $item->kehamilan_ke }})" class="p-1.5 rounded-xl text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition" title="Hapus Data Kehamilan">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
-                                    <form action="{{ route('kehamilan.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data Kehamilan Ke-{{ $item->kehamilan_ke }}?')" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="p-1.5 rounded-xl text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition" title="Hapus Data">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                        </button>
-                                    </form>
                                 </div>
                             </div>
 
@@ -796,8 +792,51 @@
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- DIALOG KONFIRMASI PENGHAPUSAN (ACCEPTANCE CRITERIA 2) -->
+    <!-- ========================================== -->
+    <div id="modalKonfirmasiHapus" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in duration-200">
+            <!-- Icon Warning -->
+            <div class="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+
+            <!-- Content -->
+            <div class="text-center space-y-2 mb-6">
+                <h3 class="text-base font-extrabold text-slate-900">Konfirmasi Penghapusan Data</h3>
+                <p id="pesanKonfirmasiHapus" class="text-xs text-slate-600 leading-relaxed">
+                    Apakah Anda yakin ingin menghapus data kehamilan ini? Seluruh catatan terkait akan dihapus permanen.
+                </p>
+            </div>
+
+            <!-- Actions -->
+            <form id="formHapusKehamilan" action="" method="POST" class="flex items-center justify-center gap-3">
+                @csrf
+                @method('DELETE')
+                <button type="button" onclick="tutupDialogKonfirmasiHapus()" class="w-1/2 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition">
+                    Batal
+                </button>
+                <button type="submit" class="w-1/2 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md shadow-rose-600/20 transition">
+                    Ya, Hapus Data
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Script Javascript Pendukung & Validasi Interaktif -->
     <script>
+        function bukaDialogKonfirmasiHapus(id, nomor) {
+            document.getElementById('formHapusKehamilan').action = `/data-kehamilan/${id}`;
+            document.getElementById('pesanKonfirmasiHapus').innerHTML = `Apakah Anda yakin ingin menghapus data <strong>Kehamilan Ke-${nomor}</strong>? Seluruh catatan terkait akan dihapus permanen.`;
+            document.getElementById('modalKonfirmasiHapus').classList.remove('hidden');
+        }
+
+        function tutupDialogKonfirmasiHapus() {
+            document.getElementById('modalKonfirmasiHapus').classList.add('hidden');
+        }
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
