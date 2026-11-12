@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardPenggunaController;
 use App\Http\Controllers\AnakController;
+use App\Http\Controllers\InformasiNutrisiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,3 +55,9 @@ Route::get('/dashboard/data-anak', [AnakController::class, 'index'])->name('dash
 
 // Daftar Anak & Umur (sub-halaman tabel daftar anak)
 Route::get('/daftar-anak', [AnakController::class, 'daftarAnak'])->name('daftar-anak.index');
+
+// Rute Informasi Nutrisi & Rekomendasi Gizi (PBI-025)
+Route::resource('informasi-nutrisi', InformasiNutrisiController::class);
+Route::get('/rekomendasi-nutrisi', [InformasiNutrisiController::class, 'index'])->name('rekomendasi-nutrisi.index');
+Route::get('/admin/informasi-nutrisi/create', [InformasiNutrisiController::class, 'create'])->name('admin.informasi-nutrisi.create');
+Route::post('/admin/informasi-nutrisi', [InformasiNutrisiController::class, 'store'])->name('admin.informasi-nutrisi.store');
