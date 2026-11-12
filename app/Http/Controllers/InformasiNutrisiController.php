@@ -54,7 +54,11 @@ class InformasiNutrisiController extends Controller
         $activeKondisi = $request->kondisi ?? '';
         $searchTerm = $request->q ?? '';
 
-        return view('DashboardPengguna.informasi-nutrisi.index', [
+        $viewName = $request->is('admin*') 
+            ? 'DashboardAdmin.informasi-nutrisi' 
+            : 'DashboardPengguna.informasi-nutrisi.index';
+
+        return view($viewName, [
             'nutrisis' => $nutrisis,
             'daftarFase' => InformasiNutrisi::DAFTAR_FASE,
             'daftarKondisi' => InformasiNutrisi::DAFTAR_KONDISI,

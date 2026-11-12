@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\DashboardPenggunaController;
 use App\Http\Controllers\AnakController;
 use App\Http\Controllers\InformasiNutrisiController;
@@ -39,12 +41,40 @@ Route::get('/reset-password', function () {
 Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
-// Rute Dashboard Admin & Pengguna
+// Rute Dashboard Admin & Portal Tenaga Kesehatan
+Route::prefix('admin')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('admin.dashboard');
+    })->name('admin.root');
+
+    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
+    Route::get('/forgot-password', [AdminAuthController::class, 'showForgotPasswordForm'])->name('admin.password.request');
+    Route::post('/forgot-password', [AdminAuthController::class, 'sendResetLinkEmail'])->name('admin.password.email');
+    Route::get('/reset-password/{token}', [AdminAuthController::class, 'showResetPasswordForm'])->name('admin.password.reset');
+    Route::post('/reset-password', [AdminAuthController::class, 'resetPassword'])->name('admin.password.update');
+
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
+    // Data Informasi Nutrisi (Portal Admin / Nakes)
+    Route::get('/informasi-nutrisi', [InformasiNutrisiController::class, 'index'])->name('admin.informasi-nutrisi.index');
+    Route::get('/data-informasi-nutrisi', [InformasiNutrisiController::class, 'index'])->name('admin.informasi-nutrisi.alias');
+    Route::get('/informasi-nutrisi/create', [InformasiNutrisiController::class, 'create'])->name('admin.informasi-nutrisi.create');
+    Route::post('/informasi-nutrisi', [InformasiNutrisiController::class, 'store'])->name('admin.informasi-nutrisi.store');
+    Route::get('/informasi-nutrisi/{informasi_nutrisi}', [InformasiNutrisiController::class, 'show'])->name('admin.informasi-nutrisi.show');
+});
+
+// Alias rute admin umum
+Route::get('/admin', function () {
+    return redirect()->route('admin.dashboard');
+});
+Route::get('/login-admin', function () {
+    return redirect()->route('admin.login');
+});
 Route::get('/dashboard-admin', function () {
-    if (view()->exists('DashboardAdmiin.index')) {
-        return view('DashboardAdmiin.index');
-    }
-    return redirect()->route('home');
+    return redirect()->route('admin.dashboard');
 })->name('dashboard.admin');
 
 Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
