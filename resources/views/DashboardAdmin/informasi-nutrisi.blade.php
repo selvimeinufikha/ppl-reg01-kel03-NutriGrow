@@ -567,13 +567,13 @@
                                         <!-- Aksi -->
                                         <td class="px-5 py-4 text-center">
                                             <div class="inline-flex items-center gap-2 text-slate-400">
-                                                <a href="{{ route('informasi-nutrisi.show', $item->id) }}" class="p-1 hover:text-sky-600 transition" title="Lihat">
+                                                <a href="{{ route('admin.informasi-nutrisi.show', $item->id) }}" class="p-1 hover:text-sky-600 transition" title="Lihat">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                                 </a>
-                                                <button onclick="showNotice('Edit')" class="p-1 hover:text-amber-600 transition" title="Ubah">
+                                                <a href="{{ route('admin.informasi-nutrisi.edit', $item->id) }}" class="p-1 hover:text-amber-600 transition" title="Ubah">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                                </button>
-                                                <button onclick="showNotice('Hapus')" class="p-1 hover:text-rose-600 transition" title="Hapus">
+                                                </a>
+                                                <button type="button" onclick="confirmDeleteNutrisi({{ $item->id }}, '{{ addslashes($item->nama_bahan_menu) }}')" class="p-1 hover:text-rose-600 transition cursor-pointer" title="Hapus">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                                 </button>
                                             </div>
@@ -618,6 +618,35 @@
         </main>
     </div>
 
+    <!-- DIALOG KONFIRMASI PENGHAPUSAN (PBI-026) -->
+    <div id="delete-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+            <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-xl">
+                🗑️
+            </div>
+
+            <div class="text-center space-y-1">
+                <h3 class="text-base font-extrabold text-slate-900">Konfirmasi Penghapusan</h3>
+                <p class="text-xs text-slate-500">
+                    Apakah Anda yakin ingin menghapus data nutrisi <strong id="delete-item-name" class="text-slate-800"></strong> dari katalog rekomendasi? Tindakan ini tidak dapat dibatalkan.
+                </p>
+            </div>
+
+            <form id="delete-form" method="POST" action="">
+                @csrf
+                @method('DELETE')
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button type="button" onclick="closeDeleteModal()" class="w-full py-2.5 px-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md shadow-rose-600/20 transition cursor-pointer">
+                        Ya, Hapus
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- JS Helper -->
     <script>
         function toggleAdminSidebar() {
@@ -634,6 +663,16 @@
 
         function showNotice(title) {
             alert('Fitur ' + title + ' sedang aktif di Portal Admin Faskes.');
+        }
+
+        function confirmDeleteNutrisi(id, name) {
+            document.getElementById('delete-item-name').textContent = '"' + name + '"';
+            document.getElementById('delete-form').action = '/admin/informasi-nutrisi/' + id;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.add('hidden');
         }
     </script>
 </body>

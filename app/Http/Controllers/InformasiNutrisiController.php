@@ -140,4 +140,100 @@ class InformasiNutrisiController extends Controller
 
         return redirect()->route('informasi-nutrisi.index');
     }
+
+    /**
+     * Tampilkan halaman formulir edit informasi nutrisi (PBI-026).
+     */
+    public function edit($id)
+    {
+        $nutrisi = InformasiNutrisi::findOrFail($id);
+
+        $viewName = request()->is('admin*')
+            ? 'DashboardAdmin.informasi-nutrisi-edit'
+            : 'DashboardPengguna.informasi-nutrisi.edit';
+
+        // Fallback jika salah satu view belum dibuat
+        if (!view()->exists($viewName)) {
+            $viewName = 'DashboardPengguna.informasi-nutrisi.edit';
+        }
+
+        return view($viewName, [
+            'nutrisi' => $nutrisi,
+            'daftarFase' => InformasiNutrisi::DAFTAR_FASE,
+            'daftarKondisi' => InformasiNutrisi::DAFTAR_KONDISI,
+        ]);
+    }
+
+    /**
+     * Perbarui data informasi nutrisi di basis data (PBI-026).
+     * Acceptance Criteria:
+     * - Perubahan tersimpan dan dipakai pada rekomendasi pengguna berikutnya.
+     */
+    public function update(Request $request, $id)
+    {
+        $nutrisi = InformasiNutrisi::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama_bahan_menu' => ['required', 'string', 'max:255'],
+            'kandungan_gizi' => ['required', 'string'],
+            'kategori_fase' => ['required', 'string', 'in:' . implode(',', array_keys(InformasiNutrisi::DAFTAR_FASE))],
+            'kategori_kondisi' => ['required', 'string', 'in:' . implode(',', array_keys(InformasiNutrisi::DAFTAR_KONDISI))],
+            'saran_penggunaan' => ['required', 'string'],
+            'deskripsi_manfaat' => ['nullable', 'string'],
+            'foto' => ['nullable', 'string', 'max:500'],
+        ], [
+            'nama_bahan_menu.required' => 'Nama bahan atau menu makanan/gizi wajib diisi.',
+            'nama_bahan_menu.string' => 'Nama bahan atau menu harus berupa teks valid.',
+            'nama_bahan_menu.max' => 'Nama bahan atau menu tidak boleh melebihi 255 karakter.',
+            'kandungan_gizi.required' => 'Kandungan gizi (misal: protein, vitamin, kalsium, zat besi) wajib diisi.',
+            'kategori_fase.required' => 'Kategori fase kehidupan wajib dipilih.',
+            'kategori_fase.in' => 'Kategori fase yang dipilih tidak valid.',
+            'kategori_kondisi.required' => 'Kategori kondisi atau tujuan nutrisi wajib dipilih.',
+            'kategori_kondisi.in' => 'Kategori kondisi yang dipilih tidak valid.',
+            'saran_penggunaan.required' => 'Saran penggunaan atau anjuran konsumsi wajib diisi.',
+        ]);
+
+        $nutrisi->update($validated);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Informasi nutrisi '{$nutrisi->nama_bahan_menu}' berhasil diperbarui!",
+                'data' => $nutrisi,
+            ]);
+        }
+
+        $redirectRoute = $request->is('admin*')
+            ? route('admin.informasi-nutrisi.index')
+            : route('informasi-nutrisi.index');
+
+        return redirect($redirectRoute)
+            ->with('success', "Informasi nutrisi '{$nutrisi->nama_bahan_menu}' berhasil diperbarui dan diterapkan pada rekomendasi!");
+    }
+
+    /**
+     * Hapus informasi nutrisi dari basis data (PBI-026).
+     * Acceptance Criteria:
+     * - Penghapusan meminta konfirmasi (melalui dialog konfirmasi frontend).
+     */
+    public function destroy(Request $request, $id)
+    {
+        $nutrisi = InformasiNutrisi::findOrFail($id);
+        $nama = $nutrisi->nama_bahan_menu;
+        $nutrisi->delete();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Informasi nutrisi '{$nama}' berhasil dihapus dari sistem.",
+            ]);
+        }
+
+        $redirectRoute = $request->is('admin*')
+            ? route('admin.informasi-nutrisi.index')
+            : route('informasi-nutrisi.index');
+
+        return redirect($redirectRoute)
+            ->with('success', "Informasi nutrisi '{$nama}' berhasil dihapus!");
+    }
 }

@@ -58,12 +58,16 @@ Route::prefix('admin')->group(function () {
 
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    // Data Informasi Nutrisi (Portal Admin / Nakes)
+    // Data Informasi Nutrisi (Portal Admin / Nakes - PBI-025 & PBI-026)
     Route::get('/informasi-nutrisi', [InformasiNutrisiController::class, 'index'])->name('admin.informasi-nutrisi.index');
     Route::get('/data-informasi-nutrisi', [InformasiNutrisiController::class, 'index'])->name('admin.informasi-nutrisi.alias');
     Route::get('/informasi-nutrisi/create', [InformasiNutrisiController::class, 'create'])->name('admin.informasi-nutrisi.create');
     Route::post('/informasi-nutrisi', [InformasiNutrisiController::class, 'store'])->name('admin.informasi-nutrisi.store');
     Route::get('/informasi-nutrisi/{informasi_nutrisi}', [InformasiNutrisiController::class, 'show'])->name('admin.informasi-nutrisi.show');
+    Route::get('/informasi-nutrisi/{informasi_nutrisi}/edit', [InformasiNutrisiController::class, 'edit'])->name('admin.informasi-nutrisi.edit');
+    Route::put('/informasi-nutrisi/{informasi_nutrisi}', [InformasiNutrisiController::class, 'update'])->name('admin.informasi-nutrisi.update');
+    Route::patch('/informasi-nutrisi/{informasi_nutrisi}', [InformasiNutrisiController::class, 'update']);
+    Route::delete('/informasi-nutrisi/{informasi_nutrisi}', [InformasiNutrisiController::class, 'destroy'])->name('admin.informasi-nutrisi.destroy');
 });
 
 // Alias rute admin umum

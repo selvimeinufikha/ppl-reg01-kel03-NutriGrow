@@ -122,4 +122,131 @@ class InformasiNutrisiTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Alpukat & Susu Segar');
     }
+
+    /**
+     * PBI-026 Test 1: Halaman formulir edit informasi nutrisi dapat diakses.
+     */
+    public function test_halaman_edit_informasi_nutrisi_dapat_diakses(): void
+    {
+        $nutrisi = InformasiNutrisi::create([
+            'nama_bahan_menu' => 'Sup Sayur Bayam Jagung',
+            'kandungan_gizi' => 'Zat Besi, Vitamin A, Serat',
+            'kategori_fase' => 'Masa Kehamilan',
+            'kategori_kondisi' => 'Makanan Bergizi',
+            'saran_penggunaan' => 'Sajikan hangat bersama nasi merah.',
+        ]);
+
+        $response = $this->actingAs($this->user)->get(route('informasi-nutrisi.edit', $nutrisi->id));
+        $response->assertStatus(200);
+        $response->assertSee('Edit Informasi Nutrisi');
+        $response->assertSee('Sup Sayur Bayam Jagung');
+    }
+
+    /**
+     * PBI-026 Test 2: Acceptance Criteria:
+     * Perubahan tersimpan dan dipakai pada rekomendasi pengguna berikutnya.
+     */
+    public function test_perubahan_informasi_nutrisi_tersimpan_dan_tampil_pada_rekomendasi_berikutnya(): void
+    {
+        $nutrisi = InformasiNutrisi::create([
+            'nama_bahan_menu' => 'Bubur Beras Merah Telur',
+            'kandungan_gizi' => 'Karbohidrat Kompleks, Protein 8g',
+            'kategori_fase' => 'Tumbuh Kembang Anak',
+            'kategori_kondisi' => 'Pencegahan Stunting',
+            'saran_penggunaan' => 'Berikan 2x sehari untuk MPASI bayi 6-9 bulan.',
+        ]);
+
+        $updatePayload = [
+            'nama_bahan_menu' => 'Bubur Beras Merah Telur & Salmon',
+            'kandungan_gizi' => 'DHA 300mg, Protein 14g, Omega-3',
+            'kategori_fase' => 'Tumbuh Kembang Anak',
+            'kategori_kondisi' => 'Pencegahan Stunting',
+            'saran_penggunaan' => 'Berikan 2-3x sehari dengan tekstur lumat halus.',
+            'deskripsi_manfaat' => 'Pencegah stunting dan pendukung tumbuh kembang sel otak.',
+        ];
+
+        $response = $this->actingAs($this->user)
+            ->put(route('informasi-nutrisi.update', $nutrisi->id), $updatePayload);
+
+        $response->assertRedirect(route('informasi-nutrisi.index'));
+        $response->assertSessionHas('success');
+
+        // Pastikan perubahan tersimpan di database
+        $this->assertDatabaseHas('informasi_nutrisis', [
+            'id' => $nutrisi->id,
+            'nama_bahan_menu' => 'Bubur Beras Merah Telur & Salmon',
+            'kandungan_gizi' => 'DHA 300mg, Protein 14g, Omega-3',
+        ]);
+
+        // Pastikan dipakai pada rekomendasi berikutnya saat pengguna membuka katalog
+        $katalogResponse = $this->actingAs($this->user)->get(route('informasi-nutrisi.index'));
+        $katalogResponse->assertStatus(200);
+        $katalogResponse->assertSee('Bubur Beras Merah Telur & Salmon');
+        $katalogResponse->assertSee('DHA 300mg, Protein 14g, Omega-3');
+    }
+
+    /**
+     * PBI-026 Test 3: Acceptance Criteria:
+     * Isian wajib yang kosong saat update ditolak.
+     */
+    public function test_update_informasi_nutrisi_isian_wajib_kosong_ditolak(): void
+    {
+        $nutrisi = InformasiNutrisi::create([
+            'nama_bahan_menu' => 'Jus Wortel Jeruk',
+            'kandungan_gizi' => 'Vitamin C, Vitamin A',
+            'kategori_fase' => 'Ibu Menyusui',
+            'kategori_kondisi' => 'Zat Gizi',
+            'saran_penggunaan' => 'Minum di siang hari.',
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->from(route('informasi-nutrisi.edit', $nutrisi->id))
+            ->put(route('informasi-nutrisi.update', $nutrisi->id), [
+                'nama_bahan_menu' => '',
+                'kandungan_gizi' => '',
+                'kategori_fase' => '',
+                'kategori_kondisi' => '',
+                'saran_penggunaan' => '',
+            ]);
+
+        $response->assertRedirect(route('informasi-nutrisi.edit', $nutrisi->id));
+        $response->assertSessionHasErrors([
+            'nama_bahan_menu',
+            'kandungan_gizi',
+            'kategori_fase',
+            'kategori_kondisi',
+            'saran_penggunaan',
+        ]);
+    }
+
+    /**
+     * PBI-026 Test 4: Acceptance Criteria:
+     * Informasi nutrisi dapat dihapus dan tidak tampil lagi pada rekomendasi.
+     */
+    public function test_informasi_nutrisi_dapat_dihapus(): void
+    {
+        $nutrisi = InformasiNutrisi::create([
+            'nama_bahan_menu' => 'Camilan Kacang Almond & Kismis',
+            'kandungan_gizi' => 'Vitamin E, Magnesium, Serat',
+            'kategori_fase' => 'Persiapan Kehamilan',
+            'kategori_kondisi' => 'Makanan Bergizi',
+            'saran_penggunaan' => 'Konsumsi 1 genggam per hari sebagai camilan sehat.',
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->delete(route('informasi-nutrisi.destroy', $nutrisi->id));
+
+        $response->assertRedirect(route('informasi-nutrisi.index'));
+        $response->assertSessionHas('success');
+
+        // Pastikan terhapus dari basis data
+        $this->assertDatabaseMissing('informasi_nutrisis', [
+            'id' => $nutrisi->id,
+            'nama_bahan_menu' => 'Camilan Kacang Almond & Kismis',
+        ]);
+
+        // Pastikan tidak lagi muncul pada rekomendasi berikutnya (halaman baru tanpa session flash)
+        $katalogResponse = $this->actingAs($this->user)->get(route('informasi-nutrisi.index'));
+        $this->assertNull(InformasiNutrisi::find($nutrisi->id));
+    }
 }
