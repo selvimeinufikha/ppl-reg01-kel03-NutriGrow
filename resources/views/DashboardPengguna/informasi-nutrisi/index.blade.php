@@ -447,18 +447,37 @@
                 @if($nutrisis->isEmpty())
                     <div class="bg-white rounded-3xl border border-dashed border-slate-200 p-12 text-center space-y-4">
                         <div class="w-16 h-16 mx-auto rounded-full bg-rose-50 text-rose-500 flex items-center justify-center text-2xl">
-                            🥗
+                            🔍
                         </div>
                         <div class="max-w-md mx-auto">
-                            <h3 class="text-sm font-bold text-slate-800">Belum Ada Informasi Nutrisi</h3>
-                            <p class="text-xs text-slate-500 mt-1">
-                                Belum ada data nutrisi yang sesuai dengan pencarian atau filter saat ini.
-                            </p>
+                            @if($searchTerm || $activeFase || $activeKondisi)
+                                <h3 class="text-sm font-bold text-slate-800">Data Tidak Ditemukan</h3>
+                                <p class="text-xs text-slate-500 mt-1">
+                                    Tidak ada informasi nutrisi yang sesuai dengan
+                                    @if($searchTerm)
+                                        pencarian <strong class="text-slate-700">"{{ $searchTerm }}"</strong>
+                                    @endif
+                                    @if($activeFase)
+                                        fase <strong class="text-slate-700">{{ $activeFase }}</strong>
+                                    @endif
+                                    @if($activeKondisi)
+                                        kondisi <strong class="text-slate-700">{{ $activeKondisi }}</strong>
+                                    @endif
+                                </p>
+                                <a href="{{ route('informasi-nutrisi.index') }}" class="inline-flex items-center gap-1.5 mt-3 px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-brand-800 font-bold text-xs transition">
+                                    ↺ Reset Filter &amp; Pencarian
+                                </a>
+                            @else
+                                <h3 class="text-sm font-bold text-slate-800">Belum Ada Informasi Nutrisi</h3>
+                                <p class="text-xs text-slate-500 mt-1">
+                                    Belum ada data nutrisi yang sesuai dengan pencarian atau filter saat ini.
+                                </p>
+                                <a href="{{ route('admin.informasi-nutrisi.create') }}" class="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-xl bg-brand-800 text-white font-bold text-xs shadow-sm hover:bg-brand-900 transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                                    <span>Tambah Informasi Nutrisi Pertama</span>
+                                </a>
+                            @endif
                         </div>
-                        <a href="{{ route('admin.informasi-nutrisi.create') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-800 text-white font-bold text-xs shadow-sm hover:bg-brand-900 transition">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                            <span>Tambah Informasi Nutrisi Pertama</span>
-                        </a>
                     </div>
                 @else
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

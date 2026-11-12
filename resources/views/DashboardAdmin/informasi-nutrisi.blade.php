@@ -581,8 +581,34 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-5 py-8 text-center text-slate-400">
-                                            Belum ada data nutrisi yang ditemukan. Silakan tambah data informasi nutrisi baru.
+                                        <td colspan="6" class="px-5 py-12 text-center">
+                                            <div class="flex flex-col items-center gap-3">
+                                                <div class="w-14 h-14 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">
+                                                    🔍
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-slate-700">Data tidak ditemukan</p>
+                                                    @if(($searchTerm ?? '') || ($activeFase ?? '') || ($activeKondisi ?? ''))
+                                                        <p class="text-xs text-slate-400 mt-1">
+                                                            Tidak ada hasil untuk
+                                                            @if($searchTerm ?? '')
+                                                                pencarian <strong class="text-slate-600">"{{ $searchTerm }}"</strong>
+                                                            @endif
+                                                            @if($activeFase ?? '')
+                                                                fase <strong class="text-slate-600">{{ $activeFase }}</strong>
+                                                            @endif
+                                                            @if($activeKondisi ?? '')
+                                                                kondisi <strong class="text-slate-600">{{ $activeKondisi }}</strong>
+                                                            @endif
+                                                        </p>
+                                                        <a href="{{ route('admin.informasi-nutrisi.index') }}" class="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-sky-600 hover:underline">
+                                                            ↺ Reset filter
+                                                        </a>
+                                                    @else
+                                                        <p class="text-xs text-slate-400 mt-1">Belum ada data nutrisi. Silakan tambah data baru.</p>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforelse
