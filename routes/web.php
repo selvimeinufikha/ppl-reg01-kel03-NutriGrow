@@ -95,6 +95,14 @@ Route::prefix('admin')->group(function () {
     Route::get('/data-layanan-kesehatan', [AdminFasilitasKesehatanController::class, 'index'])->name('admin.fasilitas.alias');
     Route::post('/layanan-kesehatan', [AdminFasilitasKesehatanController::class, 'store'])->name('admin.fasilitas.store');
 
+    // Data Layanan Kesehatan: Ubah & Hapus Fasilitas (PBI-023)
+    // URL: PUT    /admin/layanan-kesehatan/{id}  → perbarui fasilitas kesehatan
+    // URL: POST   /admin/layanan-kesehatan/{id}  → perbarui fasilitas (alias kompatibilitas browser)
+    // URL: DELETE /admin/layanan-kesehatan/{id}  → hapus fasilitas kesehatan
+    Route::put('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'update'])->name('admin.fasilitas.update');
+    Route::post('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'update'])->name('admin.fasilitas.update.post');
+    Route::delete('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'destroy'])->name('admin.fasilitas.destroy');
+
     // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {
         return redirect()->route('admin.login');

@@ -175,4 +175,64 @@ class AdminFasilitasKesehatanController extends Controller
 
         return redirect()->route('admin.fasilitas.index')->with('success', "Fasilitas kesehatan '{$faskes->nama_fasilitas}' berhasil ditambahkan ke direktori rujukan NutriGrow.");
     }
+
+    /**
+     * Perbarui Data Fasilitas Kesehatan (PBI-023).
+     * URL: PUT /admin/layanan-kesehatan/{id}
+     */
+    public function update(Request $request, $id)
+    {
+        $faskes = FasilitasKesehatan::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama_fasilitas' => 'required|string|max:255',
+            'jenis' => 'required|string|in:puskesmas,posyandu,klinik,rumah_sakit',
+            'alamat' => 'required|string|min:10|max:1000',
+            'jam_layanan' => 'required|string|max:150',
+            'kontak' => ['required', 'string', 'max:50', 'regex:/^[0-9+\-\s()\/Ext\.]+$/i'],
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'kode_faskes' => 'nullable|string|max:50',
+            'akreditasi' => 'nullable|string|max:100',
+            'wilayah' => 'nullable|string|max:150',
+            'layanan_tambahan' => 'nullable|string|max:255',
+            'pic' => 'nullable|string|max:100',
+            'status' => 'nullable|string|in:aktif,tidak_aktif',
+        ], [
+            'nama_fasilitas.required' => 'Nama fasilitas kesehatan wajib diisi.',
+            'jenis.required' => 'Jenis fasilitas wajib dipilih.',
+            'jenis.in' => 'Jenis fasilitas tidak valid.',
+            'alamat.required' => 'Alamat fasilitas kesehatan wajib diisi.',
+            'alamat.min' => 'Alamat tidak valid. Mohon masukkan nama jalan, nomor, RT/RW atau kelurahan minimal 10 karakter.',
+            'jam_layanan.required' => 'Jam operasional layanan fasilitas wajib diisi.',
+            'kontak.required' => 'Nomor kontak atau telepon fasilitas wajib diisi.',
+            'kontak.regex' => 'Format nomor telepon/kontak tidak valid.',
+            'latitude.required' => 'Titik koordinat latitude (garis lintang) wajib diisi.',
+            'latitude.numeric' => 'Koordinat latitude tidak valid, harus berupa angka desimal.',
+            'latitude.between' => 'Koordinat latitude tidak valid, harus berada di rentang -90 hingga 90 derajat.',
+            'longitude.required' => 'Titik koordinat longitude (garis bujur) wajib diisi.',
+            'longitude.numeric' => 'Koordinat longitude tidak valid, harus berupa angka desimal.',
+            'longitude.between' => 'Koordinat longitude tidak valid, harus berada di rentang -180 hingga 180 derajat.',
+        ]);
+
+        $validated['status'] = $validated['status'] ?? 'aktif';
+
+        $faskes->update($validated);
+
+        return redirect()->route('admin.fasilitas.index')->with('success', "Data fasilitas kesehatan '{$faskes->nama_fasilitas}' berhasil diperbarui dan rekomendasi layanan terupdate.");
+    }
+
+    /**
+     * Hapus Data Fasilitas Kesehatan (PBI-023).
+     * URL: DELETE /admin/layanan-kesehatan/{id}
+     */
+    public function destroy($id)
+    {
+        $faskes = FasilitasKesehatan::findOrFail($id);
+        $nama = $faskes->nama_fasilitas;
+
+        $faskes->delete();
+
+        return redirect()->route('admin.fasilitas.index')->with('success', "Fasilitas kesehatan '{$nama}' berhasil dihapus dari direktori layanan faskes.");
+    }
 }

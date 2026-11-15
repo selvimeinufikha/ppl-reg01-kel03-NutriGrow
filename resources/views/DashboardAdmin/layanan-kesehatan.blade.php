@@ -668,19 +668,46 @@
                                         @endif
                                     </td>
 
-                                    <!-- Kolom 8: Aksi (PBI-022: Detail Pratinjau) -->
+                                    <!-- Kolom 8: Aksi (PBI-023: Detail, Ubah & Hapus) -->
                                     <td class="py-4 px-4 whitespace-nowrap text-center" onclick="event.stopPropagation()">
-                                        <button
-                                            type="button"
-                                            onclick="openFacilityDetail({{ json_encode($item) }})"
-                                            class="p-1.5 rounded-lg text-slate-500 hover:text-[#0284c7] hover:bg-sky-50 transition cursor-pointer"
-                                            title="Lihat Detail Fasilitas"
-                                        >
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                            </svg>
-                                        </button>
+                                        <div class="flex items-center justify-center gap-1">
+                                            <!-- Detail Button -->
+                                            <button
+                                                type="button"
+                                                onclick="openFacilityDetail({{ json_encode($item) }})"
+                                                class="p-1.5 rounded-lg text-slate-500 hover:text-[#0284c7] hover:bg-sky-50 transition cursor-pointer"
+                                                title="Lihat Detail Fasilitas"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                </svg>
+                                            </button>
+
+                                            <!-- Edit Button (PBI-023) -->
+                                            <button
+                                                type="button"
+                                                onclick="openEditFacilityModal({{ json_encode($item) }})"
+                                                class="p-1.5 rounded-lg text-slate-500 hover:text-[#0284c7] hover:bg-sky-50 transition cursor-pointer"
+                                                title="Ubah / Perbarui Fasilitas"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </button>
+
+                                            <!-- Delete Button (PBI-023) -->
+                                            <button
+                                                type="button"
+                                                onclick="openDeleteFacilityModal({{ $item->id }}, '{{ addslashes($item->nama_fasilitas) }}')"
+                                                class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                                                title="Hapus Fasilitas"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 @empty
@@ -914,7 +941,234 @@
     </div>
 
     <!-- =================================================================== -->
-    <!-- MODAL DETAIL FASILITAS                                              -->
+    <!-- MODAL 2: EDIT / UBAH FASILITAS KESEHATAN (PBI-023)                  -->
+    <!-- =================================================================== -->
+    <div id="editFacilityModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-sky-50 text-[#0284c7] flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Perbarui Data Fasilitas Kesehatan</h3>
+                        <p class="text-xs text-slate-500">Ubah detail layanan, jadwal operasional, dan titik GPS fasilitas</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeEditFacilityModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form id="editFacilityForm" action="" method="POST" class="mt-5 space-y-4">
+                @csrf
+                @method('PUT')
+                
+                <!-- Nama Fasilitas -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Fasilitas Kesehatan <span class="text-rose-500">*</span></label>
+                    <input
+                        type="text"
+                        name="nama_fasilitas"
+                        id="editFacilityName"
+                        required
+                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                    >
+                </div>
+
+                <!-- Jenis & Kode Faskes -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Jenis Fasilitas <span class="text-rose-500">*</span></label>
+                        <select
+                            name="jenis"
+                            id="editFacilityJenis"
+                            required
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                        >
+                            <option value="puskesmas">🏛️ Puskesmas (Pusat Kesehatan Masyarakat)</option>
+                            <option value="posyandu">👶 Posyandu (Pos Pelayanan Terpadu)</option>
+                            <option value="klinik">🩺 Klinik Pratama / Swasta</option>
+                            <option value="rumah_sakit">🏥 Rumah Sakit Rujukan Stunting</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Kode Faskes</label>
+                        <input
+                            type="text"
+                            name="kode_faskes"
+                            id="editFacilityCode"
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-mono"
+                        >
+                    </div>
+                </div>
+
+                <!-- Alamat Fasilitas -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Alamat Lengkap &amp; Lokasi <span class="text-rose-500">*</span></label>
+                    <textarea
+                        name="alamat"
+                        id="editFacilityAddress"
+                        rows="2.5"
+                        required
+                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                    ></textarea>
+                </div>
+
+                <!-- Jam Layanan & Layanan Tambahan -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Jam Layanan Operasional <span class="text-rose-500">*</span></label>
+                        <input
+                            type="text"
+                            name="jam_layanan"
+                            id="editFacilityHours"
+                            required
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Layanan Tambahan / Khusus</label>
+                        <input
+                            type="text"
+                            name="layanan_tambahan"
+                            id="editFacilityExtra"
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                        >
+                    </div>
+                </div>
+
+                <!-- Kontak & PIC -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor Kontak / Telepon <span class="text-rose-500">*</span></label>
+                        <input
+                            type="text"
+                            name="kontak"
+                            id="editFacilityContact"
+                            required
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">PIC / Petugas Faskes</label>
+                        <input
+                            type="text"
+                            name="pic"
+                            id="editFacilityPic"
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                        >
+                    </div>
+                </div>
+
+                <!-- Titik Koordinat GPS -->
+                <div class="p-3.5 rounded-2xl bg-sky-50/60 border border-sky-100 space-y-3">
+                    <label class="block text-xs font-bold text-slate-800">
+                        Titik Koordinat GPS (Geolokasi) <span class="text-rose-500">*</span>
+                    </label>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <span class="block text-[11px] font-semibold text-slate-600 mb-1">Garis Lintang (Latitude: -90 s/d 90)</span>
+                            <input
+                                type="number"
+                                step="any"
+                                name="latitude"
+                                id="editFacilityLat"
+                                required
+                                class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                            >
+                        </div>
+                        <div>
+                            <span class="block text-[11px] font-semibold text-slate-600 mb-1">Garis Bujur (Longitude: -180 s/d 180)</span>
+                            <input
+                                type="number"
+                                step="any"
+                                name="longitude"
+                                id="editFacilityLng"
+                                required
+                                class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Fasilitas -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Status Layanan Faskes <span class="text-rose-500">*</span></label>
+                    <select
+                        name="status"
+                        id="editFacilityStatus"
+                        required
+                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                    >
+                        <option value="aktif">● Aktif (Tampil pada rujukan terdekat pengguna)</option>
+                        <option value="tidak_aktif">● Tidak Aktif (Sementara dinonaktifkan)</option>
+                    </select>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+                    <button
+                        type="button"
+                        onclick="closeEditFacilityModal()"
+                        class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="submit"
+                        class="px-5 py-2.5 rounded-xl bg-[#0284c7] hover:bg-sky-700 text-white text-xs font-bold shadow-xs transition cursor-pointer"
+                    >
+                        Simpan Perubahan Fasilitas
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 3: KONFIRMASI HAPUS FASILITAS KESEHATAN (PBI-023)             -->
+    <!-- =================================================================== -->
+    <div id="deleteFacilityModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center border border-slate-100">
+            <div class="w-12 h-12 rounded-2xl bg-rose-50 text-[#e11d48] mx-auto flex items-center justify-center mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </div>
+            <h3 class="text-base font-bold text-slate-900">Hapus Fasilitas Kesehatan?</h3>
+            <p id="deleteFacilityNameDisplay" class="text-xs font-semibold text-slate-800 mt-1 italic leading-snug"></p>
+            <p class="text-[11px] text-slate-500 mt-2">Data fasilitas ini akan dihapus dari direktori dan tidak lagi direkomendasikan pada aplikasi pengguna.</p>
+
+            <form id="deleteFacilityForm" method="POST" action="" class="mt-6 flex items-center justify-center gap-3">
+                @csrf
+                @method('DELETE')
+                <button
+                    type="button"
+                    onclick="closeDeleteFacilityModal()"
+                    class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                >
+                    Batal
+                </button>
+                <button
+                    type="submit"
+                    class="px-5 py-2.5 rounded-xl bg-[#e11d48] hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition cursor-pointer"
+                >
+                    Ya, Hapus Fasilitas
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 4: DETAIL FASILITAS                                           -->
     <!-- =================================================================== -->
     <div id="facilityDetailModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
@@ -964,7 +1218,31 @@
                     </span>
                 </div>
 
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-end">
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2.5">
+                    <div class="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onclick="openEditFromDetail()"
+                            class="px-4 py-2 rounded-xl bg-sky-50 text-[#0284c7] hover:bg-sky-100 border border-sky-200 text-xs font-bold transition cursor-pointer flex items-center gap-1.5"
+                        >
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            <span>Ubah Fasilitas</span>
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="openDeleteFromDetail()"
+                            class="px-4 py-2 rounded-xl bg-rose-50 text-[#e11d48] hover:bg-rose-100 border border-rose-200 text-xs font-bold transition cursor-pointer flex items-center gap-1.5"
+                        >
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                            <span>Hapus</span>
+                        </button>
+                    </div>
+
                     <button
                         type="button"
                         onclick="closeFacilityDetail()"
@@ -1033,6 +1311,7 @@
     <!-- =================================================================== -->
     <script>
         let currentJenisFilter = 'semua';
+        let activeFacility = null;
 
         // Toggle Sidebar Mobile
         function toggleAdminSidebar() {
@@ -1085,6 +1364,7 @@
 
         // Modal Detail Fasilitas
         function openFacilityDetail(item) {
+            activeFacility = item;
             document.getElementById('detailFacilityName').textContent = item.nama_fasilitas;
             document.getElementById('detailFacilityCode').textContent = 'KODE: ' + (item.kode_faskes || '-');
             document.getElementById('detailFacilityAddress').textContent = item.alamat + (item.wilayah ? ', ' + item.wilayah : '');
@@ -1104,6 +1384,58 @@
 
         function closeFacilityDetail() {
             document.getElementById('facilityDetailModal').classList.add('hidden');
+        }
+
+        // Modal Edit Fasilitas (PBI-023)
+        function openEditFacilityModal(item) {
+            activeFacility = item;
+            document.getElementById('editFacilityName').value = item.nama_fasilitas || '';
+            document.getElementById('editFacilityJenis').value = item.jenis || 'puskesmas';
+            document.getElementById('editFacilityCode').value = item.kode_faskes || '';
+            document.getElementById('editFacilityAddress').value = item.alamat || '';
+            document.getElementById('editFacilityHours').value = item.jam_layanan || '';
+            document.getElementById('editFacilityExtra').value = item.layanan_tambahan || '';
+            document.getElementById('editFacilityContact').value = item.kontak || '';
+            document.getElementById('editFacilityPic').value = item.pic || '';
+            document.getElementById('editFacilityLat').value = item.latitude || '';
+            document.getElementById('editFacilityLng').value = item.longitude || '';
+            document.getElementById('editFacilityStatus').value = item.status || 'aktif';
+
+            const form = document.getElementById('editFacilityForm');
+            form.action = `/admin/layanan-kesehatan/${item.id}`;
+
+            document.getElementById('editFacilityModal').classList.remove('hidden');
+        }
+
+        function closeEditFacilityModal() {
+            document.getElementById('editFacilityModal').classList.add('hidden');
+        }
+
+        // Modal Konfirmasi Hapus Fasilitas (PBI-023)
+        function openDeleteFacilityModal(id, name) {
+            document.getElementById('deleteFacilityNameDisplay').textContent = '"' + name + '"';
+            const form = document.getElementById('deleteFacilityForm');
+            form.action = `/admin/layanan-kesehatan/${id}`;
+            document.getElementById('deleteFacilityModal').classList.remove('hidden');
+        }
+
+        function closeDeleteFacilityModal() {
+            document.getElementById('deleteFacilityModal').classList.add('hidden');
+        }
+
+        // Aksi Ubah & Hapus dari Modal Detail
+        function openEditFromDetail() {
+            if (activeFacility) {
+                closeFacilityDetail();
+                openEditFacilityModal(activeFacility);
+            }
+        }
+
+        function openDeleteFromDetail() {
+            if (activeFacility) {
+                closeFacilityDetail();
+                openDeleteFacilityModal(activeFacility.id, activeFacility.nama_fasilitas);
+            }
         }
 
         // Filter Jenis Pills
