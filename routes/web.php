@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminEdukasiGiziController;
+use App\Http\Controllers\AdminFasilitasKesehatanController;
 use App\Http\Controllers\DashboardPenggunaController;
 
 /*
@@ -86,6 +87,13 @@ Route::prefix('admin')->group(function () {
     // Data Edukasi Gizi: Atur Status Publikasi (PBI-021)
     // URL: POST /admin/edukasi-gizi/{id}/toggle-status → toggle terbit/draft langsung dari tabel
     Route::post('/edukasi-gizi/{id}/toggle-status', [AdminEdukasiGiziController::class, 'toggleStatus'])->name('admin.edukasi.toggle-status');
+
+    // Data Layanan Kesehatan: Tambah Fasilitas (PBI-022)
+    // URL: GET  /admin/layanan-kesehatan  → tampilkan direktori fasilitas kesehatan
+    // URL: POST /admin/layanan-kesehatan  → simpan fasilitas kesehatan baru
+    Route::get('/layanan-kesehatan', [AdminFasilitasKesehatanController::class, 'index'])->name('admin.fasilitas.index');
+    Route::get('/data-layanan-kesehatan', [AdminFasilitasKesehatanController::class, 'index'])->name('admin.fasilitas.alias');
+    Route::post('/layanan-kesehatan', [AdminFasilitasKesehatanController::class, 'store'])->name('admin.fasilitas.store');
 
     // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {
