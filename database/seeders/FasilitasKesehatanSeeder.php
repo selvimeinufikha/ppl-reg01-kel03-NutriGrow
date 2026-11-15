@@ -441,3 +441,4 @@ class FasilitasKesehatanSeeder extends Seeder
         }
     }
 }
+

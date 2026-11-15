@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 @php
     $adminName = $adminName ?? (Auth::check() ? Auth::user()->name : 'dr. Siti Nurhaliza, Sp.A');
     $adminEmail = $adminEmail ?? (Auth::check() ? Auth::user()->email : 'admin@nutrigrow.id');
@@ -343,7 +343,7 @@
                             <span>Pratinjau Portal Edukasi Pengguna</span>
                         </a>
 
-                        <!-- 2. + Tambah Artikel (Pill Biru Solid dengan Ikon Lingkaran Plus) -->
+                        <!-- 2. Tambah Artikel (Pill Biru Solid dengan Ikon Lingkaran Plus) -->
                         <button
                             type="button"
                             onclick="openAddArticleModal()"
@@ -353,7 +353,7 @@
                                 <circle cx="12" cy="12" r="9.5"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8m-4-4h8"/>
                             </svg>
-                            <span>+ Tambah Artikel</span>
+                            <span>Tambah Artikel</span>
                         </button>
                     </div>
                 </div>

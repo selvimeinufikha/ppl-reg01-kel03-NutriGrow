@@ -38,3 +38,4 @@ return new class extends Migration
         Schema::dropIfExists('fasilitas_kesehatans');
     }
 };
+

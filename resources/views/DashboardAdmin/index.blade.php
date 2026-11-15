@@ -318,43 +318,14 @@
             <!-- Dashboard Body -->
             <div class="p-4 sm:p-6 lg:p-8 space-y-6">
 
-                <!-- Title & Action Buttons -->
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                            Dashboard Pemantauan Klinis &amp; Gizi
-                        </h1>
-                        <p class="text-xs sm:text-[13px] text-slate-500 mt-1 leading-relaxed">
-                            Ringkasan data kesehatan ibu hamil, tumbuh kembang balita, dan deteksi dini stunting wilayah {{ $faskesName }}.
-                        </p>
-                    </div>
-
-                    <!-- Two Action Buttons (Pink + Blue) -->
-                    <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-                        <!-- Primary Pink: Catat Tumbuh Kembang -->
-                        <button
-                            type="button"
-                            onclick="openGrowthModal()"
-                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#e11d48] hover:bg-[#be123c] active:bg-[#9f1239] text-white text-xs font-bold shadow-sm shadow-rose-500/25 transition transform hover:-translate-y-0.5 cursor-pointer"
-                        >
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            <span>Catat Tumbuh Kembang</span>
-                        </button>
-
-                        <!-- Secondary Blue: Catat Pemeriksaan Kehamilan -->
-                        <button
-                            type="button"
-                            onclick="openAncModal()"
-                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] active:bg-[#075985] text-white text-xs font-bold shadow-sm shadow-sky-500/25 transition transform hover:-translate-y-0.5 cursor-pointer"
-                        >
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            <span>Catat Pemeriksaan Kehamilan</span>
-                        </button>
-                    </div>
+                <!-- Title -->
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+                        Dashboard Pemantauan Klinis &amp; Gizi
+                    </h1>
+                    <p class="text-xs sm:text-[13px] text-slate-500 mt-1 leading-relaxed">
+                        Ringkasan data kesehatan ibu hamil, tumbuh kembang balita, dan deteksi dini stunting wilayah {{ $faskesName }}.
+                    </p>
                 </div>
 
                 <!-- Filter Controls Bar -->
