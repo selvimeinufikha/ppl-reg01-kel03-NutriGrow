@@ -494,6 +494,7 @@
                             <input
                                 type="text"
                                 id="facilitySearchInput"
+                                value="{{ $search ?? '' }}"
                                 onkeyup="filterFacilityTable()"
                                 placeholder="Cari nama fasilitas, jalan, kelurahan, atau kode faskes..."
                                 class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200/80 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 shadow-2xs transition"
@@ -524,13 +525,13 @@
                         </div>
                     </div>
 
-                    <!-- Filter Kategori Jenis Pills -->
+                    <!-- Filter Kategori Jenis Pills (PBI-024) -->
                     <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
                         @foreach($jenisCategories as $cat)
                         <button
                             type="button"
                             onclick="setJenisFilter('{{ $cat['key'] }}', this)"
-                            class="jenis-filter-pill px-3.5 py-1.5 rounded-full font-semibold transition cursor-pointer whitespace-nowrap {{ $loop->first ? 'bg-[#0284c7] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}"
+                            class="jenis-filter-pill px-3.5 py-1.5 rounded-full font-semibold transition cursor-pointer whitespace-nowrap {{ ($selectedJenis ?? 'semua') === $cat['key'] ? 'bg-[#0284c7] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}"
                             data-jenis="{{ $cat['key'] }}"
                         >
                             {{ $cat['label'] }} ({{ $cat['count'] }})
@@ -710,10 +711,55 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <!-- Row Pesan Kosong Realtime / Filter Javascript (PBI-024) -->
+                                <tr id="clientEmptyRow" class="hidden">
+                                    <td colspan="8" class="text-center py-12 px-4 bg-slate-50/50">
+                                        <div class="max-w-sm mx-auto text-center">
+                                            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 mx-auto flex items-center justify-center mb-3 border border-amber-200/70 shadow-2xs">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                            </div>
+                                            <h4 class="text-sm font-bold text-slate-800">Data Fasilitas Tidak Ditemukan</h4>
+                                            <p id="clientEmptyMsg" class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                                Tidak ada fasilitas kesehatan yang sesuai dengan kata kunci pencarian atau filter jenis yang dipilih.
+                                            </p>
+                                            <button
+                                                type="button"
+                                                onclick="resetSearchAndFilter()"
+                                                class="mt-3.5 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
+                                            >
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                                </svg>
+                                                <span>Reset Pencarian &amp; Filter</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-10 text-slate-400 text-xs">
-                                        Tidak ada data fasilitas kesehatan yang terdaftar.
+                                    <td colspan="8" class="text-center py-12 px-4 bg-slate-50/50">
+                                        <div class="max-w-sm mx-auto text-center">
+                                            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 mx-auto flex items-center justify-center mb-3 border border-amber-200/70 shadow-2xs">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                            </div>
+                                            <h4 class="text-sm font-bold text-slate-800">Data Fasilitas Tidak Ditemukan</h4>
+                                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                                Tidak ada data fasilitas kesehatan yang sesuai dengan kata kunci pencarian atau filter jenis yang dipilih.
+                                            </p>
+                                            <a
+                                                href="{{ route('admin.fasilitas.index') }}"
+                                                class="mt-3.5 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
+                                            >
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                                </svg>
+                                                <span>Reset Pencarian &amp; Filter</span>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                                 @endforelse
@@ -1450,11 +1496,12 @@
             filterFacilityTable();
         }
 
-        // Filter tabel live
+        // Filter tabel live & pencarian gabungan (PBI-024)
         function filterFacilityTable() {
             const query = document.getElementById('facilitySearchInput').value.toLowerCase().trim();
             const statusFilter = document.getElementById('facilityStatusFilter').value;
             const rows = document.querySelectorAll('.facility-row');
+            const clientEmpty = document.getElementById('clientEmptyRow');
             let count = 0;
 
             rows.forEach(row => {
@@ -1464,7 +1511,8 @@
                 const jenis = row.getAttribute('data-jenis') || '';
                 const status = row.getAttribute('data-status') || '';
 
-                const matchesQuery = name.includes(query) || code.includes(query) || address.includes(query);
+                // Pencarian berdasarkan nama & filter jenis digabung (Acceptance Criteria 1)
+                const matchesQuery = query === '' || name.includes(query) || code.includes(query) || address.includes(query);
                 const matchesJenis = currentJenisFilter === 'semua' || jenis === currentJenisFilter;
                 const matchesStatus = statusFilter === 'all' || status === statusFilter;
 
@@ -1476,7 +1524,41 @@
                 }
             });
 
+            // Tampilkan pesan ketika data tidak ditemukan (Acceptance Criteria 2)
+            if (clientEmpty) {
+                if (count === 0 && rows.length > 0) {
+                    clientEmpty.classList.remove('hidden');
+                    const emptyMsg = document.getElementById('clientEmptyMsg');
+                    if (emptyMsg) {
+                        if (query && currentJenisFilter !== 'semua') {
+                            emptyMsg.textContent = `Tidak ditemukan fasilitas kesehatan berjenis '${currentJenisFilter}' dengan kata kunci '${query}'.`;
+                        } else if (query) {
+                            emptyMsg.textContent = `Tidak ditemukan fasilitas kesehatan yang memuat kata kunci '${query}'.`;
+                        } else {
+                            emptyMsg.textContent = `Tidak ditemukan fasilitas kesehatan dalam kategori '${currentJenisFilter}'.`;
+                        }
+                    }
+                } else {
+                    clientEmpty.classList.add('hidden');
+                }
+            }
+
             document.getElementById('tableRecordCount').textContent = `Menampilkan ${count} fasilitas kesehatan terdaftar`;
+        }
+
+        // Reset Filter & Pencarian (PBI-024)
+        function resetSearchAndFilter() {
+            document.getElementById('facilitySearchInput').value = '';
+            document.getElementById('facilityStatusFilter').value = 'all';
+            document.getElementById('facilitySortFilter').value = 'newest';
+            const allBtn = document.querySelector('.jenis-filter-pill[data-jenis="semua"]');
+            if (allBtn) {
+                setJenisFilter('semua', allBtn);
+            } else {
+                currentJenisFilter = 'semua';
+                filterFacilityTable();
+            }
+            showToast('Filter Direset', 'Menampilkan seluruh daftar fasilitas kesehatan.');
         }
 
         // Sort Table

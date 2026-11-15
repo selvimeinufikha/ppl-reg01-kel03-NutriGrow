@@ -91,8 +91,47 @@ class AdminFasilitasKesehatanController extends Controller
             ['key' => 'rumah_sakit', 'label' => 'Rumah Sakit', 'count' => $rsCount],
         ];
 
-        // Ambil seluruh daftar fasilitas kesehatan
-        $fasilitas = FasilitasKesehatan::orderBy('id', 'asc')->get();
+        // Parameter pencarian & filter dari request (PBI-024)
+        $search = $request->input('search', '');
+        $selectedJenis = $request->input('jenis', 'semua');
+        $selectedStatus = $request->input('status', 'all');
+        $selectedSort = $request->input('sort', 'newest');
+
+        // Query pencarian dan filter fasilitas kesehatan (PBI-024)
+        $query = FasilitasKesehatan::query();
+
+        // 1. Filter pencarian berdasarkan nama, kode, alamat, atau wilayah
+        if ($request->filled('search')) {
+            $keyword = trim($request->input('search'));
+            $query->where(function ($q) use ($keyword) {
+                $q->where('nama_fasilitas', 'like', "%{$keyword}%")
+                  ->orWhere('kode_faskes', 'like', "%{$keyword}%")
+                  ->orWhere('alamat', 'like', "%{$keyword}%")
+                  ->orWhere('wilayah', 'like', "%{$keyword}%")
+                  ->orWhere('pic', 'like', "%{$keyword}%");
+            });
+        }
+
+        // 2. Filter berdasarkan jenis fasilitas (dapat digabung dengan pencarian nama)
+        if ($request->filled('jenis') && $request->input('jenis') !== 'semua') {
+            $query->where('jenis', $request->input('jenis'));
+        }
+
+        // 3. Filter berdasarkan status
+        if ($request->filled('status') && $request->input('status') !== 'all') {
+            $query->where('status', $request->input('status'));
+        }
+
+        // 4. Urutan data
+        if ($selectedSort === 'name_asc') {
+            $query->orderBy('nama_fasilitas', 'asc');
+        } elseif ($selectedSort === 'name_desc') {
+            $query->orderBy('nama_fasilitas', 'desc');
+        } else {
+            $query->orderBy('id', 'asc');
+        }
+
+        $fasilitas = $query->get();
 
         return view('DashboardAdmin.layanan-kesehatan', compact(
             'adminName',
@@ -103,7 +142,11 @@ class AdminFasilitasKesehatanController extends Controller
             'tanggalHariIni',
             'statistics',
             'jenisCategories',
-            'fasilitas'
+            'fasilitas',
+            'search',
+            'selectedJenis',
+            'selectedStatus',
+            'selectedSort'
         ));
     }
 
