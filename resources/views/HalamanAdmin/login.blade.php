@@ -53,11 +53,13 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        /* Mobile background gradient fallback */
-        .ambient-glow-mobile {
-            background: radial-gradient(circle at 10% 15%, rgba(186, 230, 253, 0.5) 0%, transparent 45%),
-                        radial-gradient(circle at 85% 75%, rgba(254, 205, 211, 0.35) 0%, transparent 40%),
-                        linear-gradient(180deg, #f0f9ff 0%, #ffffff 50%, #f8fafc 100%);
+        /* Mobile background gradient fallback (hanya aktif pada tampilan mobile / < 1024px) */
+        @media (max-width: 1023px) {
+            .ambient-glow-mobile {
+                background: radial-gradient(circle at 10% 15%, rgba(56, 189, 248, 0.30) 0%, transparent 45%),
+                            radial-gradient(circle at 85% 75%, rgba(14, 165, 233, 0.25) 0%, transparent 40%),
+                            linear-gradient(180deg, #bae6fd 0%, #e0f2fe 35%, #f0f9ff 70%, #bae6fd 100%);
+            }
         }
     </style>
 </head>
@@ -71,36 +73,38 @@
         <!-- =============================================================== -->
         <!-- 1. LEFT COLUMN: HERO SHOWCASE (PORTAL FASKES & NAKES)           -->
         <!-- =============================================================== -->
-        <div class="w-full lg:w-1/2 min-h-screen lg:min-h-0 lg:h-full relative px-6 sm:px-8 lg:px-10 xl:px-14 py-5 sm:py-6 lg:py-8 flex flex-col justify-between ambient-glow-mobile lg:bg-transparent z-20 overflow-visible">
+        <div class="w-full lg:w-1/2 min-h-screen lg:min-h-0 lg:h-full relative px-6 sm:px-8 lg:px-10 xl:px-14 py-5 sm:py-6 lg:py-8 flex flex-col justify-between ambient-glow-mobile lg:bg-none lg:bg-transparent z-20 overflow-visible">
 
             <!-- =========================================================== -->
-            <!-- LATAR BELAKANG SEAMLESS DENGAN KURVA PERSIS SEPERTI LOGIN USER -->
+            <!-- LATAR BELAKANG SEAMLESS DENGAN KURVA PERSIS REGISTER PENGGUNA -->
             <!-- =========================================================== -->
             <div class="hidden lg:block absolute inset-y-0 left-0 right-[-50px] xl:right-[-65px] pointer-events-none z-0">
                 <svg class="w-full h-full" viewBox="0 0 1000 1000" preserveAspectRatio="none">
                     <defs>
-                        <!-- Linear Gradient Pastel Biru & Putih Khas Portal Faskes -->
+                        <!-- Linear Gradient Biru Pastel Khas Portal Faskes (Lebih Pekat & Terlihat Jelas) -->
                         <linearGradient id="adminBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#f0f9ff" />
-                            <stop offset="35%" stop-color="#f8fafc" />
-                            <stop offset="70%" stop-color="#ffffff" />
-                            <stop offset="100%" stop-color="#fdf2f8" stop-opacity="0.95" />
+                            <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.85" />
+                            <stop offset="30%" stop-color="#e0f2fe" />
+                            <stop offset="65%" stop-color="#f0f9ff" />
+                            <stop offset="100%" stop-color="#bae6fd" stop-opacity="0.9" />
                         </linearGradient>
 
                         <!-- Top-Left Cyan Ambient Glow -->
                         <radialGradient id="adminTopGlow" cx="20%" cy="15%" r="55%">
-                            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.22" />
+                            <stop offset="0%" stop-color="#0284c7" stop-opacity="0.25" />
+                            <stop offset="60%" stop-color="#38bdf8" stop-opacity="0.12" />
                             <stop offset="100%" stop-color="#38bdf8" stop-opacity="0" />
                         </radialGradient>
 
-                        <!-- Lower-Right Soft Pink Glow -->
+                        <!-- Lower-Right Soft Sky Ambient Glow (Harmonis & Bersih) -->
                         <radialGradient id="adminBotGlow" cx="75%" cy="80%" r="50%">
-                            <stop offset="0%" stop-color="#f472b6" stop-opacity="0.18" />
-                            <stop offset="100%" stop-color="#f472b6" stop-opacity="0" />
+                            <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.22" />
+                            <stop offset="60%" stop-color="#7dd3fc" stop-opacity="0.10" />
+                            <stop offset="100%" stop-color="#7dd3fc" stop-opacity="0" />
                         </radialGradient>
                     </defs>
 
-                    <!-- Gaya Lengkungan Persis Seperti di Login User (d="M 0,0 L 910,0 C 970,300 1000,550 900,1000 L 0,1000 Z") -->
+                    <!-- Gaya Lengkungan Persis Seperti di Register Pengguna -->
                     <path d="M 0,0 L 910,0 C 970,300 1000,550 900,1000 L 0,1000 Z" fill="url(#adminBgGrad)" />
                     <path d="M 0,0 L 910,0 C 970,300 1000,550 900,1000 L 0,1000 Z" fill="url(#adminTopGlow)" />
                     <path d="M 0,0 L 910,0 C 970,300 1000,550 900,1000 L 0,1000 Z" fill="url(#adminBotGlow)" />
