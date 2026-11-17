@@ -26,6 +26,8 @@ class User extends Authenticatable
         'faskes_name',
         'nip_str',
         'phone',
+        'status',
+        'jabatan',
     ];
 
     /**
@@ -56,11 +58,50 @@ class User extends Authenticatable
      */
     public function isStaffOrAdmin(): bool
     {
-        return in_array($this->role, ['admin', 'nakes', 'petugas'])
+        return in_array($this->role, ['superadmin', 'admin', 'nakes', 'petugas', 'dokter', 'bidan', 'ahli_gizi'])
             || str_ends_with($this->email, '@nutrigrow.id')
             || str_ends_with($this->email, '@puskesmas.go.id')
             || str_ends_with($this->email, '@kemkes.go.id')
             || str_ends_with($this->email, '@dinkes.go.id');
+    }
+
+    /**
+     * Check if user is a super admin.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'superadmin';
+    }
+
+    /**
+     * Label peran admin yang ramah dibaca.
+     */
+    public function getRoleLabelAttribute(): string
+    {
+        return match ($this->role) {
+            'superadmin' => 'Super Administrator (Kemenkes/Dinkes)',
+            'admin' => 'Administrator Faskes / Puskesmas',
+            'nakes' => 'Tenaga Kesehatan (Bidan / Dokter)',
+            'dokter' => 'Dokter Spesialis Anak / Umum',
+            'bidan' => 'Bidan Koordinator',
+            'ahli_gizi' => 'Nutrisionis / Ahli Gizi',
+            default => 'Pengguna Keluarga / Orang Tua',
+        };
+    }
+
+    /**
+     * Inisial nama untuk avatar.
+     */
+    public function getInisialAttribute(): string
+    {
+        $cleanName = preg_replace('/^(dr\.|drg\.|prof\.|dr\s+|drg\s+|prof\s+|bidan\s+|ibu\s+|bapak\s+)/i', '', trim($this->name));
+        $words = preg_split('/\s+/', trim($cleanName));
+        $initials = '';
+        foreach (array_slice($words, 0, 2) as $w) {
+            $initials .= mb_strtoupper(mb_substr($w, 0, 1));
+        }
+
+        return $initials ?: 'A';
     }
 
     /**

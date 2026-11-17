@@ -199,10 +199,9 @@
                         <span>Data Informasi Nutrisi</span>
                     </a>
 
-                    <!-- 8. Manajemen Akun Admin (SUPER) -->
+                    <!-- 8. Manajemen Akun Admin (SUPER - PBI-028) -->
                     <a
-                        href="javascript:void(0)"
-                        onclick="showFeatureNotice('Manajemen Akun Admin')"
+                        href="{{ route('admin.akun.index') }}"
                         class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
                     >
                         <div class="flex items-center gap-3">

@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminEdukasiGiziController;
 use App\Http\Controllers\AdminFasilitasKesehatanController;
+use App\Http\Controllers\AdminManajemenAkunController;
 use App\Http\Controllers\DashboardPenggunaController;
 
 /*
@@ -102,6 +103,11 @@ Route::prefix('admin')->group(function () {
     Route::put('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'update'])->name('admin.fasilitas.update');
     Route::post('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'update'])->name('admin.fasilitas.update.post');
     Route::delete('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'destroy'])->name('admin.fasilitas.destroy');
+
+    // Manajemen Akun Admin: Tambah Akun Administrator (PBI-028)
+    Route::get('/manajemen-akun', [AdminManajemenAkunController::class, 'index'])->name('admin.akun.index');
+    Route::get('/manajemen-akun/tambah', [AdminManajemenAkunController::class, 'create'])->name('admin.akun.create');
+    Route::post('/manajemen-akun', [AdminManajemenAkunController::class, 'store'])->name('admin.akun.store');
 
     // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {
