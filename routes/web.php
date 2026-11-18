@@ -51,7 +51,7 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
 Route::get('/dashboard', [DashboardPenggunaController::class, 'index'])->name('dashboard');
 
-// Rute Data Pasangan (PBI-001 & PBI-002: Kelola Data Pasangan)
+// Rute Data Pasangan (PBI-001, PBI-002, PBI-003: Kelola Data Pasangan)
 Route::prefix('data-pasangan')->name('pasangan.')->group(function () {
     Route::get('/', [PasanganController::class, 'index'])->name('index');
     Route::get('/tambah', [PasanganController::class, 'create'])->name('create');
@@ -59,6 +59,7 @@ Route::prefix('data-pasangan')->name('pasangan.')->group(function () {
     Route::get('/{id}', [PasanganController::class, 'show'])->name('show');
     Route::get('/{id}/edit', [PasanganController::class, 'edit'])->name('edit');
     Route::put('/{id}', [PasanganController::class, 'update'])->name('update');
+    Route::delete('/{id}', [PasanganController::class, 'destroy'])->name('destroy');
 });
 
 

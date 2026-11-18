@@ -122,4 +122,22 @@ class PasanganController extends Controller
         return redirect()->route('pasangan.index')
             ->with('success', 'Data pasangan berhasil diperbarui!');
     }
+
+    /**
+     * Hapus data pasangan.
+     * Acceptance Criteria:
+     * - Hanya data milik akun sendiri yang dapat dihapus.
+     */
+    public function destroy(int $id)
+    {
+        $pasangan = Pasangan::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $nama = $pasangan->nama;
+        $pasangan->delete();
+
+        return redirect()->route('pasangan.index')
+            ->with('success', "Data pasangan '{$nama}' berhasil dihapus!");
+    }
 }
