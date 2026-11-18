@@ -316,42 +316,101 @@
                 </div>
 
                 <!-- Filter Controls Bar -->
-                <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-white rounded-2xl border border-slate-200/80 shadow-2xs">
+                <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-white rounded-2xl border border-slate-200/80 shadow-2xs relative z-20">
                     <div class="flex flex-wrap items-center gap-2 text-xs">
-                        <!-- Dropdown 1: Bulan -->
-                        <div class="relative">
+                        <!-- Dropdown 1: Bulan / Tanggal Interaktif -->
+                        <div class="relative" id="monthDropdownContainer">
                             <button
                                 type="button"
+                                onclick="toggleMonthDropdown(event)"
+                                id="monthFilterBtn"
                                 class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-medium transition cursor-pointer"
                             >
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
-                                <span>Bulan ini: Oktober 2025</span>
-                                <svg class="w-3 h-3 text-slate-400 ml-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <span id="selectedMonthLabel">Bulan ini: Oktober 2025</span>
+                                <svg class="w-3 h-3 text-slate-400 ml-0.5 transition-transform" id="monthDropdownChevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                                 </svg>
                             </button>
+
+                            <!-- Dropdown Menu Bulan -->
+                            <div id="monthDropdownMenu" class="hidden absolute left-0 mt-1.5 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 text-xs">
+                                <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pilih Periode Pengukuran</div>
+                                <button type="button" onclick="selectMonth('Bulan ini: Oktober 2025', '2025-10')" class="w-full text-left px-3 py-2 hover:bg-sky-50 hover:text-sky-700 font-bold text-sky-800 flex items-center justify-between">
+                                    <span>Bulan ini: Oktober 2025</span>
+                                    <span class="w-2 h-2 rounded-full bg-sky-600"></span>
+                                </button>
+                                <button type="button" onclick="selectMonth('September 2025', '2025-09')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>September 2025</span>
+                                </button>
+                                <button type="button" onclick="selectMonth('Agustus 2025', '2025-08')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>Agustus 2025</span>
+                                </button>
+                                <button type="button" onclick="selectMonth('Juli 2025', '2025-07')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>Juli 2025</span>
+                                </button>
+                                <button type="button" onclick="selectMonth('Semua Periode (2025)', 'all')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700 border-t border-slate-100">
+                                    <span>Semua Periode (2025)</span>
+                                </button>
+                                <div class="px-3 pt-2 pb-1 border-t border-slate-100 mt-1">
+                                    <label class="block text-[10px] text-slate-400 font-semibold mb-1">Pilih Bulan Lain:</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <input type="month" id="customMonthInput" value="2025-10" class="flex-1 px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:border-sky-500">
+                                        <button type="button" onclick="applyCustomMonth()" class="px-2.5 py-1 bg-[#0284c7] hover:bg-sky-700 text-white font-bold rounded-lg text-xs cursor-pointer">Pilih</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Dropdown 2: Wilayah Binaan -->
-                        <div class="relative">
+                        <!-- Dropdown 2: Wilayah Binaan Interaktif -->
+                        <div class="relative" id="wilayahDropdownContainer">
                             <button
                                 type="button"
+                                onclick="toggleWilayahDropdown(event)"
+                                id="wilayahFilterBtn"
                                 class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-medium transition cursor-pointer"
                             >
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
-                                <span>Semua Wilayah Binaan (12 Posyandu)</span>
-                                <svg class="w-3 h-3 text-slate-400 ml-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <span id="selectedWilayahLabel">Semua Wilayah Binaan (12 Posyandu)</span>
+                                <svg class="w-3 h-3 text-slate-400 ml-0.5 transition-transform" id="wilayahDropdownChevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                                 </svg>
                             </button>
+
+                            <!-- Dropdown Menu Wilayah -->
+                            <div id="wilayahDropdownMenu" class="hidden absolute left-0 mt-1.5 w-68 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 text-xs">
+                                <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Filter Berdasarkan Wilayah Posyandu</div>
+                                <button type="button" onclick="selectWilayah('Semua Wilayah Binaan (12 Posyandu)', 'all')" class="w-full text-left px-3 py-2 hover:bg-sky-50 hover:text-sky-700 font-bold text-sky-800 flex items-center justify-between">
+                                    <span>Semua Wilayah Binaan (12 Posyandu)</span>
+                                    <span class="w-2 h-2 rounded-full bg-sky-600"></span>
+                                </button>
+                                <button type="button" onclick="selectWilayah('Posyandu Melati 1 (RW 01)', 'Melati 1')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>Posyandu Melati 1 (RW 01)</span>
+                                </button>
+                                <button type="button" onclick="selectWilayah('Posyandu Melati 2 (RW 02)', 'Melati 2')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>Posyandu Melati 2 (RW 02)</span>
+                                </button>
+                                <button type="button" onclick="selectWilayah('Posyandu Melati 3 (RW 03)', 'Melati 3')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>Posyandu Melati 3 (RW 03)</span>
+                                </button>
+                                <button type="button" onclick="selectWilayah('Puskesmas Gambir (Pusat Rujukan)', 'Gambir')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>Puskesmas Gambir (Pusat Rujukan)</span>
+                                </button>
+                                <button type="button" onclick="selectWilayah('Posyandu Mawar (RW 04)', 'Mawar')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>Posyandu Mawar (RW 04)</span>
+                                </button>
+                                <button type="button" onclick="selectWilayah('Posyandu Anggrek (RW 05)', 'Anggrek')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>Posyandu Anggrek (RW 05)</span>
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Filter Status Pills -->
+                        <!-- Filter Status Pills (Semua, Kasus Prioritas, Perlu Tindak Lanjut) -->
                         <div class="flex items-center gap-1 pl-1">
                             <button
                                 type="button"
@@ -380,17 +439,49 @@
                         </div>
                     </div>
 
-                    <!-- Unduh Laporan Action -->
-                    <button
-                        type="button"
-                        onclick="exportReport()"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 transition cursor-pointer"
-                    >
-                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                        </svg>
-                        <span>Unduh Laporan (PDF/XLS)</span>
-                    </button>
+                    <!-- Dropdown Unduh Laporan (PDF/XLS) Interaktif -->
+                    <div class="relative" id="exportDropdownContainer">
+                        <button
+                            type="button"
+                            onclick="toggleExportDropdown(event)"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 transition cursor-pointer"
+                        >
+                            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            <span>Unduh Laporan (PDF/XLS)</span>
+                            <svg class="w-3 h-3 text-slate-400 ml-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        <!-- Menu Unduh Laporan -->
+                        <div id="exportDropdownMenu" class="hidden absolute right-0 mt-1.5 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 text-xs">
+                            <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Format Dokumen Laporan</div>
+                            <button type="button" onclick="triggerDownloadReport('xls')" class="w-full text-left px-3 py-2.5 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 flex items-center gap-2.5 transition">
+                                <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-slate-800">Unduh Format Spreadsheet (XLS)</div>
+                                    <div class="text-[10px] text-slate-400">Data mentah tabel pengukuran balita &amp; ANC</div>
+                                </div>
+                            </button>
+                            <button type="button" onclick="triggerDownloadReport('pdf')" class="w-full text-left px-3 py-2.5 hover:bg-rose-50 text-slate-700 hover:text-rose-700 flex items-center gap-2.5 border-t border-slate-100 transition">
+                                <div class="w-7 h-7 rounded-lg bg-rose-100 text-[#e11d48] flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-slate-800">Unduh Format Dokumen (PDF)</div>
+                                    <div class="text-[10px] text-slate-400">Rekapitulasi resmi pemantauan gizi faskes</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- =========================================================== -->
@@ -781,12 +872,12 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-100/80">
                                         @foreach ($recentChildren as $child)
-                                            <tr class="hover:bg-slate-50/60 transition group patient-row" data-name="{{ strtolower($child['nama']) }}">
+                                            <tr class="hover:bg-slate-50/60 transition group patient-row" data-name="{{ strtolower($child['nama']) }}" data-posyandu="{{ strtolower($child['sub_info']) }}" data-alert="{{ $child['is_alert'] ? '1' : '0' }}" data-badge="{{ $child['badge'] }}">
                                                 <td class="py-3 px-2">
                                                     <div class="flex items-center gap-1.5">
                                                         <span class="font-bold text-slate-800">{{ $child['nama'] }}</span>
                                                         @if ($child['is_alert'])
-                                                            <span class="w-2 h-2 rounded-full bg-rose-500 inline-block" title="Perlu Perhatian Khusus"></span>
+                                                             <span class="w-2 h-2 rounded-full bg-rose-500 inline-block" title="Perlu Perhatian Khusus"></span>
                                                         @endif
                                                     </div>
                                                     <span class="text-[10.5px] text-slate-400 font-normal block">{{ $child['sub_info'] }}</span>
@@ -836,6 +927,18 @@
                                                 </td>
                                             </tr>
                                         @endforeach
+                                        <tr id="emptyBalitaNotice" class="hidden">
+                                            <td colspan="5" class="py-8 text-center text-slate-400">
+                                                <svg class="w-8 h-8 mx-auto text-slate-300 mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                                <p class="font-bold text-slate-600 text-xs">Data Pasien Balita Tidak Ditemukan</p>
+                                                <p class="text-[11px] text-slate-400 mt-0.5">Tidak ada data yang sesuai dengan filter wilayah atau status yang dipilih.</p>
+                                                <button type="button" onclick="resetAllFilters()" class="mt-2.5 px-3 py-1 bg-sky-50 text-sky-700 hover:bg-sky-100 font-bold rounded-lg text-xs transition cursor-pointer">
+                                                    Reset Filter
+                                                </button>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
 
@@ -852,7 +955,7 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-100/80">
                                         @foreach ($recentPregnancies as $preg)
-                                            <tr class="hover:bg-slate-50/60 transition group patient-row" data-name="{{ strtolower($preg['nama']) }}">
+                                            <tr class="hover:bg-slate-50/60 transition group patient-row" data-name="{{ strtolower($preg['nama']) }}" data-posyandu="{{ strtolower($preg['sub_info']) }}" data-alert="{{ $preg['is_alert'] ? '1' : '0' }}" data-badge="{{ $preg['badge'] }}">
                                                 <td class="py-3 px-2">
                                                     <div class="flex items-center gap-1.5">
                                                         <span class="font-bold text-slate-800">{{ $preg['nama'] }}</span>
@@ -893,6 +996,18 @@
                                                 </td>
                                             </tr>
                                         @endforeach
+                                        <tr id="emptyAncNotice" class="hidden">
+                                            <td colspan="5" class="py-8 text-center text-slate-400">
+                                                <svg class="w-8 h-8 mx-auto text-slate-300 mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                                <p class="font-bold text-slate-600 text-xs">Data Pemeriksaan Kehamilan Tidak Ditemukan</p>
+                                                <p class="text-[11px] text-slate-400 mt-0.5">Tidak ada data yang sesuai dengan filter wilayah atau status yang dipilih.</p>
+                                                <button type="button" onclick="resetAllFilters()" class="mt-2.5 px-3 py-1 bg-sky-50 text-sky-700 hover:bg-sky-100 font-bold rounded-lg text-xs transition cursor-pointer">
+                                                    Reset Filter
+                                                </button>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -1148,6 +1263,217 @@
             }
         }
 
+        // State Filter Terpadu
+        let activeStatusFilter = 'semua';
+        let activeWilayahFilter = 'all';
+        let activeMonthFilter = '2025-10';
+
+        // 1. Dropdown Bulan / Tanggal
+        function toggleMonthDropdown(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('monthDropdownMenu');
+            const chevron = document.getElementById('monthDropdownChevron');
+            const isHidden = menu.classList.contains('hidden');
+            closeAllFilterDropdowns();
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                if (chevron) chevron.classList.add('rotate-180');
+            }
+        }
+
+        function selectMonth(label, val) {
+            document.getElementById('selectedMonthLabel').textContent = label;
+            activeMonthFilter = val;
+            closeAllFilterDropdowns();
+            applyDashboardFilters();
+            showToast('Periode pemantauan diubah: ' + label);
+        }
+
+        function applyCustomMonth() {
+            const input = document.getElementById('customMonthInput');
+            if (!input || !input.value) return;
+            const parts = input.value.split('-');
+            const year = parts[0];
+            const monthNames = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const mIndex = parseInt(parts[1], 10);
+            const label = 'Bulan: ' + (monthNames[mIndex] || parts[1]) + ' ' + year;
+            selectMonth(label, input.value);
+        }
+
+        // 2. Dropdown Wilayah Binaan
+        function toggleWilayahDropdown(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('wilayahDropdownMenu');
+            const chevron = document.getElementById('wilayahDropdownChevron');
+            const isHidden = menu.classList.contains('hidden');
+            closeAllFilterDropdowns();
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                if (chevron) chevron.classList.add('rotate-180');
+            }
+        }
+
+        function selectWilayah(label, val) {
+            document.getElementById('selectedWilayahLabel').textContent = label;
+            activeWilayahFilter = val.toLowerCase();
+            closeAllFilterDropdowns();
+            applyDashboardFilters();
+            showToast('Wilayah binaan disaring: ' + label);
+        }
+
+        // 3. Status Tabs (Semua, Kasus Prioritas, Perlu Tindak Lanjut)
+        function filterStatus(mode) {
+            activeStatusFilter = mode;
+            const tabs = ['Semua', 'Prioritas', 'TindakLanjut'];
+            tabs.forEach(t => {
+                const el = document.getElementById('filterTab' + t);
+                if (el) el.className = 'px-3 py-1 rounded-xl text-slate-600 hover:bg-slate-50 font-medium transition cursor-pointer';
+            });
+
+            if (mode === 'semua') {
+                document.getElementById('filterTabSemua').className = 'px-3 py-1 rounded-xl bg-sky-50 text-sky-700 font-bold border border-sky-200 transition cursor-pointer';
+            } else if (mode === 'prioritas') {
+                document.getElementById('filterTabPrioritas').className = 'px-3 py-1 rounded-xl bg-amber-50 text-amber-700 font-bold border border-amber-200 transition cursor-pointer';
+            } else if (mode === 'tindak-lanjut') {
+                document.getElementById('filterTabTindakLanjut').className = 'px-3 py-1 rounded-xl bg-rose-50 text-rose-700 font-bold border border-rose-200 transition cursor-pointer';
+            }
+
+            applyDashboardFilters();
+        }
+
+        // Fungsi Filter Gabungan Multi-Kriteria (Wilayah + Status)
+        function applyDashboardFilters() {
+            const isBalitaActive = !document.getElementById('balitaTable').classList.contains('hidden');
+            const activeTable = isBalitaActive ? document.getElementById('balitaTable') : document.getElementById('ancTable');
+            const rows = activeTable.querySelectorAll('tbody tr.patient-row');
+            let visibleCount = 0;
+
+            rows.forEach(r => {
+                const posyandu = r.getAttribute('data-posyandu') || '';
+                const isAlert = r.getAttribute('data-alert') === '1';
+                const badge = r.getAttribute('data-badge') || '';
+
+                // Cek kriteria wilayah
+                let matchWilayah = true;
+                if (activeWilayahFilter !== 'all') {
+                    matchWilayah = posyandu.includes(activeWilayahFilter);
+                }
+
+                // Cek kriteria status
+                let matchStatus = true;
+                if (activeStatusFilter === 'prioritas') {
+                    matchStatus = isAlert || badge === 'rose' || badge === 'amber';
+                } else if (activeStatusFilter === 'tindak-lanjut') {
+                    matchStatus = isAlert && badge === 'rose';
+                }
+
+                if (matchWilayah && matchStatus) {
+                    r.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    r.classList.add('hidden');
+                }
+            });
+
+            // Tampilkan notice jika kosong
+            const noticeId = isBalitaActive ? 'emptyBalitaNotice' : 'emptyAncNotice';
+            const emptyNotice = document.getElementById(noticeId);
+            if (emptyNotice) {
+                if (visibleCount === 0) {
+                    emptyNotice.classList.remove('hidden');
+                } else {
+                    emptyNotice.classList.add('hidden');
+                }
+            }
+        }
+
+        function resetAllFilters() {
+            activeStatusFilter = 'semua';
+            activeWilayahFilter = 'all';
+            activeMonthFilter = '2025-10';
+            document.getElementById('selectedWilayahLabel').textContent = 'Semua Wilayah Binaan (12 Posyandu)';
+            document.getElementById('selectedMonthLabel').textContent = 'Bulan ini: Oktober 2025';
+            filterStatus('semua');
+            showToast('Semua kriteria filter telah di-reset ke kondisi awal.');
+        }
+
+        // 4. Dropdown & Aksi Unduh Laporan (PDF/XLS)
+        function toggleExportDropdown(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('exportDropdownMenu');
+            const isHidden = menu.classList.contains('hidden');
+            closeAllFilterDropdowns();
+            if (isHidden) {
+                menu.classList.remove('hidden');
+            }
+        }
+
+        function triggerDownloadReport(format) {
+            closeAllFilterDropdowns();
+            const monthLabel = document.getElementById('selectedMonthLabel').textContent;
+            const wilayahLabel = document.getElementById('selectedWilayahLabel').textContent;
+
+            if (format === 'xls') {
+                // Generate data spreadsheet XLS (CSV) secara riil dari tabel
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "NutriGrow - Rekapitulasi Data Pasien & Pemantauan Gizi Klinis\n";
+                csvContent += "Periode: " + monthLabel + "\n";
+                csvContent += "Wilayah: " + wilayahLabel + "\n\n";
+                csvContent += "Nama Pasien,Posyandu / Info,Hasil Ukur,Status Gizi\n";
+
+                document.querySelectorAll('.patient-row').forEach(row => {
+                    if (!row.classList.contains('hidden')) {
+                        const cols = row.querySelectorAll('td');
+                        if (cols.length >= 4) {
+                            const nama = cols[0].querySelector('span.font-bold') ? cols[0].querySelector('span.font-bold').textContent.trim() : '';
+                            const sub = cols[0].querySelector('span.text-[10.5px]') ? cols[0].querySelector('span.text-[10.5px]').textContent.trim() : '';
+                            const ukur = cols[2].querySelector('div.font-bold') ? cols[2].querySelector('div.font-bold').textContent.trim() : '';
+                            const status = cols[3].querySelector('span') ? cols[3].querySelector('span').textContent.trim() : '';
+                            csvContent += `"${nama}","${sub}","${ukur}","${status}"\n`;
+                        }
+                    }
+                });
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "Laporan_Gizi_NutriGrow_" + activeMonthFilter + ".csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                showToast('Laporan Spreadsheet (XLS) berhasil diunduh untuk ' + monthLabel);
+            } else {
+                // Format PDF - cetak / simpan
+                showToast('Mempersiapkan dokumen rekapitulasi PDF resmi...');
+                setTimeout(() => {
+                    window.print();
+                }, 400);
+            }
+        }
+
+        function closeAllFilterDropdowns() {
+            const mMenu = document.getElementById('monthDropdownMenu');
+            const wMenu = document.getElementById('wilayahDropdownMenu');
+            const exMenu = document.getElementById('exportDropdownMenu');
+            const mChev = document.getElementById('monthDropdownChevron');
+            const wChev = document.getElementById('wilayahDropdownChevron');
+            if (mMenu) mMenu.classList.add('hidden');
+            if (wMenu) wMenu.classList.add('hidden');
+            if (exMenu) exMenu.classList.add('hidden');
+            if (mChev) mChev.classList.remove('rotate-180');
+            if (wChev) wChev.classList.remove('rotate-180');
+        }
+
+        // Listener klik di luar untuk menutup semua dropdown
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#monthDropdownContainer') &&
+                !e.target.closest('#wilayahDropdownContainer') &&
+                !e.target.closest('#exportDropdownContainer')) {
+                closeAllFilterDropdowns();
+            }
+        });
+
         // Tab switcher for table
         function switchTableTab(tab) {
             const balitaTable = document.getElementById('balitaTable');
@@ -1166,38 +1492,7 @@
                 tabAnc.className = 'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-pink-50 text-[#e11d48] font-bold text-xs border border-pink-100 transition cursor-pointer';
                 tabBalita.className = 'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer';
             }
-        }
-
-        // Filter status buttons
-        function filterStatus(mode) {
-            const tabs = ['Semua', 'Prioritas', 'TindakLanjut'];
-            tabs.forEach(t => {
-                const el = document.getElementById('filterTab' + t);
-                if (el) el.className = 'px-3 py-1 rounded-xl text-slate-600 hover:bg-slate-50 font-medium transition cursor-pointer';
-            });
-
-            if (mode === 'semua') {
-                document.getElementById('filterTabSemua').className = 'px-3 py-1 rounded-xl bg-sky-50 text-sky-700 font-bold border border-sky-200 transition cursor-pointer';
-                document.querySelectorAll('.patient-row').forEach(r => r.classList.remove('hidden'));
-            } else if (mode === 'prioritas') {
-                document.getElementById('filterTabPrioritas').className = 'px-3 py-1 rounded-xl bg-amber-50 text-amber-700 font-bold border border-amber-200 transition cursor-pointer';
-                document.querySelectorAll('.patient-row').forEach(r => {
-                    if (r.querySelector('.bg-rose-50') || r.querySelector('.bg-amber-50')) {
-                        r.classList.remove('hidden');
-                    } else {
-                        r.classList.add('hidden');
-                    }
-                });
-            } else if (mode === 'tindak-lanjut') {
-                document.getElementById('filterTabTindakLanjut').className = 'px-3 py-1 rounded-xl bg-rose-50 text-rose-700 font-bold border border-rose-200 transition cursor-pointer';
-                document.querySelectorAll('.patient-row').forEach(r => {
-                    if (r.querySelector('.bg-rose-50')) {
-                        r.classList.remove('hidden');
-                    } else {
-                        r.classList.add('hidden');
-                    }
-                });
-            }
+            applyDashboardFilters();
         }
 
         // Search Filter
