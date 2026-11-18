@@ -329,7 +329,7 @@
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
-                                <span id="selectedMonthLabel">Bulan ini: Oktober 2025</span>
+                                <span id="selectedMonthLabel">Bulan ini: Oktober 2026</span>
                                 <svg class="w-3 h-3 text-slate-400 ml-0.5 transition-transform" id="monthDropdownChevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                                 </svg>
@@ -338,26 +338,26 @@
                             <!-- Dropdown Menu Bulan -->
                             <div id="monthDropdownMenu" class="hidden absolute left-0 mt-1.5 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 text-xs">
                                 <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pilih Periode Pengukuran</div>
-                                <button type="button" onclick="selectMonth('Bulan ini: Oktober 2025', '2025-10')" class="w-full text-left px-3 py-2 hover:bg-sky-50 hover:text-sky-700 font-bold text-sky-800 flex items-center justify-between">
-                                    <span>Bulan ini: Oktober 2025</span>
+                                <button type="button" onclick="selectMonth('Bulan ini: Oktober 2026', '2026-10')" class="w-full text-left px-3 py-2 hover:bg-sky-50 hover:text-sky-700 font-bold text-sky-800 flex items-center justify-between">
+                                    <span>Bulan ini: Oktober 2026</span>
                                     <span class="w-2 h-2 rounded-full bg-sky-600"></span>
                                 </button>
-                                <button type="button" onclick="selectMonth('September 2025', '2025-09')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
-                                    <span>September 2025</span>
+                                <button type="button" onclick="selectMonth('September 2026', '2026-09')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>September 2026</span>
                                 </button>
-                                <button type="button" onclick="selectMonth('Agustus 2025', '2025-08')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
-                                    <span>Agustus 2025</span>
+                                <button type="button" onclick="selectMonth('Agustus 2026', '2026-08')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>Agustus 2026</span>
                                 </button>
-                                <button type="button" onclick="selectMonth('Juli 2025', '2025-07')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
-                                    <span>Juli 2025</span>
+                                <button type="button" onclick="selectMonth('Juli 2026', '2026-07')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700">
+                                    <span>Juli 2026</span>
                                 </button>
-                                <button type="button" onclick="selectMonth('Semua Periode (2025)', 'all')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700 border-t border-slate-100">
-                                    <span>Semua Periode (2025)</span>
+                                <button type="button" onclick="selectMonth('Semua Periode (2026)', 'all')" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-slate-700 border-t border-slate-100">
+                                    <span>Semua Periode (2026)</span>
                                 </button>
                                 <div class="px-3 pt-2 pb-1 border-t border-slate-100 mt-1">
                                     <label class="block text-[10px] text-slate-400 font-semibold mb-1">Pilih Bulan Lain:</label>
                                     <div class="flex items-center gap-1.5">
-                                        <input type="month" id="customMonthInput" value="2025-10" class="flex-1 px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:border-sky-500">
+                                        <input type="month" id="customMonthInput" value="2026-10" class="flex-1 px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:border-sky-500">
                                         <button type="button" onclick="applyCustomMonth()" class="px-2.5 py-1 bg-[#0284c7] hover:bg-sky-700 text-white font-bold rounded-lg text-xs cursor-pointer">Pilih</button>
                                     </div>
                                 </div>
@@ -743,7 +743,7 @@
                                     <span>+32% Sem. II</span>
                                 </span>
                             </div>
-                            <p class="text-[11px] text-slate-400 mt-0.5">Kunjungan Posyandu Balita vs ANC Ibu Hamil (Mei - Okt 2025)</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Kunjungan Posyandu Balita vs ANC Ibu Hamil (Mei - Okt 2026)</p>
 
                             <!-- Smooth SVG Line Chart Graphic -->
                             <div class="w-full h-40 my-3 relative">
@@ -1132,7 +1132,7 @@
             <!-- Footer -->
             <footer class="mt-8 border-t border-slate-200/80 bg-white px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
                 <div>
-                    &copy; 2025 NutriGrow Health Platform &bull; Fasilitas Pelayanan Kesehatan {{ $faskesName }}
+                    &copy; 2026 NutriGrow Health Platform &bull; Fasilitas Pelayanan Kesehatan {{ $faskesName }}
                 </div>
                 <div class="flex items-center gap-2 text-[11px]">
                     <span class="inline-flex items-center gap-1 text-slate-600 font-semibold">
@@ -1266,7 +1266,7 @@
         // State Filter Terpadu
         let activeStatusFilter = 'semua';
         let activeWilayahFilter = 'all';
-        let activeMonthFilter = '2025-10';
+        let activeMonthFilter = '2026-10';
 
         // 1. Dropdown Bulan / Tanggal
         function toggleMonthDropdown(e) {
@@ -1390,9 +1390,9 @@
         function resetAllFilters() {
             activeStatusFilter = 'semua';
             activeWilayahFilter = 'all';
-            activeMonthFilter = '2025-10';
+            activeMonthFilter = '2026-10';
             document.getElementById('selectedWilayahLabel').textContent = 'Semua Wilayah Binaan (12 Posyandu)';
-            document.getElementById('selectedMonthLabel').textContent = 'Bulan ini: Oktober 2025';
+            document.getElementById('selectedMonthLabel').textContent = 'Bulan ini: Oktober 2026';
             filterStatus('semua');
             showToast('Semua kriteria filter telah di-reset ke kondisi awal.');
         }
