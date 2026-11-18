@@ -91,7 +91,7 @@
         <!-- =============================================================== -->
         <!-- 1. SIDEBAR NAVIGASI (PORTAL ADMIN TENAGA KESEHATAN)             -->
         <!-- =============================================================== -->
-        <aside id="adminSidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] xl:w-[275px] bg-white border-r border-slate-200 flex flex-col justify-between py-5 px-4 shrink-0 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto transition-transform duration-300 ease-in-out">
+        <aside id="adminSidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] xl:w-[275px] border-r border-sky-200/80 shadow-xs flex flex-col justify-between py-5 px-4 shrink-0 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto transition-transform duration-300 ease-in-out" style="background: linear-gradient(180deg, #e8f3fc 0%, #f1f7fd 35%, #e2eefa 70%, #d8e9f8 100%);">
             <div>
                 <!-- Brand Header -->
                 <div class="px-2 mb-4">
@@ -99,12 +99,12 @@
                         <img src="{{ asset('images/nutrigrow-logo.png') }}" alt="NutriGrow" class="h-7 sm:h-8 w-auto object-contain">
                         <div class="text-[9.5px] font-black uppercase tracking-widest text-[#e11d48] mt-1">
                             PORTAL ADMIN
-                            <span class="block text-[8px] tracking-wider text-slate-400 font-semibold">TENAGA KESEHATAN</span>
+                            <span class="block text-[8px] tracking-wider text-slate-500 font-semibold">TENAGA KESEHATAN</span>
                         </div>
                     </a>
 
                     <!-- Verified Badge -->
-                    <div class="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-50 border border-sky-100/90 text-[10px] font-bold text-sky-700 tracking-tight w-full">
+                    <div class="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/80 backdrop-blur-xs border border-sky-200/80 text-[10px] font-bold text-sky-800 tracking-tight w-full shadow-2xs">
                         <svg class="w-3.5 h-3.5 text-sky-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
@@ -117,7 +117,7 @@
                     <!-- 1. Dashboard Admin -->
                     <a
                         href="{{ route('admin.dashboard') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <rect x="3" y="3" width="7" height="7" rx="1.5"/>
@@ -132,7 +132,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="showFeatureNotice('Data Pengguna')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -144,7 +144,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="showFeatureNotice('Data Pemeriksaan Kehamilan')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -156,7 +156,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="showFeatureNotice('Data Tumbuh Kembang Anak')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -178,7 +178,7 @@
                     <!-- 6. Data Layanan Kesehatan -->
                     <a
                         href="{{ route('admin.fasilitas.index') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
@@ -190,7 +190,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="showFeatureNotice('Data Informasi Nutrisi')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
@@ -202,7 +202,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="showFeatureNotice('Manajemen Akun Admin')"
-                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <div class="flex items-center gap-3">
                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -219,11 +219,11 @@
             </div>
 
             <!-- Bottom Section of Sidebar -->
-            <div class="pt-4 border-t border-slate-100">
+            <div class="pt-4 border-t border-sky-200/60">
                 <!-- Faskes Info Card -->
-                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 mb-3">
+                <div class="p-3 rounded-2xl bg-white/85 backdrop-blur-xs border border-sky-200/80 shadow-2xs mb-3">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-xl bg-white shadow-xs border border-slate-100 flex items-center justify-center text-sky-600 shrink-0">
+                        <div class="w-8 h-8 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                             </svg>
@@ -246,7 +246,7 @@
                 <button
                     type="button"
                     onclick="openLogoutModal()"
-                    class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50/70 transition cursor-pointer"
+                    class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-white/70 hover:text-rose-700 transition cursor-pointer"
                 >
                     <span class="font-bold">Keluar Portal</span>
                     <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
