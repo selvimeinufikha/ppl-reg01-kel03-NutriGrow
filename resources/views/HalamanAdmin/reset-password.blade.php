@@ -84,12 +84,12 @@
 
                     <div>
                         <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5">KATA SANDI BARU <span class="text-rose-500">*</span></label>
-                        <input type="password" name="password" required placeholder="Minimal 6 karakter kombinasi aman" class="block w-full px-4 py-3 sm:py-3.5 text-sm rounded-2xl bg-white border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-100 focus:border-[#0284c7] transition" />
+                        <input type="password" name="password" required placeholder="Minimal 6 karakter kombinasi aman" class="block w-full px-4 py-3 sm:py-3.5 text-sm rounded-2xl bg-white border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-100 focus:border-[#0284c7] transition shadow-xs" />
                     </div>
 
                     <div>
                         <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5">KONFIRMASI KATA SANDI BARU <span class="text-rose-500">*</span></label>
-                        <input type="password" name="password_confirmation" required placeholder="Ulangi kata sandi baru" class="block w-full px-4 py-3 sm:py-3.5 text-sm rounded-2xl bg-white border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-100 focus:border-[#0284c7] transition" />
+                        <input type="password" name="password_confirmation" required placeholder="Ulangi kata sandi baru" class="block w-full px-4 py-3 sm:py-3.5 text-sm rounded-2xl bg-white border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-100 focus:border-[#0284c7] transition shadow-xs" />
                     </div>
 
                     <div class="pt-2">

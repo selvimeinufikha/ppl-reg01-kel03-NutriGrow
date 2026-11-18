@@ -173,7 +173,7 @@
                                     required
                                     value="{{ old('email') }}"
                                     placeholder="nama@email.com"
-                                    class="w-full pl-10 pr-3.5 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border @error('email') border-rose-400 bg-rose-50/30 @else border-slate-200 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-3.5 py-2 sm:py-2.5 rounded-xl bg-white border @error('email') border-rose-400 bg-rose-50/30 @else border-slate-300 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 transition shadow-xs"
                                 />
                             </div>
                             @error('email')
@@ -203,7 +203,7 @@
                                     name="password"
                                     required
                                     placeholder="Masukkan kata sandi Anda"
-                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border @error('password') border-rose-400 bg-rose-50/30 @else border-slate-200 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-white border @error('password') border-rose-400 bg-rose-50/30 @else border-slate-300 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 transition shadow-xs"
                                 />
                                 <button
                                     type="button"
@@ -376,7 +376,7 @@
                                     required
                                     value="{{ old('name') }}"
                                     placeholder="Contoh: Siti Rahmawati"
-                                    class="w-full pl-10 pr-3.5 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-3.5 py-2 sm:py-2.5 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 transition shadow-xs"
                                 />
                             </div>
                         </div>
@@ -404,13 +404,8 @@
                                     required
                                     value="{{ old('email') }}"
                                     placeholder="nama@email.com"
-                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 transition shadow-xs"
                                 />
-                                <div id="email-icon-indicator" class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none hidden">
-                                    <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                </div>
                             </div>
                             <p id="email-live-msg" class="mt-0.5 text-[11px] font-medium hidden"></p>
                         </div>
@@ -435,7 +430,7 @@
                                     name="password"
                                     required
                                     placeholder="Minimal 8 karakter"
-                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 transition shadow-xs"
                                 />
                                 <button
                                     type="button"
@@ -482,7 +477,7 @@
                                     name="password_confirmation"
                                     required
                                     placeholder="Ulangi kata sandi Anda"
-                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 transition shadow-xs"
                                 />
                                 <button
                                     type="button"

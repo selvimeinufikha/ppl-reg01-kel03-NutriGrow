@@ -252,7 +252,7 @@
                                 required
                                 autofocus
                                 placeholder="nama@nutrigrow.id / puskesmas.go.id"
-                                class="w-full pl-10 pr-4 py-3 sm:py-3.5 rounded-2xl bg-slate-50/50 hover:bg-slate-50 focus:bg-white border @error('email') border-rose-400 @else border-slate-200/90 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition shadow-2xs font-medium"
+                                class="w-full pl-10 pr-4 py-3 sm:py-3.5 rounded-2xl bg-white border @error('email') border-rose-400 @else border-slate-300 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/15 focus:border-[#0284c7] transition shadow-xs font-medium"
                             />
                         </div>
                         @error('email')
@@ -278,7 +278,7 @@
                                 value="admin123"
                                 required
                                 placeholder="Masukkan kata sandi aman"
-                                class="w-full pl-10 pr-10 py-3 sm:py-3.5 rounded-2xl bg-slate-50/50 hover:bg-slate-50 focus:bg-white border @error('password') border-rose-400 @else border-slate-200/90 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition shadow-2xs font-medium"
+                                class="w-full pl-10 pr-10 py-3 sm:py-3.5 rounded-2xl bg-white border @error('password') border-rose-400 @else border-slate-300 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/15 focus:border-[#0284c7] transition shadow-xs font-medium"
                             />
                             <!-- Toggle Password Visibility Button -->
                             <button

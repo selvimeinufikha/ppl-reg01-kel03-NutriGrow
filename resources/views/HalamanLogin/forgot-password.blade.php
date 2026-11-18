@@ -275,7 +275,7 @@
                                 autofocus
                                 value="{{ old('email') }}"
                                 placeholder="nama@email.com"
-                                class="w-full pl-10 pr-3.5 py-2.5 sm:py-3 rounded-xl bg-slate-50/70 border @error('email') border-rose-400 bg-rose-50/30 @else border-slate-200 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                class="w-full pl-10 pr-3.5 py-2.5 sm:py-3 rounded-xl bg-white border @error('email') border-rose-400 bg-rose-50/30 @else border-slate-300 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 transition shadow-xs"
                             />
                         </div>
                     </div>

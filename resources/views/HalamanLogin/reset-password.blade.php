@@ -171,7 +171,7 @@
                                 required
                                 autofocus
                                 placeholder="Buat sandi baru yang kuat..."
-                                class="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-xl bg-slate-50/70 border @error('password') border-rose-400 bg-rose-50/30 @else border-slate-200 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                class="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-xl bg-white border @error('password') border-rose-400 bg-rose-50/30 @else border-slate-300 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 transition shadow-xs"
                             />
                             <button
                                 type="button"
@@ -232,7 +232,7 @@
                                 name="password_confirmation"
                                 required
                                 placeholder="Ulangi kata sandi baru..."
-                                class="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                class="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 transition shadow-xs"
                             />
                             <button
                                 type="button"

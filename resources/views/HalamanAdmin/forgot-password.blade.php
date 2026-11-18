@@ -171,7 +171,7 @@
                                 required
                                 autofocus
                                 placeholder="nama@nutrigrow.id / puskesmas.go.id"
-                                class="block w-full pl-9 pr-4 py-3 sm:py-3.5 text-sm rounded-2xl bg-white border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-100 focus:border-[#0284c7] transition"
+                                class="block w-full pl-9 pr-4 py-3 sm:py-3.5 text-sm rounded-2xl bg-white border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-100 focus:border-[#0284c7] transition shadow-xs"
                             />
                         </div>
 
