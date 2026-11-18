@@ -46,6 +46,15 @@
         }
     </script>
     <style>
+        /* Force clean white background on browser autofill */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+            -webkit-text-fill-color: #1e293b !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -248,7 +257,7 @@
                                 required
                                 autofocus
                                 placeholder="nama@nutrigrow.id / puskesmas.go.id"
-                                class="w-full pl-10 pr-4 py-3 sm:py-3.5 rounded-2xl bg-slate-50/50 hover:bg-slate-50 focus:bg-white border @error('email') border-rose-400 @else border-slate-200/90 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition shadow-2xs font-medium"
+                                class="w-full pl-10 pr-4 py-3 sm:py-3.5 rounded-2xl bg-white border @error('email') border-rose-400 bg-rose-50/20 @else border-slate-300 hover:border-slate-400 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition shadow-2xs font-medium"
                             />
                         </div>
                         @error('email')
@@ -274,7 +283,7 @@
                                 value="admin123"
                                 required
                                 placeholder="Masukkan kata sandi aman"
-                                class="w-full pl-10 pr-10 py-3 sm:py-3.5 rounded-2xl bg-slate-50/50 hover:bg-slate-50 focus:bg-white border @error('password') border-rose-400 @else border-slate-200/90 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition shadow-2xs font-medium"
+                                class="w-full pl-10 pr-10 py-3 sm:py-3.5 rounded-2xl bg-white border @error('password') border-rose-400 bg-rose-50/20 @else border-slate-300 hover:border-slate-400 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition shadow-2xs font-medium"
                             />
                             <!-- Toggle Password Visibility Button -->
                             <button

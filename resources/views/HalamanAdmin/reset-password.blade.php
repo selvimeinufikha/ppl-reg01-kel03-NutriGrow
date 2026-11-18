@@ -21,6 +21,15 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Force clean white background on browser autofill */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+            -webkit-text-fill-color: #1e293b !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -84,12 +93,12 @@
 
                     <div>
                         <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5">KATA SANDI BARU <span class="text-rose-500">*</span></label>
-                        <input type="password" name="password" required placeholder="Minimal 6 karakter kombinasi aman" class="block w-full px-4 py-3 sm:py-3.5 text-sm rounded-2xl bg-white border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-100 focus:border-[#0284c7] transition" />
+                        <input type="password" name="password" required placeholder="Minimal 6 karakter kombinasi aman" class="block w-full px-4 py-3 sm:py-3.5 text-sm rounded-2xl bg-white border border-slate-300 hover:border-slate-400 text-slate-800 placeholder-slate-400 shadow-2xs focus:outline-none focus:ring-4 focus:ring-sky-100 focus:border-[#0284c7] transition" />
                     </div>
 
                     <div>
                         <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5">KONFIRMASI KATA SANDI BARU <span class="text-rose-500">*</span></label>
-                        <input type="password" name="password_confirmation" required placeholder="Ulangi kata sandi baru" class="block w-full px-4 py-3 sm:py-3.5 text-sm rounded-2xl bg-white border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-100 focus:border-[#0284c7] transition" />
+                        <input type="password" name="password_confirmation" required placeholder="Ulangi kata sandi baru" class="block w-full px-4 py-3 sm:py-3.5 text-sm rounded-2xl bg-white border border-slate-300 hover:border-slate-400 text-slate-800 placeholder-slate-400 shadow-2xs focus:outline-none focus:ring-4 focus:ring-sky-100 focus:border-[#0284c7] transition" />
                     </div>
 
                     <div class="pt-2">
