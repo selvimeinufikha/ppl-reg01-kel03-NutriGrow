@@ -89,4 +89,27 @@ class TambahAkunAdminTest extends TestCase
         $createdUser = User::where('email', 'bambang.sudiro@nutrigrow.id')->first();
         $this->assertTrue(Hash::check('Dokter123#', $createdUser->password));
     }
+
+    public function test_email_yang_sudah_terdaftar_ditolak(): void
+    {
+        $superadmin = User::factory()->create([
+            'role' => 'superadmin',
+            'email' => 'admin@nutrigrow.id',
+        ]);
+
+        User::factory()->create([
+            'email' => 'admin.lama@nutrigrow.id',
+        ]);
+
+        $response = $this->actingAs($superadmin)->post(route('admin.akun.store'), [
+            'name' => 'Admin Baru',
+            'email' => 'admin.lama@nutrigrow.id',
+            'role' => 'admin',
+            'faskes_name' => 'Puskesmas Gambir',
+            'password' => 'Password123#',
+            'password_confirmation' => 'Password123#',
+        ]);
+
+        $response->assertSessionHasErrors(['email']);
+    }
 }

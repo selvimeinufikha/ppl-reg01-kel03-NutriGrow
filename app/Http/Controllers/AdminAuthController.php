@@ -55,10 +55,15 @@ class AdminAuthController extends Controller
                 ])->withInput($request->only('email'));
             }
 
-            // Flash notifikasi sukses
+            // Flash notifikasi sukses & redirect sesuai hierarki peran
+            if ($authUser->isSuperAdmin()) {
+                session()->flash('success_admin_login', 'Selamat datang, ' . $authUser->name . '! Anda berhasil masuk ke Dashboard Super Admin NutriGrow.');
+                return redirect()->route('superadmin.dashboard');
+            }
+
             session()->flash('success_admin_login', 'Selamat datang, ' . $authUser->name . '! Anda berhasil masuk ke Dashboard Admin NutriGrow.');
 
-            // Arahkan LANGSUNG ke Dashboard Admin (URL: /admin/dashboard)
+            // Arahkan ke Dashboard Admin Pegawai/Faskes (URL: /admin/dashboard)
             return redirect()->route('admin.dashboard');
         }
 

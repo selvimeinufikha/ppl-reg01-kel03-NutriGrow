@@ -27,17 +27,17 @@
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     colors: {
-                        medical: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
+                        brand: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                            900: '#881337',
                         }
                     }
                 }
@@ -51,7 +51,7 @@
     <div class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
         <div class="flex items-center gap-2">
             <img src="{{ asset('images/nutrigrow-logo.png') }}" alt="NutriGrow" class="h-7 w-auto">
-            <span class="text-[10px] font-black uppercase tracking-wider text-[#0284c7] bg-sky-50 px-2 py-0.5 rounded-md">
+            <span class="text-[10px] font-black uppercase tracking-wider text-[#e11d48] bg-pink-50 px-2 py-0.5 rounded-md">
                 PORTAL ADMIN
             </span>
         </div>
@@ -92,8 +92,8 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                         <span>Edukasi Gizi &amp; KIA</span>
                     </a>
-                    <!-- ACTIVE MENU: MANAJEMEN AKUN ADMIN -->
-                    <a href="{{ route('admin.akun.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#0284c7] text-white shadow-xs font-bold transition">
+                    <!-- ACTIVE MENU: MANAJEMEN AKUN ADMIN (PINK ACCENT) -->
+                    <a href="{{ route('admin.akun.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-xs font-bold transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                         <span>Manajemen Akun Admin</span>
                     </a>
@@ -102,7 +102,7 @@
 
             <div class="pt-4 border-t border-slate-100 px-2 space-y-3">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-sky-100 text-[#0284c7] font-bold text-xs flex items-center justify-center">
+                    <div class="w-9 h-9 rounded-xl bg-pink-100 text-[#e11d48] font-bold text-xs flex items-center justify-center">
                         {{ strtoupper(substr($adminName, 0, 2)) }}
                     </div>
                     <div class="min-w-0 flex-1">
@@ -124,7 +124,7 @@
                     </button>
                     <div>
                         <div class="flex items-center gap-2 text-xs text-slate-400">
-                            <a href="{{ route('admin.dashboard') }}" class="hover:text-sky-600 transition">Portal Admin</a>
+                            <a href="{{ route('admin.dashboard') }}" class="hover:text-rose-600 transition">Portal Admin</a>
                             <span>/</span>
                             <span class="text-slate-800 font-bold">Manajemen Akun Administrator (PBI-028)</span>
                         </div>
@@ -138,8 +138,8 @@
                         <span>{{ $tanggalHariIni }}</span>
                     </div>
 
-                    <!-- TOMBOL TAMBAH AKUN (PBI-028) -->
-                    <a href="{{ route('admin.akun.create') }}" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white font-bold text-xs shadow-md shadow-sky-600/20 hover:shadow-lg transition flex items-center gap-1.5">
+                    <!-- TOMBOL TAMBAH AKUN (PBI-028) - PINK -->
+                    <a href="{{ route('admin.akun.create') }}" class="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold text-xs shadow-md shadow-pink-600/20 hover:shadow-lg transition flex items-center gap-1.5 cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
                         <span>Tambah Akun Administrator</span>
                     </a>
@@ -161,14 +161,14 @@
                     </div>
                 @endif
 
-                <!-- SUMMARY METRICS -->
+                <!-- SUMMARY METRICS - PINK ACCENTS -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
                         <div>
                             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Akun Admin</p>
                             <p class="text-2xl font-black text-slate-800 mt-1">{{ $totalAdmin }}</p>
                         </div>
-                        <div class="w-11 h-11 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center">
+                        <div class="w-11 h-11 rounded-2xl bg-pink-50 text-rose-600 flex items-center justify-center">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                         </div>
                     </div>
@@ -176,9 +176,9 @@
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
                         <div>
                             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Tenaga Medis &amp; Nakes</p>
-                            <p class="text-2xl font-black text-emerald-600 mt-1">{{ $totalNakes }}</p>
+                            <p class="text-2xl font-black text-rose-600 mt-1">{{ $totalNakes }}</p>
                         </div>
-                        <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <div class="w-11 h-11 rounded-2xl bg-pink-50 text-rose-600 flex items-center justify-center">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                         </div>
                     </div>
@@ -196,9 +196,9 @@
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
                         <div>
                             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Akun Aktif</p>
-                            <p class="text-2xl font-black text-sky-700 mt-1">{{ $totalAktif }}</p>
+                            <p class="text-2xl font-black text-rose-700 mt-1">{{ $totalAktif }}</p>
                         </div>
-                        <div class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <div class="w-11 h-11 rounded-2xl bg-pink-50 text-rose-600 flex items-center justify-center">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                         </div>
                     </div>
@@ -206,53 +206,63 @@
 
                 <!-- FILTER BAR -->
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
-                    <form action="{{ route('admin.akun.index') }}" method="GET" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1">
-                        <!-- Search Box -->
-                        <div class="relative flex-1">
-                            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                            <input type="text" name="search" value="{{ $filterSearch }}" placeholder="Cari nama, email dinas, NIP/STR, atau faskes..." class="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition">
+                    <form action="{{ route('admin.akun.index') }}" method="GET" class="flex flex-col md:flex-row items-center gap-3 w-full">
+                        <div class="relative flex-1 w-full">
+                            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <input type="text" name="search" value="{{ $filterSearch }}" placeholder="Cari nama, email dinas, NIP/STR, atau faskes..." class="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition">
                         </div>
 
-                        <!-- Role Filter -->
-                        <select name="role" onchange="this.form.submit()" class="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition">
-                            <option value="all" {{ $filterRole == 'all' ? 'selected' : '' }}>Semua Hak Akses (Role)</option>
-                            <option value="superadmin" {{ $filterRole == 'superadmin' ? 'selected' : '' }}>Super Administrator</option>
-                            <option value="admin" {{ $filterRole == 'admin' ? 'selected' : '' }}>Administrator Faskes</option>
-                            <option value="dokter" {{ $filterRole == 'dokter' ? 'selected' : '' }}>Dokter Spesialis / Umum</option>
-                            <option value="bidan" {{ $filterRole == 'bidan' ? 'selected' : '' }}>Bidan Koordinator</option>
-                            <option value="ahli_gizi" {{ $filterRole == 'ahli_gizi' ? 'selected' : '' }}>Nutrisionis / Gizi</option>
-                        </select>
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <select name="role" class="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 text-slate-600 font-medium">
+                                <option value="all" {{ $filterRole === 'all' ? 'selected' : '' }}>Semua Role</option>
+                                <option value="superadmin" {{ $filterRole === 'superadmin' ? 'selected' : '' }}>Super Admin</option>
+                                <option value="admin" {{ $filterRole === 'admin' ? 'selected' : '' }}>Admin Faskes</option>
+                                <option value="dokter" {{ $filterRole === 'dokter' ? 'selected' : '' }}>Dokter</option>
+                                <option value="bidan" {{ $filterRole === 'bidan' ? 'selected' : '' }}>Bidan</option>
+                                <option value="ahli_gizi" {{ $filterRole === 'ahli_gizi' ? 'selected' : '' }}>Ahli Gizi</option>
+                            </select>
 
-                        <!-- Status Filter -->
-                        <select name="status" onchange="this.form.submit()" class="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition">
-                            <option value="all" {{ $filterStatus == 'all' ? 'selected' : '' }}>Semua Status</option>
-                            <option value="active" {{ $filterStatus == 'active' ? 'selected' : '' }}>Aktif</option>
-                            <option value="inactive" {{ $filterStatus == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
-                        </select>
+                            <select name="status" class="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 text-slate-600 font-medium">
+                                <option value="all" {{ $filterStatus === 'all' ? 'selected' : '' }}>Semua Status</option>
+                                <option value="active" {{ $filterStatus === 'active' ? 'selected' : '' }}>Aktif</option>
+                                <option value="inactive" {{ $filterStatus === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
+                            </select>
 
-                        <button type="submit" class="px-4 py-2 rounded-xl bg-slate-800 text-white text-xs font-bold hover:bg-slate-900 transition">
-                            Cari
-                        </button>
-                        @if ($filterSearch || $filterRole !== 'all' || $filterStatus !== 'all')
-                            <a href="{{ route('admin.akun.index') }}" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 text-center transition">
-                                Reset
-                            </a>
-                        @endif
+                            <button type="submit" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs transition">
+                                Terapkan
+                            </button>
+
+                            @if ($filterSearch || $filterRole !== 'all' || $filterStatus !== 'all')
+                                <a href="{{ route('admin.akun.index') }}" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold transition">
+                                    Reset
+                                </a>
+                            @endif
+                        </div>
                     </form>
                 </div>
 
                 <!-- TABLE DAFTAR AKUN ADMINISTRATOR -->
                 <div class="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-sm font-extrabold text-slate-900">Daftar Akun Administrator Terdaftar</h2>
+                            <p class="text-xs text-slate-400 mt-0.5">Seluruh petugas kesehatan yang memiliki akses login ke sistem NutriGrow.</p>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                            {{ $adminList->count() }} Akun Ditemukan
+                        </span>
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[10px]">
+                            <thead class="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                                 <tr>
-                                    <th class="px-5 py-3.5 font-bold">Administrator / Tenaga Kesehatan</th>
-                                    <th class="px-5 py-3.5 font-bold">Hak Akses (Role)</th>
-                                    <th class="px-5 py-3.5 font-bold">Faskes &amp; Jabatan</th>
-                                    <th class="px-5 py-3.5 font-bold">NIP / No. STR</th>
-                                    <th class="px-5 py-3.5 font-bold text-center">Status</th>
-                                    <th class="px-5 py-3.5 font-bold text-right">Terdaftar</th>
+                                    <th class="px-5 py-3.5">Nama &amp; Email</th>
+                                    <th class="px-5 py-3.5">Hak Akses (Role)</th>
+                                    <th class="px-5 py-3.5">Instansi Faskes &amp; Jabatan</th>
+                                    <th class="px-5 py-3.5">NIP / STR</th>
+                                    <th class="px-5 py-3.5 text-center">Status</th>
+                                    <th class="px-5 py-3.5 text-right">Didaftarkan</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
@@ -260,18 +270,18 @@
                                     @php
                                         $badgeClasses = match($adm->role) {
                                             'superadmin' => 'bg-purple-50 text-purple-700 border-purple-200',
-                                            'admin' => 'bg-sky-50 text-sky-700 border-sky-200',
+                                            'admin' => 'bg-pink-50 text-rose-700 border-pink-200',
                                             'dokter' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                            'bidan' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                            'bidan' => 'bg-pink-100 text-pink-700 border-pink-200',
                                             'ahli_gizi' => 'bg-amber-50 text-amber-700 border-amber-200',
-                                            default => 'bg-slate-100 text-slate-700 border-slate-200',
+                                            default => 'bg-slate-100 text-slate-600 border-slate-200',
                                         };
                                     @endphp
-                                    <tr class="hover:bg-slate-50/70 transition">
-                                        <!-- Nama & Avatar -->
+                                    <tr class="hover:bg-slate-50/60 transition">
+                                        <!-- Nama & Email -->
                                         <td class="px-5 py-4">
                                             <div class="flex items-center gap-3">
-                                                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-blue-700 text-white flex items-center justify-center font-black text-xs shadow-xs shrink-0">
+                                                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 to-pink-600 text-white font-black text-xs flex items-center justify-center shadow-xs shrink-0">
                                                     {{ $adm->inisial }}
                                                 </div>
                                                 <div class="min-w-0">

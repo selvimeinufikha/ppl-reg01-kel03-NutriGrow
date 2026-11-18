@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 
 class AdminManajemenAkunController extends Controller
 {
@@ -26,7 +27,7 @@ class AdminManajemenAkunController extends Controller
                 'name' => 'dr. Siti Nurhaliza, Sp.A',
                 'password' => bcrypt('password123'),
                 'role' => 'superadmin',
-                'faskes_name' => 'Puskesmas Gambir & RSUD Tarakan',
+                'faskes_name' => 'Kementerian Kesehatan RI & NutriGrow Central',
                 'nip_str' => 'STR-19880412-2023-019',
                 'phone' => '081122334455',
                 'jabatan' => 'Super Administrator / Dokter Spesialis Anak',
@@ -83,11 +84,15 @@ class AdminManajemenAkunController extends Controller
 
         $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
 
-        return view('DashboardAdmin.ManajemenAkun.index', [
+        $viewName = view()->exists('DashboardSuperAdmin.ManajemenAkun.index')
+            ? 'DashboardSuperAdmin.ManajemenAkun.index'
+            : (view()->exists('DashboardSuperAdmin.index') ? 'DashboardSuperAdmin.index' : 'DashboardAdmin.ManajemenAkun.index');
+
+        return view($viewName, [
             'currentAdmin' => $currentAdmin,
             'adminName' => $currentAdmin->name,
             'adminRole' => $currentAdmin->role_label,
-            'faskesName' => $currentAdmin->faskes_name ?? 'Puskesmas Gambir',
+            'faskesName' => $currentAdmin->faskes_name ?? 'Kementerian Kesehatan RI',
             'tanggalHariIni' => $tanggalHariIni,
             'adminList' => $adminList,
             'totalAdmin' => $totalAdmin,
@@ -120,11 +125,15 @@ class AdminManajemenAkunController extends Controller
             'Dinas Kesehatan Provinsi DKI Jakarta',
         ];
 
-        return view('DashboardAdmin.ManajemenAkun.create', [
+        $viewName = view()->exists('DashboardSuperAdmin.ManajemenAkun.create')
+            ? 'DashboardSuperAdmin.ManajemenAkun.create'
+            : 'DashboardAdmin.ManajemenAkun.create';
+
+        return view($viewName, [
             'currentAdmin' => $currentAdmin,
             'adminName' => $currentAdmin->name,
             'adminRole' => $currentAdmin->role_label,
-            'faskesName' => $currentAdmin->faskes_name ?? 'Puskesmas Gambir',
+            'faskesName' => $currentAdmin->faskes_name ?? 'Kementerian Kesehatan RI',
             'tanggalHariIni' => $tanggalHariIni,
             'daftarFaskes' => $daftarFaskes,
         ]);
@@ -165,13 +174,17 @@ class AdminManajemenAkunController extends Controller
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
             'faskes_name' => trim($validated['faskes_name']),
-            'nip_str' => $validated['nip_str'] ? trim($validated['nip_str']) : null,
-            'jabatan' => $validated['jabatan'] ? trim($validated['jabatan']) : null,
-            'phone' => $validated['phone'] ? trim($validated['phone']) : null,
+            'nip_str' => !empty($validated['nip_str']) ? trim($validated['nip_str']) : null,
+            'jabatan' => !empty($validated['jabatan']) ? trim($validated['jabatan']) : null,
+            'phone' => !empty($validated['phone']) ? trim($validated['phone']) : null,
             'status' => $validated['status'] ?? 'active',
         ]);
 
-        return redirect()->route('admin.akun.index')
+        $redirectRoute = request()->routeIs('superadmin.*') || request()->is('superadmin/*')
+            ? (Route::has('superadmin.akun.index') ? 'superadmin.akun.index' : 'admin.akun.index')
+            : 'admin.akun.index';
+
+        return redirect()->route($redirectRoute)
             ->with('success', "Akun administrator baru '{$newUser->name}' ({$newUser->role_label}) berhasil didaftarkan ke sistem!");
     }
 

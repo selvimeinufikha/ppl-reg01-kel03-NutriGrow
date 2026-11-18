@@ -10,6 +10,9 @@ use App\Http\Controllers\AdminFasilitasKesehatanController;
 use App\Http\Controllers\AdminManajemenAkunController;
 use App\Http\Controllers\DashboardPenggunaController;
 use App\Http\Controllers\PasanganController;
+use App\Http\Controllers\SuperAdminDashboardController;
+use Illuminate\Support\Facades\Auth;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +52,41 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 
 // Dashboard Pengguna (Keluarga & Orang Tua)
 Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
-Route::get('/dashboard', [DashboardPenggunaController::class, 'index'])->name('dashboard');
+
+// Dashboard Dinamis (Mengarahkan sesuai peran pengguna: Super Admin, Pegawai/Nakes, atau Pengguna)
+Route::get('/dashboard', function () {
+    if (!Auth::check()) {
+        return redirect()->route('login');
+    }
+
+    /** @var \App\Models\User $user */
+    $user = Auth::user();
+
+    if ($user->isSuperAdmin()) {
+        return redirect()->route('superadmin.dashboard');
+    }
+
+    if ($user->isStaffOrAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return redirect()->route('dashboard.pengguna');
+})->name('dashboard');
+
+// =========================================================================
+// 2. WEBSITE SUPER ADMIN (Portal Pengelola Sistem & Kementerian/Dinkes)
+// =========================================================================
+Route::prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::get('/dashboard', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/manajemen-akun', [AdminManajemenAkunController::class, 'index'])->name('akun.index');
+    Route::get('/manajemen-akun/tambah', [AdminManajemenAkunController::class, 'create'])->name('akun.create');
+    Route::post('/manajemen-akun', [AdminManajemenAkunController::class, 'store'])->name('akun.store');
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+});
+
+Route::get('/dashboard-superadmin', function () {
+    return redirect()->route('superadmin.dashboard');
+})->name('dashboard.superadmin');
 
 // Rute Data Pasangan (PBI-001, PBI-002, PBI-003: Kelola Data Pasangan)
 Route::prefix('data-pasangan')->name('pasangan.')->group(function () {
