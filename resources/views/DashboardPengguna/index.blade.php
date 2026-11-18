@@ -321,20 +321,20 @@
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100/80 border border-pink-200/90 text-brand-600 text-xs font-bold">
                                 <span class="w-2 h-2 rounded-full bg-brand-500"></span>
-                                Trimester 2 (Masa Emas Perkembangan Organ)
+                                Trimester {{ $kehamilanStatus['trimester'] }} (Masa Emas Perkembangan Organ)
                             </span>
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/90 border border-slate-200/80 text-slate-600 text-xs font-semibold">
-                                HPL: 18 Februari 2026 (~112 Hari Lagi)
+                                HPL: {{ $kehamilanStatus['hpl'] }} (~{{ $kehamilanStatus['sisaHari'] }} Hari Lagi)
                             </span>
                         </div>
 
                         <!-- Big Gestational Age Title -->
                         <div class="pt-1">
                             <h2 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-                                Minggu ke-24 Hari ke-3
+                                Minggu ke-{{ $kehamilanStatus['minggu'] }} Hari ke-{{ $kehamilanStatus['hari'] }}
                             </h2>
                             <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-                                Janin sekarang seukuran <strong class="text-brand-600 font-bold">Jagung Manis (&plusmn;30 cm, 600 gram)</strong>. Pendengaran janin semakin peka terhadap suara Ibu dan detak jantung telah terdengar mantap.
+                                Janin sekarang seukuran <strong class="text-brand-600 font-bold">{{ $kehamilanStatus['ukuranJanin'] }}</strong>. Pendengaran janin semakin peka terhadap suara Ibu dan detak jantung telah terdengar mantap.
                             </p>
                         </div>
 
@@ -342,15 +342,15 @@
                         <div class="pt-2">
                             <div class="flex items-center justify-between text-xs mb-1.5">
                                 <span class="font-bold text-slate-700">Progres Kehamilan</span>
-                                <span class="font-extrabold text-brand-600">60% Tercapai (24/40 Minggu)</span>
+                                <span class="font-extrabold text-brand-600">{{ round(($kehamilanStatus['minggu'] / 40) * 100) }}% Tercapai ({{ $kehamilanStatus['minggu'] }}/40 Minggu)</span>
                             </div>
                             <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-100">
-                                <div class="h-full bg-gradient-to-r from-brand-600 via-rose-500 to-pink-500 rounded-full transition-all duration-1000" style="width: 60%"></div>
+                                <div class="h-full bg-gradient-to-r from-brand-600 via-rose-500 to-pink-500 rounded-full transition-all duration-1000" style="width: {{ min(100, round(($kehamilanStatus['minggu'] / 40) * 100)) }}%"></div>
                             </div>
                             <div class="flex items-center justify-between text-[11px] text-slate-400 font-medium mt-1.5">
-                                <span>Trimester 1 (Mg 1&ndash;13)</span>
-                                <span class="font-bold text-brand-600">Trimester 2 (Mg 14&ndash;27)</span>
-                                <span>Trimester 3 (Mg 28&ndash;40)</span>
+                                <span class="{{ $kehamilanStatus['trimester'] == 1 ? 'font-bold text-brand-600' : '' }}">Trimester 1 (Mg 1&ndash;13)</span>
+                                <span class="{{ $kehamilanStatus['trimester'] == 2 ? 'font-bold text-brand-600' : '' }}">Trimester 2 (Mg 14&ndash;27)</span>
+                                <span class="{{ $kehamilanStatus['trimester'] == 3 ? 'font-bold text-brand-600' : '' }}">Trimester 3 (Mg 28&ndash;40)</span>
                             </div>
                         </div>
 
@@ -513,7 +513,7 @@
                                 </h3>
                             </div>
                             <span class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200/70 text-xs font-bold">
-                                4 Hari Lagi
+                                {{ $jadwalTerdekat['sisaHari'] }}
                             </span>
                         </div>
 
@@ -521,14 +521,14 @@
                         <div class="rounded-2xl bg-slate-50/70 border border-slate-200/70 p-4 mb-4">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                                 <h4 class="font-extrabold text-sm sm:text-[15px] text-slate-900">
-                                    Antenatal Care (ANC Ke-4) &amp; USG Rutin
+                                    {{ $jadwalTerdekat['nama'] }}
                                 </h4>
                                 <span class="self-start sm:self-auto px-2 py-0.5 rounded-md bg-sky-100/80 text-sky-700 text-[10px] font-bold">
-                                    Terkonfirmasi
+                                    {{ $jadwalTerdekat['status'] }}
                                 </span>
                             </div>
                             <p class="text-xs text-slate-500 font-medium mb-3">
-                                dr. Linda Sp.OG &mdash; RSIA Bunda Sehat Jakarta
+                                {{ $jadwalTerdekat['dokter'] }} &mdash; {{ $faskesName }}
                             </p>
 
                             <!-- Date & Time Row -->
@@ -537,13 +537,13 @@
                                     <svg class="w-3.5 h-3.5 text-brand-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
-                                    Sabtu, 28 Oktober 2025
+                                    {{ $jadwalTerdekat['hariTanggal'] }}
                                 </span>
                                 <span class="flex items-center gap-1.5">
                                     <svg class="w-3.5 h-3.5 text-brand-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    09:30 &ndash; 10:15 WIB (Sesi Pagi)
+                                    {{ $jadwalTerdekat['waktu'] }}
                                 </span>
                             </div>
                         </div>
@@ -554,7 +554,7 @@
                                 <span>Lihat Detail Jadwal &amp; Rujukan</span>
                             </button>
                             <span class="text-xs font-bold text-slate-600">
-                                Nomor Antrean: <span class="text-brand-600 font-extrabold text-sm">B-08</span>
+                                Nomor Antrean: <span class="text-brand-600 font-extrabold text-sm">{{ $jadwalTerdekat['nomorAntrean'] }}</span>
                             </span>
                         </div>
                     </div>
@@ -563,15 +563,15 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3 border-t border-slate-100">
                         <div class="px-3 py-2 rounded-xl bg-sky-50/70 border border-sky-100 text-center">
                             <div class="text-[10px] text-slate-400 font-medium">Protein Urin</div>
-                            <div class="text-xs font-bold text-sky-800">Negatif (-)</div>
+                            <div class="text-xs font-bold text-sky-800">{{ $jadwalTerdekat['proteinUrin'] }}</div>
                         </div>
                         <div class="px-3 py-2 rounded-xl bg-sky-50/70 border border-sky-100 text-center">
                             <div class="text-[10px] text-slate-400 font-medium">Glukosa Puasa</div>
-                            <div class="text-xs font-bold text-sky-800">88 mg/dL</div>
+                            <div class="text-xs font-bold text-sky-800">{{ $jadwalTerdekat['glukosaPuasa'] }}</div>
                         </div>
                         <div class="px-3 py-2 rounded-xl bg-sky-50/70 border border-sky-100 text-center">
                             <div class="text-[10px] text-slate-400 font-medium">Detak Jantung Janin</div>
-                            <div class="text-xs font-bold text-sky-800">142 bpm</div>
+                            <div class="text-xs font-bold text-sky-800">{{ $jadwalTerdekat['detakJantung'] }}</div>
                         </div>
                     </div>
                 </div>
@@ -638,6 +638,128 @@
                     </a>
                 </div>
 
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- SECTION RIWAYAT PEMERIKSAAN KEHAMILAN (PBI-015)         -->
+            <!-- ======================================================== -->
+            <div class="rounded-3xl bg-white border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-pink-50 text-brand-600 flex items-center justify-center font-bold text-sm">
+                            🩺
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-sm sm:text-base text-slate-900">
+                                Riwayat Pemeriksaan &amp; Deteksi Risiko Klinis
+                            </h3>
+                            <p class="text-xs text-slate-400">
+                                Rekam medis hasil kunjungan Posyandu / Faskes yang otomatis tersinkronisasi.
+                            </p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-bold border border-slate-200 shrink-0 self-start sm:self-auto">
+                        Total {{ $riwayatPemeriksaan->count() }} Kunjungan Tercatat
+                    </span>
+                </div>
+
+                @if($riwayatPemeriksaan->isNotEmpty())
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[10.5px] font-black uppercase tracking-wider text-slate-500">
+                                <th class="py-3 px-3.5">Tanggal Periksa</th>
+                                <th class="py-3 px-3.5">Gestasi</th>
+                                <th class="py-3 px-3.5">Berat Badan</th>
+                                <th class="py-3 px-3.5">Tekanan Darah</th>
+                                <th class="py-3 px-3.5">LiLA (Status KEK)</th>
+                                <th class="py-3 px-3.5">Hb (Status Anemia)</th>
+                                <th class="py-3 px-3.5">Catatan Dokter / Bidan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @foreach($riwayatPemeriksaan as $p)
+                            @php
+                                $lRisk = $p->lila_risk;
+                                $hRisk = $p->hb_risk;
+                                $gBadge = $p->gestasi_badge;
+                            @endphp
+                            <tr class="hover:bg-slate-50/70 transition">
+                                <td class="py-3.5 px-3.5 whitespace-nowrap">
+                                    <div class="font-bold text-slate-900">{{ \Carbon\Carbon::parse($p->tgl_periksa)->translatedFormat('d M Y') }}</div>
+                                    <div class="text-[10.5px] text-slate-400 mt-0.5">{{ $p->nakes ? $p->nakes->name : 'Nakes Posyandu' }}</div>
+                                </td>
+                                <td class="py-3.5 px-3.5 whitespace-nowrap">
+                                    <span class="font-bold text-sky-700">{{ $gBadge['minggu'] }}</span>
+                                    <div class="mt-0.5">
+                                        <span class="text-[9.5px] font-bold px-1.5 py-0.5 rounded-full {{ $gBadge['badge'] }}">Trimester {{ $p->trimester }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-3.5 whitespace-nowrap">
+                                    <div class="font-bold text-slate-800">{{ number_format($p->berat_badan, 1) }} kg</div>
+                                    @if($p->perubahan_bb_formatted)
+                                    <div class="text-[10px] font-bold mt-0.5 {{ str_contains($p->perubahan_bb_formatted, '↓') ? 'text-rose-600' : 'text-emerald-600' }}">
+                                        {{ $p->perubahan_bb_formatted }}
+                                    </div>
+                                    @endif
+                                </td>
+                                <td class="py-3.5 px-3.5 whitespace-nowrap">
+                                    <div class="font-bold text-slate-800">{{ $p->tekanan_darah }} mmHg</div>
+                                    <div class="text-[10px] font-semibold mt-0.5 text-slate-500">
+                                        {{ ucfirst(str_replace('_', ' ', $p->status_tekanan_darah)) }}
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-3.5 whitespace-nowrap">
+                                    <div class="font-bold {{ $lRisk['is_kek'] ? 'text-rose-700' : 'text-slate-800' }}">
+                                        {{ number_format($p->lila, 1) }} cm
+                                    </div>
+                                    <div class="mt-0.5">
+                                        @if($lRisk['is_kek'])
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                                ⚠️ Risiko KEK
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                ✓ Normal
+                                            </span>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-3.5 whitespace-nowrap">
+                                    <div class="font-bold {{ $hRisk['is_anemia'] ? 'text-red-700' : 'text-slate-800' }}">
+                                        {{ $p->hb ? number_format($p->hb, 1) . ' g/dL' : '-' }}
+                                    </div>
+                                    <div class="mt-0.5">
+                                        @if($hRisk['is_anemia'])
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-700 border border-red-200">
+                                                ⚠️ Anemia
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                ✓ Normal
+                                            </span>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-3.5 min-w-[200px]">
+                                    <p class="text-slate-600 text-[11px] leading-relaxed line-clamp-2" title="{{ $p->catatan_klinis }}">
+                                        {{ $p->catatan_klinis ?: 'Pemeriksaan rutin sesuai SOP KIA.' }}
+                                    </p>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @else
+                <div class="p-8 text-center bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 mx-auto flex items-center justify-center font-bold mb-2">
+                        📋
+                    </div>
+                    <p class="text-xs font-bold text-slate-700">Belum Ada Riwayat Kunjungan Pemeriksaan</p>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Data hasil pemeriksaan oleh tenaga kesehatan di Posyandu akan langsung tampil di sini.</p>
+                </div>
+                @endif
             </div>
 
             <!-- ======================================================== -->

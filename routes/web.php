@@ -73,6 +73,10 @@ Route::prefix('admin')->group(function () {
     Route::get('/data-pemeriksaan-kehamilan', [AdminPemeriksaanKehamilanController::class, 'index'])->name('admin.pemeriksaan.alias');
     Route::get('/pemeriksaan-kehamilan/pasien/{kehamilanId}', [AdminPemeriksaanKehamilanController::class, 'getPasienInfo'])->name('admin.pemeriksaan.pasien-info');
     Route::post('/pemeriksaan-kehamilan', [AdminPemeriksaanKehamilanController::class, 'store'])->name('admin.pemeriksaan.store');
+    Route::get('/pemeriksaan-kehamilan/{id}', [AdminPemeriksaanKehamilanController::class, 'show'])->name('admin.pemeriksaan.show');
+    Route::get('/pemeriksaan-kehamilan/{id}/edit', [AdminPemeriksaanKehamilanController::class, 'edit'])->name('admin.pemeriksaan.edit');
+    Route::put('/pemeriksaan-kehamilan/{id}', [AdminPemeriksaanKehamilanController::class, 'update'])->name('admin.pemeriksaan.update');
+    Route::post('/pemeriksaan-kehamilan/{id}', [AdminPemeriksaanKehamilanController::class, 'update'])->name('admin.pemeriksaan.update.post');
     Route::delete('/pemeriksaan-kehamilan/{id}', [AdminPemeriksaanKehamilanController::class, 'destroy'])->name('admin.pemeriksaan.destroy');
 
     // Data Edukasi Gizi (URL: /admin/edukasi-gizi)
