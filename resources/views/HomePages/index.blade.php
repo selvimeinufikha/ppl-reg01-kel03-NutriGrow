@@ -124,7 +124,6 @@
             <!-- Center Navigation Links -->
             <div class="hidden md:flex items-center gap-7 text-sm font-medium text-slate-600">
                 <a href="#fitur" class="hover:text-brand-600 transition-colors py-1">Fitur</a>
-                <a href="#dashboard-preview" class="hover:text-brand-600 transition-colors py-1">Aplikasi</a>
                 <a href="#cara-kerja" class="hover:text-brand-600 transition-colors py-1">Cara Kerja</a>
                 <a href="#edukasi-gizi" class="hover:text-brand-600 transition-colors py-1">Edukasi Gizi</a>
             </div>
@@ -667,211 +666,6 @@
             </div>
         </section>
 
-        <!-- SECTION: ANTARMUKA MODERN & RAMAH KELUARGA (PREVIEW DASHBOARD) -->
-        <section id="dashboard-preview" class="mt-24 pt-4">
-            <!-- Header -->
-            <div class="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-                <span class="inline-block px-4 py-1.5 rounded-full bg-blue-100/70 border border-blue-200/80 text-blue-600 text-xs sm:text-sm font-bold uppercase tracking-wider mb-3">
-                    ANTARMUKA MODERN & RAMAH KELUARGA
-                </span>
-                <h2 class="text-3xl sm:text-4xl lg:text-[40px] font-extrabold text-slate-900 tracking-tight leading-tight">
-                    Semua Informasi Keluarga dalam Satu Tempat
-                </h2>
-                <p class="mt-3.5 text-slate-600 text-base sm:text-lg leading-relaxed">
-                    Dashboard intuitif yang dirancang untuk kenyamanan orang tua: dari riwayat pemeriksaan antenatal care (ANC) hingga kurva perkembangan buah hati tercinta.
-                </p>
-            </div>
-
-            <!-- Browser Window Mockup -->
-            <div class="relative max-w-5xl mx-auto">
-                <!-- Ambient aura glow behind window -->
-                <div class="absolute inset-0 bg-gradient-to-r from-pink-200/40 via-purple-100/30 to-blue-200/40 rounded-[44px] filter blur-2xl transform scale-95 pointer-events-none"></div>
-
-                <!-- Window Frame -->
-                <div class="relative rounded-[32px] sm:rounded-[38px] bg-white border border-slate-200/90 shadow-2xl shadow-indigo-950/10 overflow-hidden">
-                    
-                    <!-- Browser Title Bar -->
-                    <div class="px-5 py-3.5 bg-slate-50/90 border-b border-slate-200/70 flex items-center justify-between">
-                        <!-- Traffic lights -->
-                        <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-rose-400"></span>
-                            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
-                            <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
-                        </div>
-
-                        <!-- URL Address Bar -->
-                        <div class="flex items-center justify-center gap-2 px-4 py-1.5 bg-white border border-slate-200/80 rounded-full text-xs text-slate-500 font-medium max-w-sm w-full shadow-2xs">
-                            <svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                            </svg>
-                            <span class="truncate">app.nutrigrow.id/dashboard/keluarga-sarah</span>
-                        </div>
-
-                        <!-- Right User avatar icon -->
-                        <div class="w-7 h-7 rounded-full bg-slate-200/70 text-slate-600 flex items-center justify-center text-xs">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <!-- Dashboard Inner View -->
-                    <div class="p-6 sm:p-9 bg-[#fafbfc] space-y-6">
-                        
-                        <!-- Top Banner / Greeting -->
-                        <div class="rounded-3xl bg-white border border-slate-200/70 p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div>
-                                <span class="text-[11px] font-bold text-brand-600 uppercase tracking-wider block mb-1">
-                                    PORTAL KESEHATAN KELUARGA
-                                </span>
-                                <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-                                    <span>Selamat Pagi, Ibu Sarah Permata</span>
-                                    <span>≡ƒæï</span>
-                                </h3>
-                                <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
-                                    Status Profil: <strong class="text-slate-700">1 Kehamilan Aktif</strong> ΓÇó <strong class="text-slate-700">1 Balita (Arkan, 24 Bulan)</strong>
-                                </p>
-                            </div>
-
-                            <!-- Badges on Right -->
-                            <div class="flex items-center gap-2.5">
-                                <div class="px-3 py-1.5 rounded-full bg-pink-50 border border-pink-200/60 text-brand-600 text-xs font-semibold flex items-center gap-1.5">
-                                    <span>≡ƒñ░</span>
-                                    <span>Janin (Mg 24)</span>
-                                </div>
-                                <div class="px-3 py-1.5 rounded-full bg-sky-50 border border-sky-200/60 text-sky-600 text-xs font-semibold flex items-center gap-1.5">
-                                    <span>≡ƒæ╢</span>
-                                    <span>Arkan (24 Bln)</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 3 Dashboard Metric Cards -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                            
-                            <!-- Card 1: Perkembangan Janin -->
-                            <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-xs flex flex-col justify-between space-y-4">
-                                <div>
-                                    <div class="flex items-center justify-between mb-3">
-                                        <span class="text-xs font-bold text-slate-700">Perkembangan Janin</span>
-                                        <span class="text-sm">Γ¥ñ∩╕ÅΓ¥ñ∩╕Å</span>
-                                    </div>
-                                    <div class="text-2xl sm:text-[26px] font-extrabold text-slate-900 leading-tight">
-                                        24 Minggu <span class="text-base text-slate-400 font-normal">/ 40 Mg</span>
-                                    </div>
-                                    <div class="text-xs text-rose-500 font-semibold mt-1">
-                                        Perkiraan Lahir: 14 Juli 2025
-                                    </div>
-                                    <div class="w-full bg-pink-100 rounded-full h-2 mt-3 overflow-hidden">
-                                        <div class="bg-gradient-to-r from-brand-500 to-pink-500 h-2 rounded-full w-[60%]"></div>
-                                    </div>
-                                </div>
-
-                                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-medium">
-                                    <span class="text-slate-500">Kenaikan BB Ibu:</span>
-                                    <span class="text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded">+6.5 kg (Ideal)</span>
-                                </div>
-                            </div>
-
-                            <!-- Card 2: Tumbuh Kembang: Arkan -->
-                            <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-xs flex flex-col justify-between space-y-4">
-                                <div>
-                                    <div class="flex items-center justify-between mb-3">
-                                        <span class="text-xs font-bold text-slate-700">Tumbuh Kembang: Arkan</span>
-                                        <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-[10px] font-bold border border-emerald-200/60">
-                                            Optimal
-                                        </span>
-                                    </div>
-
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <span class="text-[11px] text-slate-400 block font-medium">Tinggi Badan</span>
-                                            <span class="text-xl font-extrabold text-slate-900 block mt-0.5">89.0 cm</span>
-                                            <span class="text-[11px] text-emerald-600 font-semibold block mt-0.5">+1.5 cm bln ini</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-[11px] text-slate-400 block font-medium">Berat Badan</span>
-                                            <span class="text-xl font-extrabold text-slate-900 block mt-0.5">12.2 kg</span>
-                                            <span class="text-[11px] text-emerald-600 font-semibold block mt-0.5">Gizi Baik (KMS Hijau)</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-medium">
-                                    <span class="text-slate-500">Lingkar Kepala:</span>
-                                    <span class="text-slate-800 font-bold">48.2 cm (Normal)</span>
-                                </div>
-                            </div>
-
-                            <!-- Card 3: Pemeriksaan Mendatang -->
-                            <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-xs flex flex-col justify-between space-y-4">
-                                <div>
-                                    <div class="flex items-center justify-between mb-3">
-                                        <span class="text-xs font-bold text-slate-700">Pemeriksaan Mendatang</span>
-                                        <div class="w-6 h-6 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                            </svg>
-                                        </div>
-                                    </div>
-
-                                    <!-- Event Box -->
-                                    <div class="rounded-xl bg-sky-50/80 border border-sky-100 p-3">
-                                        <div class="font-bold text-xs sm:text-sm text-slate-900">≡ƒÅÑ Posyandu Mawar Melati</div>
-                                        <div class="text-[11px] text-slate-500 mt-1 font-medium">Sabtu, 12 April 2025 ΓÇó 08:30 WIB</div>
-                                        <div class="text-[11px] text-sky-700 font-semibold mt-1">
-                                            Agenda: Vitamin A & Imunisasi DPT Lanjutan
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <a href="{{ route('dashboard.pengguna') }}" class="w-full py-2.5 px-4 rounded-xl bg-pink-100/80 hover:bg-pink-200 text-brand-700 font-bold text-xs sm:text-sm text-center transition block">
-                                    Buka Buku KIA Digital
-                                </a>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- 2 FLOATING TRUST BADGES AT BOTTOM -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 max-w-4xl mx-auto">
-                    <!-- Badge 1: Enkripsi Medis Terstandar -->
-                    <div class="glass-card rounded-2xl p-3.5 sm:p-4 border border-pink-100/80 shadow-lg shadow-pink-900/5 flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-pink-100 text-brand-600 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-xs sm:text-sm text-slate-900 leading-tight">Enkripsi Medis Terstandar</h4>
-                            <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-                                Data kesehatan keluarga tersimpan aman sesuai regulasi Kemenkes.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Badge 2: Sinkronisasi Posyandu & PKM -->
-                    <div class="glass-card rounded-2xl p-3.5 sm:p-4 border border-sky-100/80 shadow-lg shadow-sky-900/5 flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-xs sm:text-sm text-slate-900 leading-tight">Sinkronisasi Posyandu & PKM</h4>
-                            <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-                                Dapat ditautkan dengan catatan buku KIA cetak dan bidan desa.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
         <!-- SECTION: ALUR MUDAH & TERARAH (CARA KERJA 4 LANGKAH) -->
         <section id="cara-kerja" class="mt-24 pt-8">
             <div class="text-center max-w-2xl mx-auto mb-14">
@@ -1037,7 +831,7 @@
                                 <circle cx="12" cy="12" r="10"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/>
                             </svg>
-                            <span>4 Menit Baca ΓÇó Dr. dr. Anita Sp.GK</span>
+                            <span>4 Menit Baca • Dr. dr. Anita Sp.GK</span>
                         </div>
 
                         <!-- Title -->
@@ -1082,7 +876,7 @@
                                 <circle cx="12" cy="12" r="10"/>
                                 <path d="M12 6v6l4 2"/>
                             </svg>
-                            <span>6 Menit Baca ΓÇó dr. Maya Sp.OG</span>
+                            <span>6 Menit Baca • dr. Maya Sp.OG</span>
                         </div>
 
                         <!-- Title -->
@@ -1127,7 +921,7 @@
                                 <circle cx="12" cy="12" r="10"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/>
                             </svg>
-                            <span>5 Menit Baca ΓÇó dr. Budi Santoso Sp.A</span>
+                            <span>5 Menit Baca • dr. Budi Santoso Sp.A</span>
                         </div>
 
                         <!-- Title -->

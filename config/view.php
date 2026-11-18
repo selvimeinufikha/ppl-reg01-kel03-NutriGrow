@@ -15,13 +15,6 @@ return [
 
     'paths' => [
         resource_path('views'),
-        resource_path('HomePages'),
-        resource_path('HalamanLogin'),
-        resource_path('HalamanAdmin'),
-        resource_path('DashboardPengguna'),
-        resource_path('DashboardAdmin'),
-        resource_path('DashboardAdmiin'),
-        resource_path(),
     ],
 
     /*

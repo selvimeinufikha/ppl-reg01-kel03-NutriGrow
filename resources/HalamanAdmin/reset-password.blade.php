@@ -1,2 +1,0 @@
-@include('HalamanAdmin.reset-password')
-
