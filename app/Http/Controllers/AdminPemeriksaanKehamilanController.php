@@ -69,7 +69,7 @@ class AdminPemeriksaanKehamilanController extends Controller
         // Filter Tab Kategori (Pill Buttons)
         $tab = $request->input('tab', 'semua');
         if ($tab === 'kek') {
-            $query->where('status_kek', 'risiko_kek');
+            $query->whereIn('status_kek', ['risiko_kek', 'kek_berat']);
         } elseif ($tab === 'anemia') {
             $query->where('status_anemia', '!=', 'normal');
         } elseif ($tab === 'normal') {
@@ -85,7 +85,7 @@ class AdminPemeriksaanKehamilanController extends Controller
         // Filter Risiko Dropdown
         if ($filterRisiko = $request->input('filter_risiko')) {
             if ($filterRisiko === 'kek') {
-                $query->where('status_kek', 'risiko_kek');
+                $query->whereIn('status_kek', ['risiko_kek', 'kek_berat']);
             } elseif ($filterRisiko === 'anemia') {
                 $query->where('status_anemia', '!=', 'normal');
             } elseif ($filterRisiko === 'normal') {
@@ -100,7 +100,7 @@ class AdminPemeriksaanKehamilanController extends Controller
 
         // 4. Hitung Statistik Dinamis (Sesuai 4 Card di Mockup)
         $totalPemeriksaanCount = PemeriksaanKehamilan::count();
-        $kekCount = PemeriksaanKehamilan::where('status_kek', 'risiko_kek')->count();
+        $kekCount = PemeriksaanKehamilan::whereIn('status_kek', ['risiko_kek', 'kek_berat'])->count();
         $anemiaCount = PemeriksaanKehamilan::where('status_anemia', '!=', 'normal')->count();
 
         // Jadwal kontrol dalam waktu dekat (30 hari ke depan)
