@@ -250,43 +250,43 @@
         <main class="flex-1 min-w-0 flex flex-col min-h-screen">
 
             <!-- Top Header Bar -->
-            <header class="bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between sticky top-0 z-30">
+            <header class="bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sticky top-0 z-30">
                 <!-- Breadcrumbs -->
-                <div class="flex items-center gap-2 text-xs text-slate-400">
-                    <span class="hover:text-slate-600 transition">Portal Faskes</span>
-                    <svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-                    </svg>
-                    <span class="font-bold text-slate-800">Monitoring Klinis</span>
+                <div class="flex items-center gap-2 text-xs text-slate-500">
+                    <span class="font-medium text-slate-400">Portal Tenaga Kesehatan</span>
+                    <span>/</span>
+                    <span class="font-bold text-slate-800">Data Layanan Kesehatan</span>
                 </div>
 
-                <!-- Header Actions (Notifikasi & Profil) -->
+                <!-- Right Elements: Notifications, Profile Dropdown -->
                 <div class="flex items-center gap-3">
+                    <!-- Notification Bell -->
                     <button
                         type="button"
                         onclick="showToast('Notifikasi', '3 fasilitas kesehatan dalam peninjauan integrasi SatuSehat.')"
-                        class="relative p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+                        class="relative p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer"
                         title="Notifikasi"
                     >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                         </svg>
-                        <span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#e11d48] text-white text-[9.5px] font-black flex items-center justify-center">
-                            3
-                        </span>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
                     </button>
 
-                    <!-- Profile Pill -->
-                    <div class="flex items-center gap-2.5 pl-2 border-l border-slate-200">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0284c7] to-sky-400 text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <!-- User Profile Dropdown -->
+                    <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
+                        <div class="w-8 h-8 rounded-full bg-[#0284c7] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
                         </div>
-                        <div class="hidden sm:block text-left leading-tight">
-                            <div class="text-xs font-bold text-slate-800">{{ $adminName }}</div>
-                            <div class="text-[10px] font-medium text-slate-400">{{ $adminRole }}</div>
+                        <div class="hidden sm:block text-left">
+                            <p class="text-xs font-bold text-slate-800 leading-tight">{{ $adminName }}</p>
+                            <p class="text-[10px] text-slate-400 leading-tight">{{ $adminRole }}</p>
                         </div>
+                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                        </svg>
                     </div>
                 </div>
             </header>

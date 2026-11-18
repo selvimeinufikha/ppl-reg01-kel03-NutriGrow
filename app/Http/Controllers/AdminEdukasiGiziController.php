@@ -157,9 +157,11 @@ class AdminEdukasiGiziController extends Controller
         }
 
         // Data petugas yang sedang login
-        $adminName = $user->name ?: 'dr. Siti Nurhaliza, Sp.A';
+        $adminName = $user->name ?: 'dr. Sarah Nakes (Admin Faskes)';
         $adminEmail = $user->email;
-        $adminRole = $user->role === 'nakes' ? 'Tenaga Kesehatan (Bidan/Dokter)' : 'Administrator Faskes';
+        $adminRole = ($user->role === 'super_admin' || $user->role === 'admin' || str_contains(strtolower($adminName), 'sarah') || str_starts_with($adminEmail, 'admin'))
+            ? 'Super Admin'
+            : 'Admin Biasa';
         $faskesName = $user->faskes_name ?: 'Puskesmas Gambir';
         $nipStr = $user->nip_str ?: 'STR-19880412-2023-019';
 
