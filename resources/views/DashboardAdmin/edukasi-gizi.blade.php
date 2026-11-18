@@ -311,13 +311,6 @@
                 <!-- Header Halaman & Tombol Aksi (Persis Tata Letak Referensi Mockup) -->
                 <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div class="max-w-xl">
-                        <div class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 mb-1.5">
-                            <span>Portal Tenaga Kesehatan</span>
-                            <svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-                            </svg>
-                            <span class="text-slate-600 font-bold">Data Edukasi Gizi</span>
-                        </div>
                         <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                             Data Edukasi Gizi
                         </h1>
