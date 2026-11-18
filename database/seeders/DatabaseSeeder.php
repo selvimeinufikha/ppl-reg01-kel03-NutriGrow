@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // 0. Super Admin
+        $this->call(SuperAdminSeeder::class);
+
         // 1. Admin NutriGrow Health Platform
         User::updateOrCreate(
             ['email' => 'admin@nutrigrow.id'],

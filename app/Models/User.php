@@ -120,4 +120,12 @@ class User extends Authenticatable
     {
         return in_array($this->role, ['nakes', 'petugas', 'admin']);
     }
+
+    /**
+     * Relasi ke data Pasangan milik pengguna ini.
+     */
+    public function pasangans()
+    {
+        return $this->hasMany(Pasangan::class);
+    }
 }

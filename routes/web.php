@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminEdukasiGiziController;
 use App\Http\Controllers\AdminFasilitasKesehatanController;
 use App\Http\Controllers\AdminManajemenAkunController;
 use App\Http\Controllers\DashboardPenggunaController;
+use App\Http\Controllers\PasanganController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,13 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 // Dashboard Pengguna (Keluarga & Orang Tua)
 Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
 Route::get('/dashboard', [DashboardPenggunaController::class, 'index'])->name('dashboard');
+
+// Rute Data Pasangan (PBI-001: Menambahkan Data Pasangan)
+Route::prefix('data-pasangan')->name('pasangan.')->group(function () {
+    Route::get('/', [PasanganController::class, 'index'])->name('index');
+    Route::get('/tambah', [PasanganController::class, 'create'])->name('create');
+    Route::post('/', [PasanganController::class, 'store'])->name('store');
+});
 
 
 // =========================================================================
