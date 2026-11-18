@@ -98,17 +98,19 @@
                     <a href="{{ route('admin.dashboard') }}" class="block">
                         <img src="{{ asset('images/nutrigrow-logo.png') }}" alt="NutriGrow" class="h-7 sm:h-8 w-auto object-contain">
                         <div class="text-[9.5px] font-black uppercase tracking-widest text-[#e11d48] mt-1">
-                            PORTAL ADMIN
-                            <span class="block text-[8px] tracking-wider text-slate-500 font-semibold">TENAGA KESEHATAN</span>
+                            PORTAL ADMIN <span class="text-slate-500 font-normal">| TENAGA KESEHATAN</span>
                         </div>
                     </a>
 
-                    <!-- Verified Badge -->
-                    <div class="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/80 backdrop-blur-xs border border-sky-200/80 text-[10px] font-bold text-sky-800 tracking-tight w-full shadow-2xs">
-                        <svg class="w-3.5 h-3.5 text-sky-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <!-- Verified Badge (Rounded Full with 2-line Text) -->
+                    <div class="mt-3.5 inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xs border border-sky-200/90 shadow-2xs w-full">
+                        <svg class="w-4 h-4 text-[#0284c7] shrink-0 ml-0.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
-                        <span>TENAGA KESEHATAN TERVERIFIKASI</span>
+                        <div class="text-[10px] font-extrabold tracking-tight text-[#0369a1] leading-tight">
+                            <div>TENAGA KESEHATAN</div>
+                            <div>TERVERIFIKASI</div>
+                        </div>
                     </div>
                 </div>
 
