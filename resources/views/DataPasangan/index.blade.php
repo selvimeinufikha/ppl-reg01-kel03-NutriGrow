@@ -139,6 +139,7 @@
                                     <th class="px-5 py-3.5 font-bold text-xs text-slate-500 uppercase tracking-wider">Pekerjaan</th>
                                     <th class="px-5 py-3.5 font-bold text-xs text-slate-500 uppercase tracking-wider">Gol. Darah</th>
                                     <th class="px-5 py-3.5 font-bold text-xs text-slate-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-5 py-3.5 font-bold text-xs text-slate-500 uppercase tracking-wider text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
@@ -158,6 +159,18 @@
                                         </td>
                                         <td class="px-5 py-3.5">
                                             <span class="px-2.5 py-1 rounded-full bg-pink-100 text-brand-700 border border-pink-200 text-[11px] font-bold">{{ $p->status_label }}</span>
+                                        </td>
+                                        <td class="px-5 py-3.5 text-right whitespace-nowrap">
+                                            <div class="inline-flex items-center gap-1.5 justify-end">
+                                                <a href="{{ route('pasangan.show', $p->id) }}"
+                                                    class="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-brand-300 hover:bg-pink-50 text-xs font-semibold text-slate-600 hover:text-brand-600 transition">
+                                                    Detail
+                                                </a>
+                                                <a href="{{ route('pasangan.edit', $p->id) }}"
+                                                    class="px-2.5 py-1.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-brand-600 text-xs font-bold transition">
+                                                    Ubah
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
