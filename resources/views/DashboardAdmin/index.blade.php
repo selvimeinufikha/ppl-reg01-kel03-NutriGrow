@@ -327,7 +327,7 @@
                     <!-- Right: Posyandu Measurement Illustration Image -->
                     <div class="relative md:absolute md:right-0 md:top-0 md:bottom-0 h-44 sm:h-52 md:h-full w-full md:w-auto flex items-center justify-end overflow-hidden pointer-events-none mt-4 md:mt-0">
                         <img
-                            src="{{ asset('images/dashboard-banner-illustration.png') }}"
+                            src="{{ asset('images/dashboard-banner-illustration.png') }}?v={{ filemtime(public_path('images/dashboard-banner-illustration.png')) }}"
                             alt="Pemantauan Posyandu Tumbuh Kembang Sehat Bebas Stunting"
                             class="h-full w-auto object-cover object-right"
                         />
