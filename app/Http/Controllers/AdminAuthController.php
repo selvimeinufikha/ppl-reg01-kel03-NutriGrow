@@ -55,7 +55,22 @@ class AdminAuthController extends Controller
                 ])->withInput($request->only('email'));
             }
 
-            // Flash notifikasi sukses
+            // Validasi status keaktifan akun (PBI-029)
+            if (($authUser->status ?? 'active') === 'inactive') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()->withErrors([
+                    'login_error' => 'Akun Anda berstatus nonaktif. Akses ke portal telah dinonaktifkan oleh Administrator.',
+                ])->withInput($request->only('email'));
+            }
+
+            // Flash notifikasi sukses & redirect sesuai hierarki peran
+            if ($authUser->isSuperAdmin()) {
+                session()->flash('success_admin_login', 'Selamat datang, ' . $authUser->name . '! Anda berhasil masuk ke Dashboard Super Admin NutriGrow.');
+                return redirect()->route('superadmin.dashboard');
+            }
             session()->flash('success_admin_login', 'Selamat datang, ' . $authUser->name . '! Anda berhasil masuk ke Dashboard Admin NutriGrow.');
 
             // Arahkan LANGSUNG ke Dashboard Admin (URL: /admin/dashboard)
@@ -64,19 +79,34 @@ class AdminAuthController extends Controller
 
         // Dukungan kredensial default untuk demo praktikum
         if (in_array($email, ['admin@nutrigrow.id', 'petugas@puskesmas.go.id']) && $password === 'admin123') {
-            $user = User::firstOrCreate(
-                ['email' => $email],
-                [
+            $user = User::where('email', $email)->first();
+
+            if (!$user) {
+                $user = User::create([
+                    'email' => $email,
                     'name' => $email === 'admin@nutrigrow.id' ? 'dr. Sarah Nakes (Admin Faskes)' : 'Bidan Nurul Fitriah, S.Tr.Keb',
                     'password' => Hash::make('admin123'),
                     'role' => $email === 'admin@nutrigrow.id' ? 'admin' : 'nakes',
                     'faskes_name' => 'Puskesmas Kecamatan Tebet & NutriGrow Health',
                     'nip_str' => 'STR-19880412-2023-019',
-                ]
-            );
+                    'status' => 'active',
+                ]);
+            }
+
+            // Validasi status keaktifan akun demo (PBI-029)
+            if (($user->status ?? 'active') === 'inactive') {
+                return back()->withErrors([
+                    'login_error' => 'Akun Anda berstatus nonaktif. Akses ke portal telah dinonaktifkan oleh Administrator.',
+                ])->withInput($request->only('email'));
+            }
 
             Auth::login($user, $remember);
             $request->session()->regenerate();
+
+            if ($user->isSuperAdmin()) {
+                session()->flash('success_admin_login', 'Selamat datang, ' . $user->name . '! Anda berhasil masuk ke Dashboard Super Admin NutriGrow.');
+                return redirect()->route('superadmin.dashboard');
+            }
 
             session()->flash('success_admin_login', 'Selamat datang, ' . $user->name . '! Anda berhasil masuk ke Dashboard Admin NutriGrow.');
 

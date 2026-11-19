@@ -33,10 +33,18 @@ class AdminDashboardController extends Controller
             ]);
         }
 
-        // Data petugas yang sedang login
+        // Validasi status akun (PBI-029)
+        if (($user->status ?? 'active') === 'inactive') {
+            Auth::logout();
+            return redirect()->route('admin.login')->withErrors([
+                'login_error' => 'Akun Anda dinonaktifkan oleh Administrator. Akses ke sistem ditangguhkan.',
+            ]);
+        }
+
+        // Data petugas yang sedang login (menggunakan role_label dinamis)
         $adminName = $user->name ?: 'dr. Siti Nurhaliza, Sp.A';
         $adminEmail = $user->email;
-        $adminRole = $user->role === 'nakes' ? 'Tenaga Kesehatan (Bidan/Dokter)' : 'Administrator Faskes';
+        $adminRole = $user->role_label;
         $faskesName = $user->faskes_name ?: 'Puskesmas Gambir';
         $nipStr = $user->nip_str ?: 'STR-19880412-2023-019';
 

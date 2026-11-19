@@ -247,12 +247,12 @@
                         <table class="w-full text-left text-xs">
                             <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[10px]">
                                 <tr>
-                                    <th class="px-5 py-3.5 font-bold">Administrator / Tenaga Kesehatan</th>
-                                    <th class="px-5 py-3.5 font-bold">Hak Akses (Role)</th>
-                                    <th class="px-5 py-3.5 font-bold">Faskes &amp; Jabatan</th>
-                                    <th class="px-5 py-3.5 font-bold">NIP / No. STR</th>
-                                    <th class="px-5 py-3.5 font-bold text-center">Status</th>
-                                    <th class="px-5 py-3.5 font-bold text-right">Terdaftar</th>
+                                    <th class="px-5 py-3.5">Nama &amp; Email</th>
+                                    <th class="px-5 py-3.5">Hak Akses (Role)</th>
+                                    <th class="px-5 py-3.5">Instansi Faskes &amp; Jabatan</th>
+                                    <th class="px-5 py-3.5">NIP / STR</th>
+                                    <th class="px-5 py-3.5 text-center">Status</th>
+                                    <th class="px-5 py-3.5 text-right">Didaftarkan</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
@@ -302,24 +302,30 @@
                                             {{ $adm->nip_str ?? '-' }}
                                         </td>
 
-                                        <!-- Status -->
+                                        <!-- Status (PBI-029: Toggle Cepat) -->
                                         <td class="px-5 py-4 text-center whitespace-nowrap">
-                                            @if (($adm->status ?? 'active') === 'active')
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                    <span>Aktif</span>
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold border border-slate-200">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                                                    <span>Nonaktif</span>
-                                                </span>
-                                            @endif
+                                            <form action="{{ request()->routeIs('superadmin.*') || request()->is('superadmin/*') ? route('superadmin.akun.toggle-status', $adm->id) : route('admin.akun.toggle-status', $adm->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Ubah status keaktifan akun {{ $adm->name }}?')">
+                                                @csrf
+                                                @if (($adm->status ?? 'active') === 'active')
+                                                    <button type="submit" title="Klik untuk menonaktifkan akun langsung" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[10px] font-bold border border-emerald-200 transition cursor-pointer">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                        <span>Aktif</span>
+                                                    </button>
+                                                @else
+                                                    <button type="submit" title="Klik untuk mengaktifkan akun langsung" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-700 text-[10px] font-bold border border-rose-200 transition cursor-pointer">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                                        <span>Nonaktif</span>
+                                                    </button>
+                                                @endif
+                                            </form>
                                         </td>
 
-                                        <!-- Tanggal Bergabung -->
-                                        <td class="px-5 py-4 text-right whitespace-nowrap text-slate-400 text-[11px]">
-                                            {{ $adm->created_at ? $adm->created_at->format('d/m/Y') : '-' }}
+                                        <!-- Aksi Ubah Hak Akses (PBI-029) -->
+                                        <td class="px-5 py-4 text-right whitespace-nowrap">
+                                            <a href="{{ request()->routeIs('superadmin.*') || request()->is('superadmin/*') ? route('superadmin.akun.edit', $adm->id) : route('admin.akun.edit', $adm->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-pink-50 hover:bg-pink-100 text-[#e11d48] font-bold text-xs transition border border-pink-200 shadow-2xs">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                <span>Ubah Akses</span>
+                                            </a>
                                         </td>
                                     </tr>
                                 @empty

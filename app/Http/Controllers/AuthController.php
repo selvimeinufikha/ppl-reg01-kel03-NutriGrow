@@ -130,7 +130,30 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
-            session()->flash('success_login', 'Selamat datang kembali, ' . Auth::user()->name . '!');
+            /** @var User $user */
+            $user = Auth::user();
+
+            // Validasi status akun (PBI-029)
+            if (($user->status ?? 'active') === 'inactive') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()->withErrors([
+                    'login_error' => 'Akun Anda dinonaktifkan oleh administrator. Silakan hubungi pusat layanan.',
+                ])->withInput($request->only('email'));
+            }
+
+            session()->flash('success_login', 'Selamat datang kembali, ' . $user->name . '!');
+
+            // Redirect sesuai peran akun: Super Admin, Pegawai/Nakes, atau Pengguna
+            if ($user->isSuperAdmin()) {
+                return redirect()->route('superadmin.dashboard');
+            }
+
+            if ($user->isStaffOrAdmin()) {
+                return redirect()->route('admin.dashboard');
+            }
 
             if (view()->exists('DashboardPengguna.index')) {
                 return redirect()->route('dashboard.pengguna');

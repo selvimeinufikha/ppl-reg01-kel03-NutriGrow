@@ -8,15 +8,44 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 
 class AdminManajemenAkunController extends Controller
 {
+    /**
+     * Pastikan hanya akun dengan hak akses Super Admin yang diizinkan mengakses fitur ini.
+     */
+    protected function ensureSuperAdmin()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('admin.login')->withErrors([
+                'login_error' => 'Silakan masuk sebagai Super Administrator untuk mengakses fitur ini.',
+            ]);
+        }
+
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (!$user->isSuperAdmin()) {
+            abort(403, 'Akses ditolak. Fitur Manajemen Akun Administrator hanya dapat diakses oleh Super Administrator.');
+        }
+
+        if (($user->status ?? 'active') === 'inactive') {
+            Auth::logout();
+            return redirect()->route('admin.login')->withErrors([
+                'login_error' => 'Akun Anda berstatus nonaktif.',
+            ]);
+        }
+
+        return null;
+    }
+
     /**
      * Dapatkan user admin yang sedang aktif atau fallback ke user demo.
      */
     protected function getActiveAdmin(): User
     {
-        if (Auth::check() && Auth::user()->isStaffOrAdmin()) {
+        if (Auth::check()) {
             return Auth::user();
         }
 
@@ -26,7 +55,7 @@ class AdminManajemenAkunController extends Controller
                 'name' => 'dr. Siti Nurhaliza, Sp.A',
                 'password' => bcrypt('password123'),
                 'role' => 'superadmin',
-                'faskes_name' => 'Puskesmas Gambir & RSUD Tarakan',
+                'faskes_name' => 'Kementerian Kesehatan RI & NutriGrow Central',
                 'nip_str' => 'STR-19880412-2023-019',
                 'phone' => '081122334455',
                 'jabatan' => 'Super Administrator / Dokter Spesialis Anak',
@@ -40,6 +69,10 @@ class AdminManajemenAkunController extends Controller
      */
     public function index(Request $request)
     {
+        if ($redirect = $this->ensureSuperAdmin()) {
+            return $redirect;
+        }
+
         $currentAdmin = $this->getActiveAdmin();
         Carbon::setLocale('id');
 
@@ -83,11 +116,15 @@ class AdminManajemenAkunController extends Controller
 
         $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
 
-        return view('DashboardAdmin.ManajemenAkun.index', [
+        $viewName = view()->exists('DashboardSuperAdmin.ManajemenAkun.index')
+            ? 'DashboardSuperAdmin.ManajemenAkun.index'
+            : (view()->exists('DashboardSuperAdmin.index') ? 'DashboardSuperAdmin.index' : 'DashboardAdmin.ManajemenAkun.index');
+
+        return view($viewName, [
             'currentAdmin' => $currentAdmin,
             'adminName' => $currentAdmin->name,
             'adminRole' => $currentAdmin->role_label,
-            'faskesName' => $currentAdmin->faskes_name ?? 'Puskesmas Gambir',
+            'faskesName' => $currentAdmin->faskes_name ?? 'Kementerian Kesehatan RI',
             'tanggalHariIni' => $tanggalHariIni,
             'adminList' => $adminList,
             'totalAdmin' => $totalAdmin,
@@ -105,6 +142,10 @@ class AdminManajemenAkunController extends Controller
      */
     public function create()
     {
+        if ($redirect = $this->ensureSuperAdmin()) {
+            return $redirect;
+        }
+
         $currentAdmin = $this->getActiveAdmin();
         Carbon::setLocale('id');
         $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
@@ -120,11 +161,15 @@ class AdminManajemenAkunController extends Controller
             'Dinas Kesehatan Provinsi DKI Jakarta',
         ];
 
-        return view('DashboardAdmin.ManajemenAkun.create', [
+        $viewName = view()->exists('DashboardSuperAdmin.ManajemenAkun.create')
+            ? 'DashboardSuperAdmin.ManajemenAkun.create'
+            : 'DashboardAdmin.ManajemenAkun.create';
+
+        return view($viewName, [
             'currentAdmin' => $currentAdmin,
             'adminName' => $currentAdmin->name,
             'adminRole' => $currentAdmin->role_label,
-            'faskesName' => $currentAdmin->faskes_name ?? 'Puskesmas Gambir',
+            'faskesName' => $currentAdmin->faskes_name ?? 'Kementerian Kesehatan RI',
             'tanggalHariIni' => $tanggalHariIni,
             'daftarFaskes' => $daftarFaskes,
         ]);
@@ -135,6 +180,10 @@ class AdminManajemenAkunController extends Controller
      */
     public function store(Request $request)
     {
+        if ($redirect = $this->ensureSuperAdmin()) {
+            return $redirect;
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'min:3', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
@@ -165,14 +214,143 @@ class AdminManajemenAkunController extends Controller
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
             'faskes_name' => trim($validated['faskes_name']),
-            'nip_str' => $validated['nip_str'] ? trim($validated['nip_str']) : null,
-            'jabatan' => $validated['jabatan'] ? trim($validated['jabatan']) : null,
-            'phone' => $validated['phone'] ? trim($validated['phone']) : null,
+            'nip_str' => !empty($validated['nip_str']) ? trim($validated['nip_str']) : null,
+            'jabatan' => !empty($validated['jabatan']) ? trim($validated['jabatan']) : null,
+            'phone' => !empty($validated['phone']) ? trim($validated['phone']) : null,
             'status' => $validated['status'] ?? 'active',
         ]);
 
-        return redirect()->route('admin.akun.index')
+        $redirectRoute = request()->routeIs('superadmin.*') || request()->is('superadmin/*')
+            ? (Route::has('superadmin.akun.index') ? 'superadmin.akun.index' : 'admin.akun.index')
+            : 'admin.akun.index';
+
+        return redirect()->route($redirectRoute)
             ->with('success', "Akun administrator baru '{$newUser->name}' ({$newUser->role_label}) berhasil didaftarkan ke sistem!");
+    }
+
+    /**
+     * Tampilkan form edit akun administrator (PBI-029).
+     */
+    public function edit($id)
+    {
+        if ($redirect = $this->ensureSuperAdmin()) {
+            return $redirect;
+        }
+
+        $currentAdmin = $this->getActiveAdmin();
+        $admin = User::findOrFail($id);
+        Carbon::setLocale('id');
+        $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
+
+        $daftarFaskes = [
+            'Puskesmas Gambir',
+            'Puskesmas Menteng',
+            'Puskesmas Kebayoran Baru',
+            'RSUD Tarakan Jakarta',
+            'RSIA Bunda Sehat',
+            'Posyandu Melati II',
+            'Dinas Kesehatan Provinsi DKI Jakarta',
+        ];
+
+        $viewName = view()->exists('DashboardSuperAdmin.ManajemenAkun.edit')
+            ? 'DashboardSuperAdmin.ManajemenAkun.edit'
+            : (view()->exists('DashboardAdmin.ManajemenAkun.edit') ? 'DashboardAdmin.ManajemenAkun.edit' : 'DashboardAdmin.ManajemenAkun.create');
+
+        return view($viewName, [
+            'currentAdmin' => $currentAdmin,
+            'adminName' => $currentAdmin->name,
+            'adminRole' => $currentAdmin->role_label,
+            'faskesName' => $currentAdmin->faskes_name ?? 'Kementerian Kesehatan RI',
+            'tanggalHariIni' => $tanggalHariIni,
+            'admin' => $admin,
+            'targetUser' => $admin,
+            'daftarFaskes' => $daftarFaskes,
+        ]);
+    }
+
+    /**
+     * Perbarui hak akses dan status akun administrator (PBI-029).
+     */
+    public function update(Request $request, $id)
+    {
+        if ($redirect = $this->ensureSuperAdmin()) {
+            return $redirect;
+        }
+
+        $admin = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => ['nullable', 'string', 'max:255'],
+            'role' => ['required', 'string', 'in:superadmin,admin,nakes,dokter,bidan,ahli_gizi'],
+            'status' => ['required', 'string', 'in:active,inactive'],
+            'faskes_name' => ['nullable', 'string', 'max:255'],
+            'jabatan' => ['nullable', 'string', 'max:100'],
+            'nip_str' => ['nullable', 'string', 'max:50'],
+            'phone' => ['nullable', 'string', 'max:20'],
+        ], [
+            'role.required' => 'Hak akses / peran wajib dipilih.',
+            'role.in' => 'Hak akses yang dipilih tidak valid.',
+            'status.required' => 'Status akun wajib dipilih.',
+            'status.in' => 'Status akun harus aktif atau nonaktif.',
+        ]);
+
+        if ($request->filled('name')) {
+            $admin->name = trim($request->name);
+        }
+
+        $admin->role = $validated['role'];
+        $admin->status = $validated['status'];
+
+        if ($request->filled('faskes_name')) {
+            $admin->faskes_name = trim($validated['faskes_name']);
+        }
+
+        if ($request->has('jabatan')) {
+            $admin->jabatan = !empty($validated['jabatan']) ? trim($validated['jabatan']) : null;
+        }
+
+        if ($request->has('nip_str')) {
+            $admin->nip_str = !empty($validated['nip_str']) ? trim($validated['nip_str']) : null;
+        }
+
+        if ($request->has('phone')) {
+            $admin->phone = !empty($validated['phone']) ? trim($validated['phone']) : null;
+        }
+
+        $admin->save();
+
+        // Segera perbarui state session jika user yang diedit sedang login saat ini
+        if (Auth::check() && Auth::id() === $admin->id) {
+            Auth::setUser($admin->fresh());
+        }
+
+        $redirectRoute = request()->routeIs('superadmin.*') || request()->is('superadmin/*')
+            ? (Route::has('superadmin.akun.index') ? 'superadmin.akun.index' : 'admin.akun.index')
+            : 'admin.akun.index';
+
+        return redirect()->route($redirectRoute)
+            ->with('success', "Hak akses dan status akun '{$admin->name}' ({$admin->role_label}) berhasil diperbarui!");
+    }
+
+    /**
+     * Beralih cepat status aktif/nonaktif akun (PBI-029).
+     */
+    public function toggleStatus($id)
+    {
+        if ($redirect = $this->ensureSuperAdmin()) {
+            return $redirect;
+        }
+
+        $admin = User::findOrFail($id);
+        $admin->status = ($admin->status === 'inactive') ? 'active' : 'inactive';
+        $admin->save();
+
+        if (Auth::check() && Auth::id() === $admin->id) {
+            Auth::setUser($admin->fresh());
+        }
+
+        $statusText = $admin->status === 'active' ? 'diaktifkan' : 'dinonaktifkan';
+        return back()->with('success', "Status akun '{$admin->name}' berhasil {$statusText} dan langsung berlaku!");
     }
 
     /**

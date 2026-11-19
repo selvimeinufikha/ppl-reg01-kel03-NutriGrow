@@ -9,6 +9,8 @@ use App\Http\Controllers\AdminEdukasiGiziController;
 use App\Http\Controllers\AdminFasilitasKesehatanController;
 use App\Http\Controllers\AdminManajemenAkunController;
 use App\Http\Controllers\DashboardPenggunaController;
+use App\Http\Controllers\SuperAdminDashboardController;
+use App\Http\Controllers\PasanganController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +50,65 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 
 // Dashboard Pengguna (Keluarga & Orang Tua)
 Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
-Route::get('/dashboard', [DashboardPenggunaController::class, 'index'])->name('dashboard');
+
+// Dashboard Dinamis (Mengarahkan sesuai peran pengguna: Super Admin, Pegawai/Nakes, atau Pengguna)
+Route::get('/dashboard', function () {
+    if (!Auth::check()) {
+        return redirect()->route('login');
+    }
+
+    /** @var \App\Models\User $user */
+    $user = Auth::user();
+
+    if (($user->status ?? 'active') === 'inactive') {
+        Auth::logout();
+        return redirect()->route('login')->withErrors([
+            'login_error' => 'Akun Anda dinonaktifkan.',
+        ]);
+    }
+
+    if ($user->isSuperAdmin()) {
+        return redirect()->route('superadmin.dashboard');
+    }
+
+    if ($user->isStaffOrAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return redirect()->route('dashboard.pengguna');
+})->name('dashboard');
+
+// =========================================================================
+// 2. WEBSITE SUPER ADMIN (Portal Pengelola Sistem & Kementerian/Dinkes)
+// =========================================================================
+Route::prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::get('/dashboard', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/manajemen-akun', [AdminManajemenAkunController::class, 'index'])->name('akun.index');
+    Route::get('/manajemen-akun/tambah', [AdminManajemenAkunController::class, 'create'])->name('akun.create');
+    Route::post('/manajemen-akun', [AdminManajemenAkunController::class, 'store'])->name('akun.store');
+    Route::get('/manajemen-akun/{id}/edit', [AdminManajemenAkunController::class, 'edit'])->name('akun.edit');
+    Route::put('/manajemen-akun/{id}', [AdminManajemenAkunController::class, 'update'])->name('akun.update');
+    Route::post('/manajemen-akun/{id}', [AdminManajemenAkunController::class, 'update'])->name('akun.update.post');
+    Route::post('/manajemen-akun/{id}/toggle-status', [AdminManajemenAkunController::class, 'toggleStatus'])->name('akun.toggle-status');
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+});
+
+Route::get('/dashboard-superadmin', function () {
+    return redirect()->route('superadmin.dashboard');
+})->name('dashboard.superadmin');
+
+// Rute Data Pasangan (PBI-001, PBI-002, PBI-003: Kelola Data Pasangan)
+if (class_exists(PasanganController::class)) {
+    Route::prefix('data-pasangan')->name('pasangan.')->group(function () {
+        Route::get('/', [PasanganController::class, 'index'])->name('index');
+        Route::get('/tambah', [PasanganController::class, 'create'])->name('create');
+        Route::post('/', [PasanganController::class, 'store'])->name('store');
+        Route::get('/{id}', [PasanganController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [PasanganController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [PasanganController::class, 'update'])->name('update');
+        Route::delete('/{id}', [PasanganController::class, 'destroy'])->name('destroy');
+    });
+}
 
 
 // =========================================================================
@@ -104,10 +164,14 @@ Route::prefix('admin')->group(function () {
     Route::post('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'update'])->name('admin.fasilitas.update.post');
     Route::delete('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'destroy'])->name('admin.fasilitas.destroy');
 
-    // Manajemen Akun Admin: Tambah Akun Administrator (PBI-028)
+    // Manajemen Akun Admin: Tambah Akun Administrator (PBI-028) & Kelola Hak Akses (PBI-029)
     Route::get('/manajemen-akun', [AdminManajemenAkunController::class, 'index'])->name('admin.akun.index');
     Route::get('/manajemen-akun/tambah', [AdminManajemenAkunController::class, 'create'])->name('admin.akun.create');
     Route::post('/manajemen-akun', [AdminManajemenAkunController::class, 'store'])->name('admin.akun.store');
+    Route::get('/manajemen-akun/{id}/edit', [AdminManajemenAkunController::class, 'edit'])->name('admin.akun.edit');
+    Route::put('/manajemen-akun/{id}', [AdminManajemenAkunController::class, 'update'])->name('admin.akun.update');
+    Route::post('/manajemen-akun/{id}', [AdminManajemenAkunController::class, 'update'])->name('admin.akun.update.post');
+    Route::post('/manajemen-akun/{id}/toggle-status', [AdminManajemenAkunController::class, 'toggleStatus'])->name('admin.akun.toggle-status');
 
     // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {

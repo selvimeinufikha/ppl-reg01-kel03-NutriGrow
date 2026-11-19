@@ -2,7 +2,7 @@
 @php
     $adminName = $adminName ?? (Auth::check() ? Auth::user()->name : 'dr. Siti Nurhaliza, Sp.A');
     $adminEmail = $adminEmail ?? (Auth::check() ? Auth::user()->email : 'admin@nutrigrow.id');
-    $adminRole = $adminRole ?? (Auth::check() && Auth::user()->role === 'nakes' ? 'Tenaga Kesehatan (Bidan/Dokter)' : 'Administrator Faskes');
+    $adminRole = $adminRole ?? (Auth::check() ? Auth::user()->role_label : 'Administrator Faskes');
     $faskesName = $faskesName ?? (Auth::check() && Auth::user()->faskes_name ? Auth::user()->faskes_name : 'Puskesmas Gambir');
     $nipStr = $nipStr ?? (Auth::check() && Auth::user()->nip_str ? Auth::user()->nip_str : 'STR-19880412-2023-019');
     \Carbon\Carbon::setLocale('id');
@@ -199,7 +199,8 @@
                         <span>Data Informasi Nutrisi</span>
                     </a>
 
-                    <!-- 8. Manajemen Akun Admin (SUPER - PBI-028) -->
+                    <!-- 8. Manajemen Akun Admin (HANYA UNTUK SUPER ADMIN - PBI-028/PBI-029) -->
+                    @if(Auth::check() && Auth::user()->isSuperAdmin())
                     <a
                         href="{{ route('admin.akun.index') }}"
                         class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
@@ -215,6 +216,7 @@
                             SUPER
                         </span>
                     </a>
+                    @endif
                 </nav>
             </div>
 
