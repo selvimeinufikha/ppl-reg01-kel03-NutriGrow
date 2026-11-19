@@ -53,5 +53,8 @@ class DatabaseSeeder extends Seeder
                 'phone' => '085712345678',
             ]
         );
+
+        // 4. Data Direktori Fasilitas Kesehatan & Jejaring Rujukan Stunting
+        $this->call(FasilitasKesehatanSeeder::class);
     }
 }
