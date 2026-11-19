@@ -305,14 +305,33 @@
             <!-- Dashboard Body -->
             <div class="p-4 sm:p-6 lg:p-8 space-y-6">
 
-                <!-- Title -->
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                        Dashboard Pemantauan Klinis &amp; Gizi
-                    </h1>
-                    <p class="text-xs sm:text-[13px] text-slate-500 mt-1 leading-relaxed">
-                        Ringkasan data kesehatan ibu hamil, tumbuh kembang balita, dan deteksi dini stunting wilayah {{ $faskesName }}.
-                    </p>
+                <!-- Welcome Hero Banner (Sesuai Mockup Desain Portal Admin) -->
+                <div class="relative rounded-3xl overflow-hidden border border-pink-100 shadow-sm min-h-[170px] sm:min-h-[190px] flex flex-col md:flex-row items-center justify-between px-6 sm:px-10 py-6" style="background: linear-gradient(90deg, #fcecee 0%, #fdeff2 35%, #fce9ee 60%, #fbd8e1 100%);">
+                    <!-- Left: Greetings & Subtitle -->
+                    <div class="z-10 py-1 max-w-md sm:max-w-lg">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-snug">
+                            Selamat Datang,<br>
+                            <span class="text-slate-900 font-black">{{ $adminName }}!</span>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-600 font-medium mt-2 leading-relaxed">
+                            Bersama kita wujudkan generasi sehat, bebas stunting.
+                        </p>
+                        <!-- Pink Doodle Heart Icon -->
+                        <div class="mt-3 text-pink-400">
+                            <svg class="w-6 h-6 transform -rotate-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Right: Posyandu Measurement Illustration Image -->
+                    <div class="relative md:absolute md:right-0 md:top-0 md:bottom-0 h-44 sm:h-52 md:h-full w-full md:w-auto flex items-center justify-end overflow-hidden pointer-events-none mt-4 md:mt-0">
+                        <img
+                            src="{{ asset('images/dashboard-banner-illustration.png') }}"
+                            alt="Pemantauan Posyandu Tumbuh Kembang Sehat Bebas Stunting"
+                            class="h-full w-auto object-cover object-right"
+                        />
+                    </div>
                 </div>
 
                 <!-- Filter Controls Bar -->
