@@ -91,8 +91,8 @@
         <!-- =============================================================== -->
         <!-- 1. SIDEBAR NAVIGASI (PERSIS SESUAI GAMBAR REFERENSI ADMIN)       -->
         <!-- =============================================================== -->
-        <aside id="adminSidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] xl:w-[275px] border-r border-sky-200/80 shadow-xs flex flex-col justify-between py-5 px-4 shrink-0 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto transition-transform duration-300 ease-in-out" style="background: linear-gradient(180deg, #e8f3fc 0%, #f1f7fd 35%, #e2eefa 70%, #d8e9f8 100%);">
-            <div>
+        <aside id="adminSidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] xl:w-[275px] border-r border-sky-200/80 shadow-xs flex flex-col justify-between py-4 px-3.5 shrink-0 transform -translate-x-full lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:max-h-screen lg:self-start lg:z-30 transition-transform duration-300 ease-in-out" style="background: linear-gradient(180deg, #e8f3fc 0%, #f1f7fd 35%, #e2eefa 70%, #d8e9f8 100%);">
+            <div class="overflow-y-auto no-scrollbar flex-1 flex flex-col min-h-0">
                 <!-- Brand Header -->
                 <div class="px-2 mb-4">
                     <a href="{{ route('admin.dashboard') }}" class="block">
@@ -221,7 +221,7 @@
             </div>
 
             <!-- Bottom Section of Sidebar -->
-            <div class="pt-4 border-t border-sky-200/60 space-y-3">
+            <div class="pt-3 border-t border-sky-200/60 shrink-0 space-y-2 mt-auto">
                 <!-- Faskes Card -->
                 <div class="p-3 rounded-2xl bg-white/85 backdrop-blur-xs border border-sky-200/80 shadow-2xs flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0 text-sky-600 shadow-2xs">
