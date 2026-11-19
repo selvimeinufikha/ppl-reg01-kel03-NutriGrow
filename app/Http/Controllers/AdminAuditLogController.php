@@ -140,6 +140,79 @@ class AdminAuditLogController extends Controller
     }
 
     /**
+     * Ekspor Laporan Lengkap Audit & Log Aktivitas Administrator dalam bentuk PDF (PBI-030).
+     */
+    public function exportPdf(Request $request, \App\Services\AuditLogPdfService $pdfService)
+    {
+        if ($redirect = $this->ensureSuperAdmin()) {
+            return $redirect;
+        }
+
+        $currentAdmin = $this->getActiveAdmin();
+        $this->ensureDemoLogs();
+
+        $query = AdminActivityLog::with(['user', 'targetUser'])->latest();
+
+        // Terapkan filter jika ada parameter
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('actor_name', 'like', "%{$search}%")
+                  ->orWhere('actor_email', 'like', "%{$search}%")
+                  ->orWhere('target_name', 'like', "%{$search}%")
+                  ->orWhere('target_email', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('action') && $request->action !== 'all') {
+            $query->where('action', $request->action);
+        }
+
+        if ($request->filled('period')) {
+            switch ($request->period) {
+                case 'today':
+                    $query->whereDate('created_at', Carbon::today());
+                    break;
+                case 'week':
+                    $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    break;
+                case 'month':
+                    $query->whereMonth('created_at', Carbon::now()->month)
+                          ->whereYear('created_at', Carbon::now()->year);
+                    break;
+            }
+        }
+
+        $logs = $query->get();
+
+        // 1. Jika meminta unduhan file .pdf murni
+        if ($request->get('format') === 'pdf') {
+            $pdfContent = $pdfService->generate($logs, $currentAdmin->name);
+            $filename = 'Laporan_Audit_Log_NutriGrow_' . Carbon::now()->format('Ymd_His') . '.pdf';
+
+            return response($pdfContent, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+                'Content-Length' => strlen($pdfContent),
+            ]);
+        }
+
+        // 2. Default: Tampilan dokumen cetak / save-to-pdf interaktif resmi
+        $viewName = view()->exists('DashboardSuperAdmin.LogAktivitas.export_pdf')
+            ? 'DashboardSuperAdmin.LogAktivitas.export_pdf'
+            : 'DashboardAdmin.LogAktivitas.export_pdf';
+
+        return view($viewName, [
+            'currentAdmin' => $currentAdmin,
+            'adminName' => $currentAdmin->name,
+            'adminRole' => $currentAdmin->role_label,
+            'faskesName' => $currentAdmin->faskes_name ?? 'Kementerian Kesehatan RI & NutriGrow Central',
+            'logs' => $logs,
+        ]);
+    }
+
+    /**
      * Pastikan ada demo log jika tabel masih kosong untuk kemudahan demonstrasi pengujian.
      */
     protected function ensureDemoLogs(): void

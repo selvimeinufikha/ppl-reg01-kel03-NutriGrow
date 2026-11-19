@@ -93,6 +93,7 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::post('/manajemen-akun/{id}/toggle-status', [AdminManajemenAkunController::class, 'toggleStatus'])->name('akun.toggle-status');
     // Log Aktivitas & Audit Administrator (PBI-030)
     Route::get('/log-aktivitas', [AdminAuditLogController::class, 'index'])->name('log.index');
+    Route::get('/log-aktivitas/export-pdf', [AdminAuditLogController::class, 'exportPdf'])->name('log.export-pdf');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 });
 
@@ -177,6 +178,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/manajemen-akun/{id}/toggle-status', [AdminManajemenAkunController::class, 'toggleStatus'])->name('admin.akun.toggle-status');
     // Log Aktivitas & Audit Administrator (PBI-030)
     Route::get('/log-aktivitas', [AdminAuditLogController::class, 'index'])->name('admin.log.index');
+    Route::get('/log-aktivitas/export-pdf', [AdminAuditLogController::class, 'exportPdf'])->name('admin.log.export-pdf');
 
     // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {
