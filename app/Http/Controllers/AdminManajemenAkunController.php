@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\FasilitasKesehatan;
+use App\Models\AdminActivityLog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -220,6 +221,23 @@ class AdminManajemenAkunController extends Controller
             'status' => $validated['status'] ?? 'active',
         ]);
 
+        // PBI-030: Catat log aktivitas penambahan akun baru oleh Super Admin
+        AdminActivityLog::record(
+            action: 'TAMBAH_AKUN',
+            description: "Menambahkan akun administrator baru '{$newUser->name}' dengan hak akses {$newUser->role_label} di {$newUser->faskes_name}.",
+            targetUser: $newUser,
+            oldValues: null,
+            newValues: [
+                'name' => $newUser->name,
+                'email' => $newUser->email,
+                'role' => $newUser->role,
+                'faskes_name' => $newUser->faskes_name,
+                'status' => $newUser->status,
+                'jabatan' => $newUser->jabatan,
+                'nip_str' => $newUser->nip_str,
+            ]
+        );
+
         $redirectRoute = request()->routeIs('superadmin.*') || request()->is('superadmin/*')
             ? (Route::has('superadmin.akun.index') ? 'superadmin.akun.index' : 'admin.akun.index')
             : 'admin.akun.index';
@@ -294,6 +312,15 @@ class AdminManajemenAkunController extends Controller
             'status.in' => 'Status akun harus aktif atau nonaktif.',
         ]);
 
+        $oldValues = [
+            'role' => $admin->role,
+            'role_label' => $admin->role_label,
+            'status' => $admin->status,
+            'faskes_name' => $admin->faskes_name,
+            'jabatan' => $admin->jabatan,
+            'nip_str' => $admin->nip_str,
+        ];
+
         if ($request->filled('name')) {
             $admin->name = trim($request->name);
         }
@@ -319,6 +346,22 @@ class AdminManajemenAkunController extends Controller
 
         $admin->save();
 
+        // PBI-030: Catat log aktivitas perubahan hak akses & data akun
+        AdminActivityLog::record(
+            action: 'UBAH_HAK_AKSES',
+            description: "Memperbarui hak akses/data akun '{$admin->name}': Peran [{$oldValues['role_label']} → {$admin->role_label}], Status [" . ($oldValues['status'] === 'active' ? 'Aktif' : 'Nonaktif') . " → " . ($admin->status === 'active' ? 'Aktif' : 'Nonaktif') . "].",
+            targetUser: $admin,
+            oldValues: $oldValues,
+            newValues: [
+                'role' => $admin->role,
+                'role_label' => $admin->role_label,
+                'status' => $admin->status,
+                'faskes_name' => $admin->faskes_name,
+                'jabatan' => $admin->jabatan,
+                'nip_str' => $admin->nip_str,
+            ]
+        );
+
         // Segera perbarui state session jika user yang diedit sedang login saat ini
         if (Auth::check() && Auth::id() === $admin->id) {
             Auth::setUser($admin->fresh());
@@ -342,8 +385,18 @@ class AdminManajemenAkunController extends Controller
         }
 
         $admin = User::findOrFail($id);
-        $admin->status = ($admin->status === 'inactive') ? 'active' : 'inactive';
+        $oldStatus = $admin->status ?? 'active';
+        $admin->status = ($oldStatus === 'inactive') ? 'active' : 'inactive';
         $admin->save();
+
+        // PBI-030: Catat log aktivitas perubahan status aktif/nonaktif akun
+        AdminActivityLog::record(
+            action: 'TOGGLE_STATUS',
+            description: "Mengubah status akun '{$admin->name}' ({$admin->role_label}) dari " . ($oldStatus === 'active' ? 'Aktif' : 'Nonaktif') . " menjadi " . ($admin->status === 'active' ? 'Aktif' : 'Nonaktif') . ".",
+            targetUser: $admin,
+            oldValues: ['status' => $oldStatus],
+            newValues: ['status' => $admin->status]
+        );
 
         if (Auth::check() && Auth::id() === $admin->id) {
             Auth::setUser($admin->fresh());

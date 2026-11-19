@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\AdminActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -68,6 +69,13 @@ class AdminAuthController extends Controller
 
             // Flash notifikasi sukses & redirect sesuai hierarki peran
             if ($authUser->isSuperAdmin()) {
+                AdminActivityLog::record(
+                    action: 'LOGIN_ADMIN',
+                    description: "Super Admin '{$authUser->name}' berhasil masuk ke portal sistem NutriGrow.",
+                    targetUser: $authUser,
+                    actor: $authUser
+                );
+
                 session()->flash('success_admin_login', 'Selamat datang, ' . $authUser->name . '! Anda berhasil masuk ke Dashboard Super Admin NutriGrow.');
                 return redirect()->route('superadmin.dashboard');
             }

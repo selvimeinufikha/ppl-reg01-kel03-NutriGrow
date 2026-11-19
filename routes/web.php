@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminFasilitasKesehatanController;
 use App\Http\Controllers\AdminManajemenAkunController;
 use App\Http\Controllers\DashboardPenggunaController;
 use App\Http\Controllers\SuperAdminDashboardController;
+use App\Http\Controllers\AdminAuditLogController;
 use App\Http\Controllers\PasanganController;
 
 /*
@@ -90,6 +91,8 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::put('/manajemen-akun/{id}', [AdminManajemenAkunController::class, 'update'])->name('akun.update');
     Route::post('/manajemen-akun/{id}', [AdminManajemenAkunController::class, 'update'])->name('akun.update.post');
     Route::post('/manajemen-akun/{id}/toggle-status', [AdminManajemenAkunController::class, 'toggleStatus'])->name('akun.toggle-status');
+    // Log Aktivitas & Audit Administrator (PBI-030)
+    Route::get('/log-aktivitas', [AdminAuditLogController::class, 'index'])->name('log.index');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 });
 
@@ -172,6 +175,8 @@ Route::prefix('admin')->group(function () {
     Route::put('/manajemen-akun/{id}', [AdminManajemenAkunController::class, 'update'])->name('admin.akun.update');
     Route::post('/manajemen-akun/{id}', [AdminManajemenAkunController::class, 'update'])->name('admin.akun.update.post');
     Route::post('/manajemen-akun/{id}/toggle-status', [AdminManajemenAkunController::class, 'toggleStatus'])->name('admin.akun.toggle-status');
+    // Log Aktivitas & Audit Administrator (PBI-030)
+    Route::get('/log-aktivitas', [AdminAuditLogController::class, 'index'])->name('admin.log.index');
 
     // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {

@@ -1,0 +1,1 @@
+@include('DashboardSuperAdmin.LogAktivitas.index')

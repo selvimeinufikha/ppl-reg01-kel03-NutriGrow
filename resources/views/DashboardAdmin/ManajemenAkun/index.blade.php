@@ -92,17 +92,24 @@
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                         <span>Edukasi Gizi &amp; KIA</span>
                     </a>
-                    <!-- ACTIVE MENU: MANAJEMEN AKUN ADMIN -->
-                    <a href="{{ route('admin.akun.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#0284c7] text-white shadow-xs font-bold transition">
+                    <!-- ACTIVE MENU: MANAJEMEN AKUN ADMIN (PINK ACCENT) -->
+                    <a href="{{ route('admin.akun.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-xs font-bold transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                         <span>Manajemen Akun Admin</span>
                     </a>
+                    @if (Auth::check() && Auth::user()->isSuperAdmin())
+                        <!-- MENU LOG AKTIVITAS (PBI-030) -->
+                        <a href="{{ route('admin.log.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <span>Log Aktivitas &amp; Audit</span>
+                        </a>
+                    @endif
                 </nav>
             </div>
 
             <div class="pt-4 border-t border-slate-100 px-2 space-y-3">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-sky-100 text-[#0284c7] font-bold text-xs flex items-center justify-center">
+                    <div class="w-9 h-9 rounded-xl bg-pink-100 text-[#e11d48] font-bold text-xs flex items-center justify-center">
                         {{ strtoupper(substr($adminName, 0, 2)) }}
                     </div>
                     <div class="min-w-0 flex-1">
