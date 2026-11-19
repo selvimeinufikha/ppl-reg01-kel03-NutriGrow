@@ -134,10 +134,10 @@
             <!-- Middle Section: Image Showcase Card & Centered Typography (Persis Sesuai Gambar Referensi) -->
             <div class="my-auto py-4 sm:py-6 max-w-[420px] mx-auto w-full flex flex-col items-center justify-center relative z-10">
 
-                <!-- Card Photo: Dokter Memeriksa Anak di Timbangan Digital -->
+                <!-- Card Photo: Ibu & Anak Pengukuran Tinggi Badan Optimal -->
                 <div class="relative w-full max-w-[340px] sm:max-w-[370px] rounded-[26px] sm:rounded-[30px] overflow-hidden shadow-xl shadow-slate-200/60 border border-white/90 bg-white group">
                     <img
-                        src="{{ asset('images/growth-measurement-hd.png') }}"
+                        src="{{ asset('images/admin-growth-hero.jpg') }}"
                         alt="Pemantauan Gizi Anak & Pencegahan Stunting NutriGrow"
                         class="w-full h-[220px] sm:h-[250px] object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
                         onerror="this.onerror=null; this.src='{{ asset('images/growth-measurement.jpg') }}';"
