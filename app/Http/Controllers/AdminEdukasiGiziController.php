@@ -157,7 +157,7 @@ class AdminEdukasiGiziController extends Controller
         }
 
         // Data petugas yang sedang login
-        $adminName = $user->name ?: 'dr. Sarah Nakes (Admin Faskes)';
+        $adminName = $user->name ?: 'dr. Sarah Diana';
         $adminEmail = $user->email;
         $adminRole = ($user->role === 'super_admin' || $user->role === 'admin' || str_contains(strtolower($adminName), 'sarah') || str_contains(strtolower($adminName), 'anita') || str_starts_with($adminEmail, 'admin') || str_contains(strtolower($adminEmail), 'anita'))
             ? 'Super Admin'
@@ -177,10 +177,23 @@ class AdminEdukasiGiziController extends Controller
         // Pastikan URL gambar setiap artikel selalu valid dan menggunakan host/port saat ini
         $articlesModified = false;
         foreach ($articles as $index => &$art) {
+            // Perbarui penulis jika masih tertulis nama lama
+            if (isset($art['author']) && str_contains($art['author'], 'Sarah Nakes')) {
+                $art['author'] = 'dr. Sarah Diana';
+                $articlesModified = true;
+            }
+
             $img = (string) ($art['image'] ?? '');
             $parsedPath = parse_url($img, PHP_URL_PATH) ?? $img;
             
-            if (str_contains($parsedPath, 'images/')) {
+            if (str_contains($parsedPath, 'images/uploads/')) {
+                $filename = basename($parsedPath);
+                $newUrl = asset('images/uploads/' . $filename);
+                if ($img !== $newUrl) {
+                    $art['image'] = $newUrl;
+                    $articlesModified = true;
+                }
+            } elseif (str_contains($parsedPath, 'images/')) {
                 $filename = basename($parsedPath);
                 $newUrl = asset('images/' . $filename);
                 if ($img !== $newUrl) {
@@ -287,6 +300,7 @@ class AdminEdukasiGiziController extends Controller
             'read_time' => 'required|string|max:50',
             'status' => 'required|string|in:terbit,draft',
             'summary' => 'required|string|max:1500',
+            'image' => 'nullable|file|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
         ]);
 
         $articles = session()->get('admin_articles', $this->getDefaultArticles());
@@ -297,6 +311,19 @@ class AdminEdukasiGiziController extends Controller
         $isPublished = $validated['status'] === 'terbit';
 
         Carbon::setLocale('id');
+
+        // Tangani unggah berkas gambar thumbnail jika ada
+        $imageUrl = asset('images/nutrition-food.jpg');
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $dest = public_path('images/uploads');
+            if (!file_exists($dest)) {
+                mkdir($dest, 0755, true);
+            }
+            $file->move($dest, $filename);
+            $imageUrl = asset('images/uploads/' . $filename);
+        }
 
         $newArticle = [
             'id' => $newId,
@@ -313,7 +340,7 @@ class AdminEdukasiGiziController extends Controller
             'status' => $validated['status'],
             'status_label' => $isPublished ? 'Terbit' : 'Draft',
             'status_note' => $isPublished ? 'Tampil ke aplikasi' : 'Hanya tim nakes',
-            'image' => asset('images/nutrition-food.jpg'),
+            'image' => $imageUrl,
             'views' => $isPublished ? '1' : '-',
             'summary' => $validated['summary'],
         ];
@@ -336,6 +363,7 @@ class AdminEdukasiGiziController extends Controller
             'read_time' => 'required|string|max:50',
             'status' => 'required|string|in:terbit,draft',
             'summary' => 'required|string|max:1500',
+            'image' => 'nullable|file|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
         ]);
 
         $articles = session()->get('admin_articles', $this->getDefaultArticles());
@@ -364,6 +392,19 @@ class AdminEdukasiGiziController extends Controller
                     $art['publish_time'] = Carbon::now()->format('H:i') . ' WIB';
                 }
                 $art['summary'] = $validated['summary'];
+
+                // Jika ada unggahan gambar baru
+                if ($request->hasFile('image')) {
+                    $file = $request->file('image');
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $dest = public_path('images/uploads');
+                    if (!file_exists($dest)) {
+                        mkdir($dest, 0755, true);
+                    }
+                    $file->move($dest, $filename);
+                    $art['image'] = asset('images/uploads/' . $filename);
+                }
+
                 $updated = true;
                 break;
             }

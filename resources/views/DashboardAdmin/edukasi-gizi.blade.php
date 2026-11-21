@@ -813,7 +813,7 @@
                 </button>
             </div>
 
-            <form action="{{ route('admin.edukasi.store') }}" method="POST" class="mt-5 space-y-4">
+            <form action="{{ route('admin.edukasi.store') }}" method="POST" enctype="multipart/form-data" class="mt-5 space-y-4">
                 @csrf
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Judul Artikel <span class="text-rose-500">*</span></label>
@@ -895,11 +895,22 @@
                     <div class="flex items-center gap-3">
                         <label class="flex-1 border-2 border-dashed border-slate-200 hover:border-sky-400 rounded-2xl p-3 text-center cursor-pointer transition">
                             <span class="text-xs text-slate-500 block">Klik untuk memilih gambar atau seret berkas</span>
-                            <span class="text-[10px] text-slate-400 block mt-0.5">JPG, PNG atau WebP (Maks. 2MB)</span>
-                            <input type="file" class="hidden" accept="image/*" onchange="previewThumbnailName(this)">
+                            <span class="text-[10px] text-slate-400 block mt-0.5">JPG, PNG atau WebP (Maks. 5MB)</span>
+                            <input type="file" name="image" id="addArticleImageInput" class="hidden" accept="image/*" onchange="previewThumbnailName(this, 'thumbnailFileName', 'addThumbnailPreview', 'addThumbnailPreviewImg')">
                         </label>
                     </div>
-                    <span id="thumbnailFileName" class="text-[10px] font-semibold text-sky-600 block mt-1 hidden"></span>
+                    <div id="addThumbnailPreview" class="hidden mt-2.5 flex items-center gap-3 p-2.5 bg-slate-50 rounded-2xl border border-slate-200">
+                        <img id="addThumbnailPreviewImg" src="" alt="Pratinjau Sampul" class="w-16 h-12 object-cover rounded-xl border border-slate-200 shadow-2xs">
+                        <div class="min-w-0 flex-1 text-xs">
+                            <span id="thumbnailFileName" class="font-bold text-slate-800 block truncate"></span>
+                            <span class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Berkas siap diunggah sebagai foto artikel
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
@@ -944,7 +955,7 @@
                     </svg>
                 </button>
             </div>
-            <form id="editArticleForm" method="POST" action="" class="mt-5 space-y-4">
+            <form id="editArticleForm" method="POST" action="" enctype="multipart/form-data" class="mt-5 space-y-4">
                 @csrf
                 @method('PUT')
                 <div>
@@ -982,6 +993,31 @@
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Ringkasan Materi / Panduan Medis <span class="text-rose-500">*</span></label>
                     <textarea name="summary" id="editArticleSummaryInput" rows="4" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"></textarea>
                 </div>
+
+                <!-- Gambar Thumbnail Baru (Opsional) -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Ganti Sampul Artikel (Opsional)</label>
+                    <div class="flex items-center gap-3">
+                        <label class="flex-1 border-2 border-dashed border-slate-200 hover:border-sky-400 rounded-2xl p-3 text-center cursor-pointer transition">
+                            <span class="text-xs text-slate-500 block">Klik untuk memilih gambar baru</span>
+                            <span class="text-[10px] text-slate-400 block mt-0.5">JPG, PNG atau WebP (Biarkan kosong jika tidak ingin mengubah)</span>
+                            <input type="file" name="image" id="editArticleImageInput" class="hidden" accept="image/*" onchange="previewThumbnailName(this, 'editThumbnailFileName', 'editThumbnailPreview', 'editThumbnailPreviewImg')">
+                        </label>
+                    </div>
+                    <div id="editThumbnailPreview" class="hidden mt-2.5 flex items-center gap-3 p-2.5 bg-slate-50 rounded-2xl border border-slate-200">
+                        <img id="editThumbnailPreviewImg" src="" alt="Pratinjau Sampul" class="w-16 h-12 object-cover rounded-xl border border-slate-200 shadow-2xs">
+                        <div class="min-w-0 flex-1 text-xs">
+                            <span id="editThumbnailFileName" class="font-bold text-slate-800 block truncate"></span>
+                            <span class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Berkas baru siap diunggah
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
                     <button type="button" onclick="closeEditArticleModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer">Batal</button>
                     <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0284c7] hover:bg-sky-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">Simpan Perubahan</button>
@@ -1283,12 +1319,25 @@
             }
         }
 
-        // Preview File Name
-        function previewThumbnailName(input) {
+        // Preview File Name & Instant Image Preview
+        function previewThumbnailName(input, labelId = 'thumbnailFileName', previewContainerId = 'addThumbnailPreview', previewImgId = 'addThumbnailPreviewImg') {
             if (input.files && input.files[0]) {
-                const label = document.getElementById('thumbnailFileName');
-                label.textContent = 'Berkas dipilih: ' + input.files[0].name;
-                label.classList.remove('hidden');
+                const file = input.files[0];
+                const label = document.getElementById(labelId);
+                if (label) {
+                    label.textContent = 'Berkas dipilih: ' + file.name;
+                    label.classList.remove('hidden');
+                }
+                const container = document.getElementById(previewContainerId);
+                const img = document.getElementById(previewImgId);
+                if (container && img) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        img.src = e.target.result;
+                        container.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
             }
         }
 

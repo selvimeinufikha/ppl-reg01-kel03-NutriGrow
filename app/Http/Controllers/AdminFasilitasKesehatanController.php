@@ -35,7 +35,7 @@ class AdminFasilitasKesehatanController extends Controller
         }
 
         // Data profil nakes yang sedang login
-        $adminName = $user->name ?: 'dr. Sarah Nakes (Admin Faskes)';
+        $adminName = $user->name ?: 'dr. Sarah Diana';
         $adminEmail = $user->email;
         $adminRole = ($user->role === 'super_admin' || $user->role === 'admin' || str_contains(strtolower($adminName), 'sarah') || str_contains(strtolower($adminName), 'anita') || str_starts_with($adminEmail, 'admin') || str_contains(strtolower($adminEmail), 'anita'))
             ? 'Super Admin'
