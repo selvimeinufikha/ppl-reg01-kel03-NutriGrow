@@ -294,34 +294,7 @@
             <!-- Page Body Content -->
             <div class="p-4 sm:p-6 lg:p-8 space-y-6">
 
-                <!-- Alert Feedback (Success / Error) -->
-                @if(session('success'))
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-2xl text-xs flex items-center justify-between shadow-xs">
-                    <div class="flex items-center gap-2.5">
-                        <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                        </svg>
-                        <span>{{ session('success') }}</span>
-                    </div>
-                    <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 cursor-pointer text-sm font-bold">&times;</button>
-                </div>
-                @endif
-
-                @if(isset($errors) && $errors->any())
-                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-2xl text-xs shadow-xs space-y-1">
-                    <div class="font-bold flex items-center gap-2">
-                        <svg class="w-4 h-4 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                        </svg>
-                        <span>Gagal Menyimpan Data Fasilitas Kesehatan:</span>
-                    </div>
-                    <ul class="list-disc pl-6 space-y-0.5 text-[11px] text-rose-700">
-                        @foreach($errors->all() as $err)
-                            <li>{{ $err }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif
+                <!-- Notifikasi Berhasil & Gagal ditampilkan dalam bentuk Modal Pop Up di tengah layar -->
 
                 <!-- =========================================================== -->
                 <!-- HEADER HALAMAN & TOMBOL AKSI                                -->
@@ -1365,6 +1338,74 @@
     </div>
 
     <!-- =================================================================== -->
+    <!-- MODAL POP UP SUKSES & ERROR (PERSIS MOCKUP REFERENSI)               -->
+    <!-- =================================================================== -->
+    @php
+        $hasFlashSuccess = session()->has('success');
+        $flashSuccessMsg = session('success');
+        $hasFlashError = session()->has('error') || (isset($errors) && $errors->any());
+        $flashErrorMsg = session('error') ?? ($hasFlashError && isset($errors) ? $errors->first() : '');
+    @endphp
+
+    <!-- 1. POP UP SUKSES (LINGKARAN HIJAU CENTANG PUTIH) -->
+    <div id="successModalPopup" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs {{ $hasFlashSuccess ? '' : 'hidden' }}">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-7 sm:p-8 shadow-2xl text-center border border-slate-100 transform transition-all duration-200">
+            <!-- Icon Lingkaran Hijau Centang Putih -->
+            <div class="w-16 h-16 rounded-full bg-[#22c55e] text-white mx-auto flex items-center justify-center mb-4 shadow-lg shadow-green-500/25">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            
+            <h3 id="successModalTitle" class="text-lg font-black text-[#22c55e] uppercase tracking-wider mb-2">
+                BERHASIL!
+            </h3>
+            
+            <p id="successModalMessage" class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6 font-medium">
+                {{ $flashSuccessMsg ?? 'Operasi data berhasil diproses oleh sistem.' }}
+            </p>
+            
+            <button
+                type="button"
+                id="successModalBtn"
+                onclick="closeSuccessModalPopup()"
+                class="w-full py-3 px-6 rounded-2xl bg-[#22c55e] hover:bg-[#16a34a] text-white font-extrabold text-xs sm:text-sm shadow-md hover:shadow-lg transition cursor-pointer active:scale-95"
+            >
+                Lanjutkan
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. POP UP ERROR (LINGKARAN MERAH TANDA SERU PUTIH) -->
+    <div id="errorModalPopup" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs {{ $hasFlashError ? '' : 'hidden' }}">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-7 sm:p-8 shadow-2xl text-center border border-slate-100 transform transition-all duration-200">
+            <!-- Icon Lingkaran Merah Tanda Seru Putih -->
+            <div class="w-16 h-16 rounded-full bg-[#ef4444] text-white mx-auto flex items-center justify-center mb-4 shadow-lg shadow-rose-500/25">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v5m0 4h.01"/>
+                </svg>
+            </div>
+            
+            <h3 id="errorModalTitle" class="text-lg font-black text-[#ef4444] uppercase tracking-wider mb-2">
+                GAGAL!
+            </h3>
+            
+            <p id="errorModalMessage" class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6 font-medium">
+                {{ $flashErrorMsg ?: 'Terjadi kesalahan saat memproses data. Silakan coba kembali.' }}
+            </p>
+            
+            <button
+                type="button"
+                id="errorModalBtn"
+                onclick="closeErrorModalPopup()"
+                class="w-full py-3 px-6 rounded-2xl bg-[#ef4444] hover:bg-rose-600 text-white font-extrabold text-xs sm:text-sm shadow-md hover:shadow-lg transition cursor-pointer active:scale-95"
+            >
+                Coba Lagi
+            </button>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
     <!-- TOAST NOTIFICATION CONTAINER                                        -->
     <!-- =================================================================== -->
     <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
@@ -1406,19 +1447,47 @@
             showToast(featureName, 'Modul ' + featureName + ' sedang dalam sinkronisasi faskes.');
         }
 
-        // Toast Helper
+        let successModalCallback = null;
+        let errorModalCallback = null;
+
+        // Modal Pop Up Helpers (Sesuai Mockup Referensi)
+        function showSuccessPopup(title = 'BERHASIL!', message = 'Operasi data berhasil diproses oleh sistem.', buttonText = 'Lanjutkan', callback = null) {
+            document.getElementById('successModalTitle').textContent = title;
+            document.getElementById('successModalMessage').textContent = message;
+            document.getElementById('successModalBtn').textContent = buttonText;
+            successModalCallback = callback;
+            document.getElementById('successModalPopup').classList.remove('hidden');
+        }
+
+        function closeSuccessModalPopup() {
+            document.getElementById('successModalPopup').classList.add('hidden');
+            if (typeof successModalCallback === 'function') {
+                const cb = successModalCallback;
+                successModalCallback = null;
+                cb();
+            }
+        }
+
+        function showErrorPopup(title = 'GAGAL!', message = 'Terjadi kesalahan saat memproses data. Silakan coba kembali.', buttonText = 'Coba Lagi', callback = null) {
+            document.getElementById('errorModalTitle').textContent = title;
+            document.getElementById('errorModalMessage').textContent = message;
+            document.getElementById('errorModalBtn').textContent = buttonText;
+            errorModalCallback = callback;
+            document.getElementById('errorModalPopup').classList.remove('hidden');
+        }
+
+        function closeErrorModalPopup() {
+            document.getElementById('errorModalPopup').classList.add('hidden');
+            if (typeof errorModalCallback === 'function') {
+                const cb = errorModalCallback;
+                errorModalCallback = null;
+                cb();
+            }
+        }
+
+        // Toast Helper (dialihkan ke Modal Pop Up Baru)
         function showToast(title, message) {
-            const toast = document.getElementById('toastNotification');
-            document.getElementById('toastTitle').textContent = title;
-            document.getElementById('toastMessage').textContent = message;
-
-            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-                toast.classList.remove('translate-y-0', 'opacity-100');
-            }, 3500);
+            showSuccessPopup(title || 'BERHASIL!', message || 'Pesan Anda berhasil diproses.');
         }
 
         // Modal Tambah Fasilitas
