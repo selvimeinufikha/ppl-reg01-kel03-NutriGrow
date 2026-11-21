@@ -177,16 +177,19 @@ class AdminEdukasiGiziController extends Controller
         // Pastikan URL gambar setiap artikel selalu valid dan menggunakan host/port saat ini
         $articlesModified = false;
         foreach ($articles as $index => &$art) {
-            $img = $art['image'] ?? '';
-            // Ekstrak nama file atau sub-path gambar lokal
-            if (preg_match('#images/([^"\'\s?#]+)#', $img, $matches)) {
-                $newUrl = asset('images/' . $matches[1]);
+            $img = (string) ($art['image'] ?? '');
+            $parsedPath = parse_url($img, PHP_URL_PATH) ?? $img;
+            
+            if (str_contains($parsedPath, 'images/')) {
+                $filename = basename($parsedPath);
+                $newUrl = asset('images/' . $filename);
                 if ($img !== $newUrl) {
                     $art['image'] = $newUrl;
                     $articlesModified = true;
                 }
-            } elseif (preg_match('#storage/([^"\'\s?#]+)#', $img, $matches)) {
-                $newUrl = asset('storage/' . $matches[1]);
+            } elseif (str_contains($parsedPath, 'storage/')) {
+                $filename = basename($parsedPath);
+                $newUrl = asset('storage/' . $filename);
                 if ($img !== $newUrl) {
                     $art['image'] = $newUrl;
                     $articlesModified = true;
