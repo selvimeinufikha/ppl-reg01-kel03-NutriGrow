@@ -169,10 +169,41 @@ class AdminEdukasiGiziController extends Controller
         $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
 
         // Ambil artikel dari session atau inisialisasi default
-        if (!session()->has('admin_articles')) {
+        if (!session()->has('admin_articles') || $request->has('reset_articles')) {
             session()->put('admin_articles', $this->getDefaultArticles());
         }
         $articles = session()->get('admin_articles');
+
+        // Pastikan URL gambar setiap artikel selalu valid dan menggunakan host/port saat ini
+        $articlesModified = false;
+        foreach ($articles as $index => &$art) {
+            $img = $art['image'] ?? '';
+            // Ekstrak nama file atau sub-path gambar lokal
+            if (preg_match('#images/([^"\'\s?#]+)#', $img, $matches)) {
+                $newUrl = asset('images/' . $matches[1]);
+                if ($img !== $newUrl) {
+                    $art['image'] = $newUrl;
+                    $articlesModified = true;
+                }
+            } elseif (preg_match('#storage/([^"\'\s?#]+)#', $img, $matches)) {
+                $newUrl = asset('storage/' . $matches[1]);
+                if ($img !== $newUrl) {
+                    $art['image'] = $newUrl;
+                    $articlesModified = true;
+                }
+            } elseif (empty($img)) {
+                $art['image'] = asset('images/nutrigrow-icon.png');
+                $articlesModified = true;
+            } elseif (!str_starts_with($img, 'http://') && !str_starts_with($img, 'https://')) {
+                $art['image'] = asset(ltrim($img, '/'));
+                $articlesModified = true;
+            }
+        }
+        unset($art);
+
+        if ($articlesModified) {
+            session()->put('admin_articles', $articles);
+        }
 
         // Hitung statistik
         $totalCount = count($articles);

@@ -746,7 +746,29 @@
                                 @empty
                                 <tr>
                                     <td colspan="8" class="text-center py-12 px-4 bg-slate-50/50">
-                                        <div class="max-w-sm mx-auto text-center">
+                                        <div class="max-w-md mx-auto text-center">
+                                            @if(($statistics['total_fasilitas']['val'] ?? '0') === '0' || ($statistics['total_fasilitas']['val'] ?? 0) == 0)
+                                            <div class="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284c7] mx-auto flex items-center justify-center mb-3 border border-sky-200/70 shadow-2xs">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                                </svg>
+                                            </div>
+                                            <h4 class="text-sm font-bold text-slate-800">Belum Ada Data Fasilitas Kesehatan</h4>
+                                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                                Tabel fasilitas kesehatan saat ini masih kosong. Silakan gunakan tombol di bawah untuk mulai input data fasilitas secara manual.
+                                            </p>
+                                            <button
+                                                type="button"
+                                                onclick="openAddFacilityModal()"
+                                                class="mt-3.5 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0284c7] hover:bg-sky-700 text-white text-xs font-bold transition cursor-pointer shadow-xs"
+                                            >
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <circle cx="12" cy="12" r="9"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8m-4-4h8"/>
+                                                </svg>
+                                                <span>Tambah Fasilitas Sekarang</span>
+                                            </button>
+                                            @else
                                             <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 mx-auto flex items-center justify-center mb-3 border border-amber-200/70 shadow-2xs">
                                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -765,6 +787,7 @@
                                                 </svg>
                                                 <span>Reset Pencarian &amp; Filter</span>
                                             </a>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

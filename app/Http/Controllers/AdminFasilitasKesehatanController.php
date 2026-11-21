@@ -46,14 +46,6 @@ class AdminFasilitasKesehatanController extends Controller
         Carbon::setLocale('id');
         $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
 
-        // Pastikan ada data awal jika tabel masih kosong
-        if (FasilitasKesehatan::count() === 0) {
-            \Illuminate\Support\Facades\Artisan::call('db:seed', [
-                '--class' => 'Database\\Seeders\\FasilitasKesehatanSeeder',
-                '--force' => true,
-            ]);
-        }
-
         // Hitung statistik dinamis fasilitas kesehatan
         $totalCount = FasilitasKesehatan::count();
         $posyanduCount = FasilitasKesehatan::where('jenis', 'posyandu')->count();
