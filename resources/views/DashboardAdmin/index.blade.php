@@ -144,8 +144,8 @@
 
                     <!-- 3. Data Pemeriksaan Kehamilan -->
                     <a
-                        href="javascript:void(0)"
-                        onclick="switchTableTab('anc')"
+                        href="{{ Route::has('admin.pemeriksaan.index') ? route('admin.pemeriksaan.index') : 'javascript:void(0)' }}"
+                        @if(!Route::has('admin.pemeriksaan.index')) onclick="switchTableTab('anc')" @endif
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -168,7 +168,8 @@
 
                     <!-- 5. Data Edukasi Gizi -->
                     <a
-                        href="{{ route('admin.edukasi.index') }}"
+                        href="{{ Route::has('admin.edukasi.index') ? route('admin.edukasi.index') : 'javascript:void(0)' }}"
+                        @if(!Route::has('admin.edukasi.index')) onclick="showFeatureNotice('Data Edukasi Gizi')" @endif
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -179,7 +180,8 @@
 
                     <!-- 6. Data Layanan Kesehatan -->
                     <a
-                        href="{{ route('admin.fasilitas.index') }}"
+                        href="{{ Route::has('admin.fasilitas.index') ? route('admin.fasilitas.index') : 'javascript:void(0)' }}"
+                        @if(!Route::has('admin.fasilitas.index')) onclick="showFeatureNotice('Data Layanan Kesehatan')" @endif
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
