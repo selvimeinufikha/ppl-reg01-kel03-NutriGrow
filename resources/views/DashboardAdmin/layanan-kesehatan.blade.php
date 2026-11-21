@@ -342,30 +342,7 @@
                     </div>
                 </div>
 
-                <!-- =========================================================== -->
-                <!-- BANNER SUMBER REKOMENDASI TERDEKAT (SESUAI MOCKUP)          -->
-                <!-- =========================================================== -->
-                <div class="p-4 sm:p-5 rounded-2xl bg-[#eef6ff] border border-sky-200/70 shadow-2xs flex items-start gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-white border border-sky-200 text-[#0284c7] flex items-center justify-center shrink-0 shadow-2xs">
-                        <svg class="w-5 h-5 text-[#0284c7]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <h3 class="text-xs sm:text-sm font-bold text-slate-900">
-                                Sumber Rekomendasi Terdekat Aplikasi NutriGrow Ibu &amp; Balita
-                            </h3>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-rose-100 text-[#e11d48] text-[10px] font-extrabold uppercase">
-                                SatuSehat Ready
-                            </span>
-                        </div>
-                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                            Data faskes di halaman ini merupakan rujukan utama yang dihitung berdasarkan radius GPS pada aplikasi pengguna. Digunakan saat ibu mencari jadwal penimbangan Posyandu, skrining gizi Puskesmas, maupun intervensi kegawatdaruratan stunting/KEK ke Rumah Sakit Rujukan.
-                        </p>
-                    </div>
-                </div>
+
 
                 <!-- =========================================================== -->
                 <!-- STATISTIK RINGKASAN (4 CARDS SESUAI MOCKUP)                 -->

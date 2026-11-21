@@ -351,19 +351,7 @@
 
                 <!-- Notifikasi Berhasil & Gagal ditampilkan dalam bentuk Modal Pop Up di tengah layar -->
 
-                <!-- Info Notice Callout (Pemisahan Ruang Lingkup Sistem Klinis) -->
-                <div class="p-4 rounded-2xl bg-[#f0f9ff] border border-sky-100 flex items-start gap-3.5 shadow-2xs">
-                    <div class="w-7 h-7 rounded-xl bg-sky-100 text-[#0284c7] flex items-center justify-center shrink-0 mt-0.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <div class="text-xs text-slate-600 leading-relaxed">
-                        <span class="font-bold text-slate-800 block mb-0.5">Pemisahan Ruang Lingkup Sistem Klinis:</span>
-                        Halaman ini khusus untuk publikasi artikel ilmiah populer, panduan praktik pola asuh, dan kampanye pencegahan stunting. Master data tabel Angka Kecukupan Gizi (AKG), densitas mikro/makronutrien pangan lokal dikelola secara terpisah melalui modul
-                        <a href="javascript:void(0)" onclick="showFeatureNotice('Data Informasi Nutrisi')" class="font-bold text-[#0284c7] hover:underline">Data Informasi Nutrisi</a>.
-                    </div>
-                </div>
+
 
                 <!-- =========================================================== -->
                 <!-- 3. KARTU STATISTIK (4 STAT CARDS)                           -->
