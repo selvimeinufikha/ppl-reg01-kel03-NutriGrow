@@ -92,19 +92,12 @@
                 </a>
             </div>
 
-            <!-- Group: DATA KELUARGA & PROFIL -->
+            <!-- Group: DATA KELUARGA -->
             <div class="mb-5">
                 <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 mb-2 block">
-                    DATA KELUARGA &amp; PROFIL
+                    DATA KELUARGA
                 </span>
                 <nav class="space-y-1">
-                    <a href="{{ route('profil.index') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <span>Profil Pengguna</span>
-                    </a>
-                    
                     <!-- DATA KEHAMILAN - ACTIVE MENU -->
                     <a href="{{ route('kehamilan.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-brand-800 to-brand-700 text-white font-bold text-xs shadow-md shadow-brand-900/20">
                         <svg class="w-4 h-4 text-rose-200" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
@@ -264,11 +257,11 @@
                     <span class="absolute top-1 right-1 w-4 h-4 bg-brand-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">3</span>
                 </button>
 
-                <div class="w-8 h-8 rounded-full bg-brand-800 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                <a href="{{ route('profil.index') }}" class="w-8 h-8 rounded-full bg-brand-800 text-white flex items-center justify-center font-bold text-xs shadow-xs hover:opacity-90 transition" title="Profil Pengguna">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
-                </div>
+                </a>
             </div>
         </header>
 

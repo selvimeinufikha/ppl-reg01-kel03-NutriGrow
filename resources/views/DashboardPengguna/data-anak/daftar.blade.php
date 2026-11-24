@@ -83,9 +83,9 @@
                 </a>
             </div>
 
-            <!-- DATA KELUARGA & PROFIL -->
+            <!-- DATA KELUARGA -->
             <div class="mb-5">
-                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 mb-2 block">DATA KELUARGA &amp; PROFIL</span>
+                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 mb-2 block">DATA KELUARGA</span>
                 <nav class="space-y-1">
                     <a href="{{ route('dashboard.pengguna') }}#data-pasangan" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
