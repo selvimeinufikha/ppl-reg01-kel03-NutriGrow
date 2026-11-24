@@ -12,6 +12,8 @@ use App\Http\Controllers\DashboardPenggunaController;
 use App\Http\Controllers\PasanganController;
 use App\Http\Controllers\KehamilanController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminPengukuranAnakController;
+use App\Http\Controllers\TumbuhKembangAnakController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +61,11 @@ Route::prefix('data-pasangan')->name('pasangan.')->group(function () {
     Route::get('/tambah', [PasanganController::class, 'create'])->name('create');
     Route::post('/', [PasanganController::class, 'store'])->name('store');
 });
+
+// Rekam Medis: Riwayat Tumbuh Kembang Anak (PBI-016 / F-06)
+Route::get('/tumbuh-kembang-anak', [TumbuhKembangAnakController::class, 'index'])->name('tumbuh-kembang.index');
+Route::get('/riwayat-tumbuh-kembang', [TumbuhKembangAnakController::class, 'index'])->name('riwayat-tumbuh-kembang');
+Route::get('/dashboard-pengguna/tumbuh-kembang-anak', [TumbuhKembangAnakController::class, 'index'])->name('dashboard.tumbuh-kembang');
 
 
 // =========================================================================
@@ -119,6 +126,13 @@ Route::prefix('admin')->group(function () {
     Route::get('/manajemen-akun/tambah', [AdminManajemenAkunController::class, 'create'])->name('admin.akun.create');
     Route::post('/manajemen-akun', [AdminManajemenAkunController::class, 'store'])->name('admin.akun.store');
 
+    // Pengelolaan Pengukuran dan Status Gizi Anak (PBI-016 / F-06)
+    Route::get('/pengukuran-anak', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.index');
+    Route::get('/tumbuh-kembang-anak', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.tumbuh-kembang');
+    Route::get('/data-tumbuh-kembang', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.alias');
+    Route::post('/pengukuran-anak', [AdminPengukuranAnakController::class, 'store'])->name('admin.pengukuran.store');
+    Route::delete('/pengukuran-anak/{id}', [AdminPengukuranAnakController::class, 'destroy'])->name('admin.pengukuran.destroy');
+
     // Beralih Peran Superadmin / Admin (Demonstrasi & Pengujian)
     Route::get('/switch-role/{role}', [AdminDashboardController::class, 'switchRole'])->name('admin.switch-role');
     Route::post('/switch-role', [AdminDashboardController::class, 'switchRole'])->name('admin.switch-role.post');
@@ -147,7 +161,6 @@ Route::get('/admin/lupa-password', function () {
 Route::get('/dashboard-admin', function () {
     return redirect()->route('admin.dashboard');
 })->name('dashboard.admin');
-
 // Rute Data Kehamilan (PBI-004, PBI-005, PBI-006: Pencatatan, Usia Kehamilan, Trimester, Perbarui & Hapus)
 Route::prefix('data-kehamilan')->name('kehamilan.')->group(function () {
     Route::get('/', [KehamilanController::class, 'index'])->name('index');
@@ -175,3 +188,7 @@ Route::prefix('profil')->name('profil.')->group(function () {
 // Alias rute mandiri untuk ganti kata sandi
 Route::get('/ganti-password', [ProfileController::class, 'editPassword'])->name('password.change');
 Route::put('/ganti-password', [ProfileController::class, 'updatePassword'])->name('password.change.update');
+
+Route::get('/data-edukasi-gizi', function () {
+    return redirect()->route('admin.edukasi.index');
+});

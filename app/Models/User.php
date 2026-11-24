@@ -191,4 +191,12 @@ class User extends Authenticatable
 
         return null;
     }
+
+    /**
+     * Data anak / balita yang terhubung dengan akun pengguna / orang tua ini.
+     */
+    public function anaks()
+    {
+        return $this->hasMany(Anak::class, 'user_id');
+    }
 }
