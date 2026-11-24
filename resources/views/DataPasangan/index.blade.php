@@ -139,6 +139,7 @@
                                     <th class="px-5 py-3.5 font-bold text-xs text-slate-500 uppercase tracking-wider">Pekerjaan</th>
                                     <th class="px-5 py-3.5 font-bold text-xs text-slate-500 uppercase tracking-wider">Gol. Darah</th>
                                     <th class="px-5 py-3.5 font-bold text-xs text-slate-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-5 py-3.5 font-bold text-xs text-slate-500 uppercase tracking-wider text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
@@ -159,6 +160,23 @@
                                         <td class="px-5 py-3.5">
                                             <span class="px-2.5 py-1 rounded-full bg-pink-100 text-brand-700 border border-pink-200 text-[11px] font-bold">{{ $p->status_label }}</span>
                                         </td>
+                                        <td class="px-5 py-3.5 text-right whitespace-nowrap">
+                                            <div class="inline-flex items-center gap-1.5 justify-end">
+                                                <a href="{{ route('pasangan.show', $p->id) }}"
+                                                    class="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-brand-300 hover:bg-pink-50 text-xs font-semibold text-slate-600 hover:text-brand-600 transition">
+                                                    Detail
+                                                </a>
+                                                <a href="{{ route('pasangan.edit', $p->id) }}"
+                                                    class="px-2.5 py-1.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-brand-600 text-xs font-bold transition">
+                                                    Ubah
+                                                </a>
+                                                <button type="button"
+                                                    onclick="openDeleteModal('{{ route('pasangan.destroy', $p->id) }}', '{{ addslashes($p->nama) }}')"
+                                                    class="px-2.5 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-rose-600 text-xs font-bold transition cursor-pointer">
+                                                    Hapus
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -170,10 +188,56 @@
         </main>
     </div>
 
+    <!-- MODAL KONFIRMASI PENGHAPUSAN (PBI-003) -->
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+        <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200/80 p-6 transform transition-all">
+            <div class="flex items-center gap-3.5 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Konfirmasi Hapus Data</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Tindakan ini memerlukan persetujuan Anda</p>
+                </div>
+            </div>
+
+            <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                Apakah Anda yakin ingin menghapus data pasangan <strong id="deleteTargetName" class="text-slate-900"></strong>? Data yang dihapus tidak dapat dipulihkan kembali.
+            </p>
+
+            <form id="deleteForm" method="POST" action="">
+                @csrf
+                @method('DELETE')
+                <div class="flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeDeleteModal()"
+                        class="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit"
+                        class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-bold text-xs shadow-md shadow-rose-500/20 transition cursor-pointer">
+                        Ya, Hapus Data
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');
             document.getElementById('sidebarBackdrop').classList.toggle('hidden');
+        }
+
+        function openDeleteModal(actionUrl, nama) {
+            document.getElementById('deleteForm').action = actionUrl;
+            document.getElementById('deleteTargetName').textContent = nama;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
         }
     </script>
 </body>
