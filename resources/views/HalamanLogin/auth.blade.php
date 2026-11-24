@@ -37,16 +37,16 @@
                     },
                     colors: {
                         brand: {
-                            50: '#fff1f2',
-                            100: '#ffe4e6',
-                            200: '#fecdd3',
-                            300: '#fda4af',
-                            400: '#fb7185',
-                            500: '#f43f5e',
-                            600: '#e11d48',
-                            700: '#be123c',
-                            800: '#9f1239',
-                            900: '#881337',
+                            50: '#fff0f6',
+                            100: '#ffe4ee',
+                            200: '#ffd0e2',
+                            300: '#ffb0ce',
+                            400: '#ff80b3',
+                            500: '#ff539b',
+                            600: '#e63b82',
+                            700: '#c2246b',
+                            800: '#991147',
+                            900: '#7a0b38',
                         }
                     }
                 }
@@ -54,6 +54,15 @@
         }
     </script>
     <style>
+        /* Force clean white background on browser autofill */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+            -webkit-text-fill-color: #1e293b !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -173,7 +182,7 @@
                                     required
                                     value="{{ old('email') }}"
                                     placeholder="nama@email.com"
-                                    class="w-full pl-10 pr-3.5 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border @error('email') border-rose-400 bg-rose-50/30 @else border-slate-200 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-3.5 py-2 sm:py-2.5 rounded-xl bg-white border @error('email') border-rose-400 bg-rose-50/20 @else border-slate-300 hover:border-slate-400 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 shadow-2xs focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15 transition-all"
                                 />
                             </div>
                             @error('email')
@@ -203,7 +212,7 @@
                                     name="password"
                                     required
                                     placeholder="Masukkan kata sandi Anda"
-                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border @error('password') border-rose-400 bg-rose-50/30 @else border-slate-200 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-white border @error('password') border-rose-400 bg-rose-50/20 @else border-slate-300 hover:border-slate-400 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 shadow-2xs focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15 transition-all"
                                 />
                                 <button
                                     type="button"
@@ -247,7 +256,7 @@
                         <div class="pt-1">
                             <button
                                 type="submit"
-                                class="w-full py-2.5 sm:py-3 px-5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-brand-600 via-rose-500 to-pink-500 hover:from-brand-700 hover:to-pink-600 shadow-md shadow-pink-500/20 hover:shadow-lg hover:shadow-pink-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
+                                class="w-full py-2.5 sm:py-3 px-5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-brand-600 via-pink-500 to-[#FF539B] hover:from-brand-700 hover:to-pink-600 shadow-md shadow-pink-500/25 hover:shadow-lg hover:shadow-pink-500/35 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
                             >
                                 <span>Masuk Sekarang</span>
                                 <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -376,7 +385,7 @@
                                     required
                                     value="{{ old('name') }}"
                                     placeholder="Contoh: Siti Rahmawati"
-                                    class="w-full pl-10 pr-3.5 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-3.5 py-2 sm:py-2.5 rounded-xl bg-white border @error('name') border-rose-400 bg-rose-50/20 @else border-slate-300 hover:border-slate-400 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 shadow-2xs focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15 transition-all"
                                 />
                             </div>
                         </div>
@@ -404,7 +413,7 @@
                                     required
                                     value="{{ old('email') }}"
                                     placeholder="nama@email.com"
-                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-white border @error('email') border-rose-400 bg-rose-50/20 @else border-slate-300 hover:border-slate-400 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 shadow-2xs focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15 transition-all"
                                 />
                                 <div id="email-icon-indicator" class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none hidden">
                                     <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
@@ -435,7 +444,7 @@
                                     name="password"
                                     required
                                     placeholder="Minimal 8 karakter"
-                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-white border @error('password') border-rose-400 bg-rose-50/20 @else border-slate-300 hover:border-slate-400 @enderror text-xs sm:text-sm text-slate-800 placeholder-slate-400 shadow-2xs focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15 transition-all"
                                 />
                                 <button
                                     type="button"
@@ -482,7 +491,7 @@
                                     name="password_confirmation"
                                     required
                                     placeholder="Ulangi kata sandi Anda"
-                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-3 focus:ring-brand-500/10 transition"
+                                    class="w-full pl-10 pr-10 py-2 sm:py-2.5 rounded-xl bg-white border border-slate-300 hover:border-slate-400 text-xs sm:text-sm text-slate-800 placeholder-slate-400 shadow-2xs focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15 transition-all"
                                 />
                                 <button
                                     type="button"
@@ -522,7 +531,7 @@
                             <button
                                 type="submit"
                                 id="submitBtn"
-                                class="w-full py-2.5 sm:py-3 px-5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-brand-600 via-rose-500 to-pink-500 hover:from-brand-700 hover:to-pink-600 shadow-md shadow-pink-500/20 hover:shadow-lg hover:shadow-pink-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
+                                class="w-full py-2.5 sm:py-3 px-5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-brand-600 via-pink-500 to-[#FF539B] hover:from-brand-700 hover:to-pink-600 shadow-md shadow-pink-500/25 hover:shadow-lg hover:shadow-pink-500/35 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
                             >
                                 <span>Daftar Sekarang</span>
                                 <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -670,13 +679,24 @@
                         </div>
                     </div>
 
-                    <!-- Mother & Child Image/Illustration (Solid & Glides Smoothly Without Jitter) -->
+                    <!-- Mother & Child Image/Illustration: Superposed Crossfade (Zero Movement) -->
                     <div class="relative w-full h-44 sm:h-48 lg:h-52 rounded-2xl overflow-hidden bg-gradient-to-b from-rose-50/50 via-pink-50/30 to-slate-50 flex items-center justify-center">
+                        <!-- Register Image (Real Photo: Ibu dan Anak Makan Sehat & Minum Susu) -->
                         <img
-                            src="{{ asset('images/register-mother-child.jpg') }}"
+                            id="cardImgRegister"
+                            src="{{ asset('images/auth-register.jpg') }}"
                             alt="Ibu dan Anak Sehat NutriGrow"
-                            class="w-full h-full object-cover object-center"
-                            onerror="this.onerror=null; this.src='{{ asset('images/family-hero.png') }}';"
+                            class="absolute inset-0 w-full h-full object-cover object-center transition-all duration-300 {{ $initialMode === 'register' ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none' }}"
+                            onerror="this.onerror=null; this.src='{{ asset('images/register-mother-child.jpg') }}';"
+                        />
+
+                        <!-- Login Image (Real Photo: Keluarga Sehat Bebas Stunting) -->
+                        <img
+                            id="cardImgLogin"
+                            src="{{ asset('images/auth-login.jpg') }}"
+                            alt="Keluarga Sehat Bebas Stunting NutriGrow"
+                            class="absolute inset-0 w-full h-full object-cover object-center transition-all duration-300 {{ $initialMode === 'login' ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none' }}"
+                            onerror="this.onerror=null; this.src='{{ asset('images/auth-register.jpg') }}';"
                         />
                     </div>
 
@@ -878,6 +898,9 @@
             const cardBadgeRegister = document.getElementById('cardBadgeRegister');
             const cardBadgeLogin = document.getElementById('cardBadgeLogin');
 
+            const cardImgRegister = document.getElementById('cardImgRegister');
+            const cardImgLogin = document.getElementById('cardImgLogin');
+
             const headRegister = document.getElementById('headRegister');
             const headLogin = document.getElementById('headLogin');
 
@@ -941,6 +964,9 @@
                     setLayerState(pillRegister, false);
                     setLayerState(pillLogin, true);
 
+                    setLayerState(cardImgRegister, false);
+                    setLayerState(cardImgLogin, true);
+
                     setLayerState(cardBadgeRegister, false);
                     setLayerState(cardBadgeLogin, true);
 
@@ -993,6 +1019,9 @@
                     // 3. Crossfade superimposed layers without shifting layout
                     setLayerState(pillLogin, false);
                     setLayerState(pillRegister, true);
+
+                    setLayerState(cardImgLogin, false);
+                    setLayerState(cardImgRegister, true);
 
                     setLayerState(cardBadgeLogin, false);
                     setLayerState(cardBadgeRegister, true);

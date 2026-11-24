@@ -56,5 +56,10 @@ class DatabaseSeeder extends Seeder
                 'phone' => '085712345678',
             ]
         );
+
+        // 4. Data Rekam Medis & Pasien Pemeriksaan Kehamilan (jika seeder & tabel tersedia)
+        if (class_exists(\Database\Seeders\PemeriksaanKehamilanSeeder::class)) {
+            $this->call(\Database\Seeders\PemeriksaanKehamilanSeeder::class);
+        }
     }
 }
