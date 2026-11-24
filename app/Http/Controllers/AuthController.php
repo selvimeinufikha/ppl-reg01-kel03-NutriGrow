@@ -130,7 +130,23 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
-            session()->flash('success_login', 'Selamat datang kembali, ' . Auth::user()->name . '!');
+            /** @var \App\Models\User $authUser */
+            $authUser = Auth::user();
+
+            // Jika yang login adalah Admin atau Nakes, tolak akses ke portal pengguna
+            // dan arahkan ke portal admin. (PBI-016: Pemisahan akses Admin & User)
+            if ($authUser->isStaffOrAdmin()) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()->withErrors([
+                    'login_error' => 'Akun Anda terdaftar sebagai Admin / Tenaga Kesehatan. Silakan masuk melalui Portal Admin.',
+                ])->withInput($request->only('email', 'remember'))
+                  ->with('redirect_admin', true);
+            }
+
+            session()->flash('success_login', 'Selamat datang kembali, ' . $authUser->name . '!');
 
             if (view()->exists('DashboardPengguna.index')) {
                 return redirect()->route('dashboard.pengguna');

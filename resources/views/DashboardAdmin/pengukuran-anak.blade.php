@@ -428,6 +428,7 @@
                                         max="40.0"
                                         value="{{ old('berat_badan', '12.4') }}"
                                         placeholder="12.4"
+                                        oninput="recalculateStatusGizi()"
                                         class="w-full pl-3.5 pr-10 py-2.5 rounded-xl border @error('berat_badan') border-rose-400 bg-rose-50/30 @else border-slate-200 @enderror text-xs font-extrabold text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition"
                                     />
                                     <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-bold text-slate-400 pointer-events-none">
@@ -456,6 +457,7 @@
                                         max="150.0"
                                         value="{{ old('tinggi_badan', '88.5') }}"
                                         placeholder="88.5"
+                                        oninput="recalculateStatusGizi()"
                                         class="w-full pl-3.5 pr-10 py-2.5 rounded-xl border @error('tinggi_badan') border-rose-400 bg-rose-50/30 @else border-slate-200 @enderror text-xs font-extrabold text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition"
                                     />
                                     <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-bold text-slate-400 pointer-events-none">
@@ -520,6 +522,31 @@
                                 @error('lingkar_lengan_atas')
                                     <span class="text-[11px] text-rose-600 font-semibold mt-1 block">{{ $message }}</span>
                                 @enderror
+                            </div>
+                        </div>
+
+                        {{-- ========================================================= --}}
+                        {{-- PBI-017: PRATINJAU STATUS GIZI OTOMATIS (Real-time)        --}}
+                        {{-- Dihitung otomatis sesuai Permenkes No. 2 Tahun 2020        --}}
+                        {{-- ========================================================= --}}
+                        <div id="previewStatusGizi" class="mt-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 hidden">
+                            <div class="flex items-start justify-between gap-3 flex-wrap">
+                                <div>
+                                    <div class="text-[10px] font-black uppercase tracking-wider text-emerald-700 flex items-center gap-1.5 mb-1">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        🔄 Pratinjau Status Gizi Otomatis — Permenkes No. 2 Tahun 2020
+                                    </div>
+                                    <div class="font-extrabold text-sm text-slate-900" id="previewStatusLabel">-</div>
+                                    <div class="text-[11px] text-slate-500 mt-1" id="previewRekomendasi">-</div>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Z-Score BB/U</div>
+                                    <div class="text-sm font-black text-blue-700" id="previewZscoreBBU">-</div>
+                                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-1">Z-Score TB/U</div>
+                                    <div class="text-sm font-black text-purple-700" id="previewZscoreTBU">-</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -651,7 +678,25 @@
                         <p class="text-xs text-slate-500 mt-0.5">Seluruh rekaman data antropometri balita yang tersimpan di MySQL database `nutrigrow`.</p>
                     </div>
 
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-3">
+                        {{-- PBI-018 AC #1: Filter berdasarkan anak --}}
+                        <form method="GET" action="{{ route('admin.pengukuran.index') }}" class="flex items-center gap-2">
+                            <select
+                                name="filter_anak"
+                                onchange="this.form.submit()"
+                                class="px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-700 cursor-pointer"
+                            >
+                                <option value="">Semua Anak</option>
+                                @foreach($allAnaks as $anak)
+                                    <option value="{{ $anak->id }}" {{ ($filterAnakId ?? '') == $anak->id ? 'selected' : '' }}>
+                                        {{ $anak->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @if($filterAnakId ?? false)
+                                <a href="{{ route('admin.pengukuran.index') }}" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-500 text-xs font-bold hover:bg-rose-50 hover:text-rose-600 transition" title="Reset Filter">✕</a>
+                            @endif
+                        </form>
                         <input
                             type="text"
                             id="tableSearch"
@@ -745,15 +790,29 @@
 
                                     <!-- Aksi -->
                                     <td class="py-3.5 px-4 text-center whitespace-nowrap">
-                                        <form action="{{ route('admin.pengukuran.destroy', $row->id) }}" method="POST" onsubmit="return confirm('Hapus catatan pengukuran ini dari rekam medis?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer" title="Hapus Data">
+                                        <div class="flex items-center justify-center gap-1">
+                                            {{-- PBI-018: Tombol Edit --}}
+                                            <button
+                                                type="button"
+                                                onclick="openEditModal({{ $row->id }})"
+                                                class="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 transition cursor-pointer"
+                                                title="Edit Data Pengukuran"
+                                            >
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                 </svg>
                                             </button>
-                                        </form>
+                                            {{-- Tombol Hapus --}}
+                                            <form action="{{ route('admin.pengukuran.destroy', $row->id) }}" method="POST" onsubmit="return confirm('Hapus catatan pengukuran ini dari rekam medis?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer" title="Hapus Data">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -771,8 +830,179 @@
         </main>
     </div>
 
+    <!-- ================================================================== -->
+    <!-- MODAL EDIT PENGUKURAN (PBI-018)                                   -->
+    <!-- ================================================================== -->
+    <div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeEditModal()"></div>
+
+        <!-- Modal Panel -->
+        <div class="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-sky-50 to-white shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 rounded-xl bg-sky-100">
+                        <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-extrabold text-slate-900">Edit Data Pengukuran</h3>
+                        <p id="editModalSubtitle" class="text-xs text-slate-500">Memuat data...</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeEditModal()" class="p-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="editModalLoading" class="flex flex-col items-center justify-center py-16 gap-3">
+                <div class="w-8 h-8 border-4 border-sky-200 border-t-sky-600 rounded-full animate-spin"></div>
+                <span class="text-xs text-slate-500 font-medium">Memuat data pengukuran...</span>
+            </div>
+
+            <!-- Form -->
+            <form id="editForm" method="POST" action="" class="hidden flex-1 overflow-y-auto">
+                @csrf
+                @method('PUT')
+
+                <div class="p-6 space-y-5">
+                    <!-- Tanggal Pemeriksaan -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Tanggal Pemeriksaan <span class="text-rose-500">*</span></label>
+                        <input type="date" name="tanggal_pemeriksaan" id="edit_tanggal_pemeriksaan"
+                            max="{{ date('Y-m-d') }}"
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 font-semibold text-slate-800"
+                            required>
+                    </div>
+
+                    <!-- Antropometri -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Berat Badan (kg) <span class="text-rose-500">*</span></label>
+                            <input type="number" name="berat_badan" id="edit_berat_badan" step="0.1" min="1.5" max="40"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 font-semibold text-slate-800"
+                                oninput="recalculateEditStatusGizi()" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Tinggi/Panjang Badan (cm) <span class="text-rose-500">*</span></label>
+                            <input type="number" name="tinggi_badan" id="edit_tinggi_badan" step="0.1" min="30" max="150"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 font-semibold text-slate-800"
+                                oninput="recalculateEditStatusGizi()" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Lingkar Kepala (cm)</label>
+                            <input type="number" name="lingkar_kepala" id="edit_lingkar_kepala" step="0.1" min="20" max="65"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">LiLA (cm)</label>
+                            <input type="number" name="lingkar_lengan_atas" id="edit_lingkar_lengan_atas" step="0.1" min="7" max="30"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 text-slate-800">
+                        </div>
+                    </div>
+
+                    <!-- Preview Status Gizi Real-time -->
+                    <div id="editPreviewStatusGizi" class="hidden rounded-2xl border p-4 bg-emerald-50 border-emerald-200 transition-all">
+                        <div class="flex items-start gap-3">
+                            <div class="p-1.5 rounded-lg bg-white/60 shrink-0">
+                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-0.5">Pratinjau Status Gizi (Permenkes No.2/2020)</p>
+                                <p id="editPreviewStatusLabel" class="font-extrabold text-sm text-emerald-700">-</p>
+                                <div class="flex gap-3 mt-1 text-[10px] text-slate-500 font-semibold">
+                                    <span>BB/U: <span id="editPreviewZscoreBBU" class="text-slate-700">-</span></span>
+                                    <span>TB/U: <span id="editPreviewZscoreTBU" class="text-slate-700">-</span></span>
+                                </div>
+                                <p id="editPreviewRekomendasi" class="text-[10px] text-slate-500 mt-1 leading-relaxed">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pemeriksaan Lainnya -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Status KPSP</label>
+                            <input type="text" name="kpsp_status" id="edit_kpsp_status" placeholder="Sesuai Umur"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Imunisasi</label>
+                            <input type="text" name="imunisasi" id="edit_imunisasi" placeholder="Sesuai Jadwal Usia"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Vitamin A</label>
+                            <input type="text" name="vitamin_a" id="edit_vitamin_a" placeholder="-"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Obat Cacing</label>
+                            <input type="text" name="obat_cacing" id="edit_obat_cacing" placeholder="-"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 text-slate-800">
+                        </div>
+                    </div>
+
+                    <!-- Pemeriksa -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Tenaga Kesehatan</label>
+                            <input type="text" name="nama_nakes" id="edit_nama_nakes"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Faskes Pemeriksa</label>
+                            <input type="text" name="faskes_pemeriksa" id="edit_faskes_pemeriksa"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 text-slate-800">
+                        </div>
+                    </div>
+
+                    <!-- Catatan Klinis -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Catatan Klinis</label>
+                        <textarea name="catatan_klinis" id="edit_catatan_klinis" rows="3" placeholder="Catatan temuan klinis, saran, atau tindak lanjut..."
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/30 text-slate-800 resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="flex items-center justify-between gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50 shrink-0">
+                    <p class="text-[10px] text-slate-400 flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 text-sky-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        Status gizi dihitung ulang otomatis sesuai Permenkes No.2/2020
+                    </p>
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeEditModal()"
+                            class="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="px-6 py-2.5 rounded-xl bg-[#0284c7] hover:bg-sky-700 text-white font-extrabold text-xs shadow-md shadow-sky-600/20 hover:shadow-lg transition flex items-center gap-2 cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT: LOGIKA FILTER WALI & KALKULATOR ANTROPOMETRI -->
     <script>
+        // URL API untuk hitung status gizi otomatis (PBI-017)
+        const API_STATUS_GIZI = "{{ route('api.hitung-status-gizi') }}";
+
         function toggleAdminSidebar() {
             const sidebar = document.getElementById('adminSidebar');
             const backdrop = document.getElementById('adminSidebarBackdrop');
@@ -812,63 +1042,279 @@
             const selectedOpt = anakSelect.options[anakSelect.selectedIndex];
             if (!selectedOpt) return;
 
-            const name = selectedOpt.text.split('•')[0].replace('👶', '').trim();
-            const nik = selectedOpt.getAttribute('data-nik') || '-';
+            const name   = selectedOpt.text.split('•')[0].replace('👶', '').trim();
+            const nik    = selectedOpt.getAttribute('data-nik') || '-';
             const gender = selectedOpt.getAttribute('data-gender') || 'Perempuan';
-            const lahir = selectedOpt.getAttribute('data-lahir') || '2022-02-14';
+            const lahir  = selectedOpt.getAttribute('data-lahir') || '2022-02-14';
 
-            document.getElementById('mChildName').innerText = name;
-            document.getElementById('mChildNik').innerText = nik;
+            document.getElementById('mChildName').innerText   = name;
+            document.getElementById('mChildNik').innerText    = nik;
             document.getElementById('mChildGender').innerText = gender;
-            document.getElementById('mChildBirth').innerText = lahir;
+            document.getElementById('mChildBirth').innerText  = lahir;
 
             recalculateAge();
         }
 
-        // Hitung Usia dalam Bulan secara Real-time berdasarkan Tanggal Pengukuran
+        /**
+         * PBI-017 AC #1: Hitung Usia Otomatis dari Tanggal Lahir & Tanggal Ukur
+         * Memanggil API backend agar konsisten dengan perhitungan server.
+         */
         function recalculateAge() {
             const anakSelect = document.getElementById('anak_id');
             const selectedOpt = anakSelect.options[anakSelect.selectedIndex];
-            if (!selectedOpt) return;
+            if (!selectedOpt || !selectedOpt.value) return;
 
+            const anakId  = selectedOpt.value;
+            const tglUkur = document.getElementById('tanggal_pemeriksaan').value || new Date().toISOString().split('T')[0];
+
+            // Hitung lokal sebagai fallback instan
             const birthStr = selectedOpt.getAttribute('data-lahir') || '2022-02-14';
-            const examStr = document.getElementById('tanggal_pemeriksaan').value || new Date().toISOString().split('T')[0];
-
             const birthDate = new Date(birthStr);
-            const examDate = new Date(examStr);
+            const examDate  = new Date(tglUkur);
 
-            let months = (examDate.getFullYear() - birthDate.getFullYear()) * 12 + (examDate.getMonth() - birthDate.getMonth());
-            if (examDate.getDate() < birthDate.getDate()) {
-                months--;
-            }
+            let months = (examDate.getFullYear() - birthDate.getFullYear()) * 12
+                       + (examDate.getMonth() - birthDate.getMonth());
+            if (examDate.getDate() < birthDate.getDate()) months--;
             months = Math.max(0, months);
 
-            const years = Math.floor(months / 12);
+            const years     = Math.floor(months / 12);
             const remMonths = months % 12;
+            document.getElementById('mCalculatedAge').innerText =
+                months + ' Bulan (' + years + ' Tahun ' + remMonths + ' Bulan)';
 
-            document.getElementById('mCalculatedAge').innerText = months + ' Bulan (' + years + ' Tahun ' + remMonths + ' Bulan)';
+            // Panggil API untuk status gizi jika BB & TB sudah diisi
+            recalculateStatusGizi();
+        }
+
+        /**
+         * PBI-017 AC #2: Pratinjau Status Gizi Otomatis sesuai Permenkes No.2/2020
+         * Dipanggil setiap kali BB, TB, tanggal, atau anak berubah.
+         */
+        let debounceTimer = null;
+        function recalculateStatusGizi() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                const anakSelect = document.getElementById('anak_id');
+                const selectedOpt = anakSelect.options[anakSelect.selectedIndex];
+                if (!selectedOpt || !selectedOpt.value) return;
+
+                const anakId  = selectedOpt.value;
+                const tglUkur = document.getElementById('tanggal_pemeriksaan').value;
+                const bb      = parseFloat(document.getElementById('berat_badan').value);
+                const tb      = parseFloat(document.getElementById('tinggi_badan').value);
+
+                if (!bb || !tb || bb < 1.5 || tb < 30) {
+                    document.getElementById('previewStatusGizi').classList.add('hidden');
+                    return;
+                }
+
+                try {
+                    const url = `${API_STATUS_GIZI}?anak_id=${anakId}&tanggal_pemeriksaan=${tglUkur}&berat_badan=${bb}&tinggi_badan=${tb}`;
+                    const resp = await fetch(url);
+                    const data = await resp.json();
+
+                    if (data.umur) {
+                        const u = data.umur;
+                        document.getElementById('mCalculatedAge').innerText = u.label;
+                    }
+
+                    if (data.gizi) {
+                        const g = data.gizi;
+                        const card = document.getElementById('previewStatusGizi');
+
+                        // Update konten pratinjau
+                        document.getElementById('previewStatusLabel').innerText   = g.status_pertumbuhan;
+                        document.getElementById('previewRekomendasi').innerText   = g.rekomendasi;
+                        document.getElementById('previewZscoreBBU').innerText     = g.z_score_bb_u;
+                        document.getElementById('previewZscoreTBU').innerText     = g.z_score_tb_u;
+
+                        // Warna card sesuai status
+                        card.classList.remove('hidden',
+                            'bg-emerald-50', 'border-emerald-200',
+                            'bg-amber-50',   'border-amber-200',
+                            'bg-rose-50',    'border-rose-200',
+                            'bg-blue-50',    'border-blue-200');
+
+                        const colorMap = {
+                            'normal':  ['bg-emerald-50', 'border-emerald-200'],
+                            'warning': ['bg-amber-50',   'border-amber-200'],
+                            'danger':  ['bg-rose-50',    'border-rose-200'],
+                            'info':    ['bg-blue-50',    'border-blue-200'],
+                        };
+                        const colors = colorMap[g.status_type] || colorMap['normal'];
+                        card.classList.add(...colors);
+                    }
+                } catch (e) {
+                    console.warn('Gagal memuat pratinjau status gizi:', e);
+                }
+            }, 600); // debounce 600ms
         }
 
         // Live Search Tabel
         function searchTable() {
-            const input = document.getElementById('tableSearch');
+            const input  = document.getElementById('tableSearch');
             const filter = input.value.toLowerCase();
-            const table = document.getElementById('riwayatTable');
-            const tr = table.getElementsByTagName('tr');
+            const table  = document.getElementById('riwayatTable');
+            const tr     = table.getElementsByTagName('tr');
 
             for (let i = 1; i < tr.length; i++) {
                 const tdText = tr[i].innerText.toLowerCase();
-                if (tdText.indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
+                tr[i].style.display = tdText.indexOf(filter) > -1 ? "" : "none";
             }
         }
+
+        // ================================================================
+        // PBI-018: Modal Edit Pengukuran
+        // ================================================================
+
+        let editCurrentAnakId = null;
+        let editDebounceTimer = null;
+
+        async function openEditModal(id) {
+            const modal   = document.getElementById('editModal');
+            const loading = document.getElementById('editModalLoading');
+            const form    = document.getElementById('editForm');
+
+            // Tampilkan modal + loading state
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            loading.classList.remove('hidden');
+            form.classList.add('hidden');
+            document.body.style.overflow = 'hidden';
+
+            try {
+                const resp = await fetch(`/admin/pengukuran-anak/${id}/edit`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    }
+                });
+                if (!resp.ok) throw new Error('Gagal memuat data');
+                const data = await resp.json();
+
+                // Set form action ke route update
+                form.action = `/admin/pengukuran-anak/${id}/update`;
+
+                // Isi subtitle modal
+                const namaAnak = data.anak ? data.anak.nama : 'Anak';
+                document.getElementById('editModalSubtitle').innerText =
+                    `Mengedit catatan ${namaAnak} — ${data.tanggal_pemeriksaan ?? ''}`;
+
+                // Simpan anak_id untuk kalkulasi status gizi
+                editCurrentAnakId = data.anak_id;
+
+                // Isi field form
+                setVal('edit_tanggal_pemeriksaan', data.tanggal_pemeriksaan);
+                setVal('edit_berat_badan',         data.berat_badan);
+                setVal('edit_tinggi_badan',         data.tinggi_badan);
+                setVal('edit_lingkar_kepala',       data.lingkar_kepala ?? '');
+                setVal('edit_lingkar_lengan_atas',  data.lingkar_lengan_atas ?? '');
+                setVal('edit_kpsp_status',          data.kpsp_status ?? '');
+                setVal('edit_imunisasi',            data.imunisasi ?? '');
+                setVal('edit_vitamin_a',            data.vitamin_a ?? '');
+                setVal('edit_obat_cacing',          data.obat_cacing ?? '');
+                setVal('edit_nama_nakes',           data.nama_nakes ?? '');
+                setVal('edit_faskes_pemeriksa',     data.faskes_pemeriksa ?? '');
+                setVal('edit_catatan_klinis',       data.catatan_klinis ?? '');
+
+                // Tampilkan form
+                loading.classList.add('hidden');
+                form.classList.remove('hidden');
+
+                // Panggil preview status gizi
+                recalculateEditStatusGizi();
+
+            } catch (e) {
+                console.error('Error:', e);
+                document.getElementById('editModalSubtitle').innerText = 'Gagal memuat data. Coba lagi.';
+                loading.innerHTML = '<p class="text-xs text-rose-500 font-bold">Gagal memuat data pengukuran.</p>';
+            }
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+            editCurrentAnakId = null;
+            document.getElementById('editPreviewStatusGizi').classList.add('hidden');
+        }
+
+        function setVal(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.value = val ?? '';
+        }
+
+        /**
+         * Preview status gizi real-time di modal edit
+         */
+        function recalculateEditStatusGizi() {
+            clearTimeout(editDebounceTimer);
+            editDebounceTimer = setTimeout(async () => {
+                if (!editCurrentAnakId) return;
+
+                const tglUkur = document.getElementById('edit_tanggal_pemeriksaan').value;
+                const bb      = parseFloat(document.getElementById('edit_berat_badan').value);
+                const tb      = parseFloat(document.getElementById('edit_tinggi_badan').value);
+
+                const previewCard = document.getElementById('editPreviewStatusGizi');
+
+                if (!bb || !tb || bb < 1.5 || tb < 30 || !tglUkur) {
+                    previewCard.classList.add('hidden');
+                    return;
+                }
+
+                try {
+                    const url = `${API_STATUS_GIZI}?anak_id=${editCurrentAnakId}&tanggal_pemeriksaan=${tglUkur}&berat_badan=${bb}&tinggi_badan=${tb}`;
+                    const resp = await fetch(url);
+                    const data = await resp.json();
+
+                    if (data.gizi) {
+                        const g = data.gizi;
+
+                        document.getElementById('editPreviewStatusLabel').innerText   = g.status_pertumbuhan;
+                        document.getElementById('editPreviewRekomendasi').innerText   = g.rekomendasi;
+                        document.getElementById('editPreviewZscoreBBU').innerText     = g.z_score_bb_u;
+                        document.getElementById('editPreviewZscoreTBU').innerText     = g.z_score_tb_u;
+
+                        previewCard.classList.remove('hidden',
+                            'bg-emerald-50', 'border-emerald-200',
+                            'bg-amber-50',   'border-amber-200',
+                            'bg-rose-50',    'border-rose-200',
+                            'bg-blue-50',    'border-blue-200');
+
+                        const colorMap = {
+                            'normal':  ['bg-emerald-50', 'border-emerald-200'],
+                            'warning': ['bg-amber-50',   'border-amber-200'],
+                            'danger':  ['bg-rose-50',    'border-rose-200'],
+                            'info':    ['bg-blue-50',    'border-blue-200'],
+                        };
+                        const colors = colorMap[g.status_type] || colorMap['normal'];
+                        previewCard.classList.add(...colors);
+                    }
+                } catch (e) {
+                    console.warn('Gagal pratinjau edit:', e);
+                }
+            }, 600);
+        }
+
+        // Tutup modal saat tekan Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeEditModal();
+        });
 
         // Inisialisasi saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function () {
             updateChildMetadata();
+
+            // Tambahkan event listener untuk hitung real-time
+            document.getElementById('berat_badan').addEventListener('input', recalculateStatusGizi);
+            document.getElementById('tinggi_badan').addEventListener('input', recalculateStatusGizi);
+            document.getElementById('tanggal_pemeriksaan').addEventListener('change', recalculateAge);
+            document.getElementById('anak_id').addEventListener('change', updateChildMetadata);
+
+            // Event listener untuk form edit modal
+            document.getElementById('edit_tanggal_pemeriksaan').addEventListener('change', recalculateEditStatusGizi);
         });
     </script>
 </body>

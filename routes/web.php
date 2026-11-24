@@ -15,6 +15,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminPengukuranAnakController;
 use App\Http\Controllers\TumbuhKembangAnakController;
 use App\Http\Controllers\AnakController;
+use App\Services\StatusGiziCalculator;
+use App\Models\Anak;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +44,43 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// =========================================================================
+// API: PBI-017 — Hitung Umur & Status Gizi Otomatis (Real-time / AJAX)
+// Acceptance Criteria: Sistem menghitung umur & status gizi secara otomatis
+// =========================================================================
+Route::get('/api/hitung-status-gizi', function (\Illuminate\Http\Request $request) {
+    $anakId       = $request->query('anak_id');
+    $tglUkur      = $request->query('tanggal_pemeriksaan', date('Y-m-d'));
+    $bb           = (float) $request->query('berat_badan', 0);
+    $tb           = (float) $request->query('tinggi_badan', 0);
+
+    $anak = \App\Models\Anak::find($anakId);
+    if (! $anak || ! $anak->tanggal_lahir) {
+        return response()->json(['error' => 'Data anak tidak ditemukan'], 404);
+    }
+
+    // Hitung umur otomatis (PBI-017 AC #1)
+    $umurData = \App\Services\StatusGiziCalculator::hitungUmur(
+        $anak->tanggal_lahir->format('Y-m-d'),
+        $tglUkur
+    );
+
+    $result = ['umur' => $umurData];
+
+    // Hitung status gizi jika BB & TB tersedia (PBI-017 AC #2)
+    if ($bb > 0 && $tb > 0) {
+        $giziData = \App\Services\StatusGiziCalculator::hitungStatusGizi(
+            $umurData['bulan'],
+            $bb,
+            $tb,
+            $anak->jenis_kelamin
+        );
+        $result['gizi'] = $giziData;
+    }
+
+    return response()->json($result);
+})->name('api.hitung-status-gizi');
+
 // Lupa & Reset Password Pengguna
 Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
 Route::get('/lupa-password', [AuthController::class, 'showForgotPassword'])->name('password.request.id');
@@ -52,9 +91,10 @@ Route::get('/reset-password', function () {
 Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
-// Dashboard Pengguna (Keluarga & Orang Tua)
-Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
-Route::get('/dashboard', [DashboardPenggunaController::class, 'index'])->name('dashboard');
+// Dashboard Pengguna (Keluarga & Orang Tua) — hanya role: user
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/dashboard-pengguna', [DashboardPenggunaController::class, 'index'])->name('dashboard.pengguna');
+    Route::get('/dashboard', [DashboardPenggunaController::class, 'index'])->name('dashboard');
 
 // Rute Data Pasangan (PBI-001, PBI-002, PBI-003: Kelola Data Pasangan)
 Route::prefix('data-pasangan')->name('pasangan.')->group(function () {
@@ -71,13 +111,14 @@ Route::prefix('data-pasangan')->name('pasangan.')->group(function () {
 Route::get('/tumbuh-kembang-anak', [TumbuhKembangAnakController::class, 'index'])->name('tumbuh-kembang.index');
 Route::get('/riwayat-tumbuh-kembang', [TumbuhKembangAnakController::class, 'index'])->name('riwayat-tumbuh-kembang');
 Route::get('/dashboard-pengguna/tumbuh-kembang-anak', [TumbuhKembangAnakController::class, 'index'])->name('dashboard.tumbuh-kembang');
+});
 
 // =========================================================================
 // 2. WEBSITE ADMIN (Portal Khusus Faskes & Tenaga Kesehatan)
 // =========================================================================
 
 Route::prefix('admin')->group(function () {
-    // Autentikasi Admin & Nakes (URL: /admin/login)
+    // Autentikasi Admin & Nakes (URL: /admin/login) — BEBAS diakses
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
@@ -88,54 +129,65 @@ Route::prefix('admin')->group(function () {
     Route::get('/reset-password/{token}', [AdminAuthController::class, 'showResetPasswordForm'])->name('admin.password.reset');
     Route::post('/reset-password', [AdminAuthController::class, 'resetPassword'])->name('admin.password.update');
 
-    // Dashboard Admin (URL: /admin/dashboard)
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    // ===================================================================
+    // Route yang hanya boleh diakses oleh Admin & Tenaga Kesehatan (Nakes)
+    // PBI-016: Pemisahan akses berdasarkan role
+    // ===================================================================
+    Route::middleware(['auth', 'role:admin,nakes'])->group(function () {
+        // Dashboard Admin (URL: /admin/dashboard)
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    // Data Edukasi Gizi: Lihat & Tambah Artikel (PBI-019)
-    // URL: GET  /admin/edukasi-gizi  → tampilkan daftar artikel
-    // URL: POST /admin/edukasi-gizi  → simpan artikel baru
-    Route::get('/edukasi-gizi', [AdminEdukasiGiziController::class, 'index'])->name('admin.edukasi.index');
-    Route::get('/data-edukasi-gizi', [AdminEdukasiGiziController::class, 'index'])->name('admin.edukasi.alias');
-    Route::post('/edukasi-gizi', [AdminEdukasiGiziController::class, 'store'])->name('admin.edukasi.store');
+        // Data Edukasi Gizi: Lihat & Tambah Artikel (PBI-019)
+        // URL: GET  /admin/edukasi-gizi  → tampilkan daftar artikel
+        // URL: POST /admin/edukasi-gizi  → simpan artikel baru
+        Route::get('/edukasi-gizi', [AdminEdukasiGiziController::class, 'index'])->name('admin.edukasi.index');
+        Route::get('/data-edukasi-gizi', [AdminEdukasiGiziController::class, 'index'])->name('admin.edukasi.alias');
+        Route::post('/edukasi-gizi', [AdminEdukasiGiziController::class, 'store'])->name('admin.edukasi.store');
 
-    // Data Edukasi Gizi: Ubah & Hapus Artikel (PBI-020)
-    // URL: PUT    /admin/edukasi-gizi/{id}  → perbarui artikel
-    // URL: POST   /admin/edukasi-gizi/{id}  → perbarui artikel (alias untuk browser yang tidak support PUT)
-    // URL: DELETE /admin/edukasi-gizi/{id}  → hapus artikel
-    Route::put('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'update'])->name('admin.edukasi.update');
-    Route::post('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'update'])->name('admin.edukasi.update.post');
-    Route::delete('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'destroy'])->name('admin.edukasi.destroy');
+        // Data Edukasi Gizi: Ubah & Hapus Artikel (PBI-020)
+        // URL: PUT    /admin/edukasi-gizi/{id}  → perbarui artikel
+        // URL: POST   /admin/edukasi-gizi/{id}  → perbarui artikel (alias untuk browser yang tidak support PUT)
+        // URL: DELETE /admin/edukasi-gizi/{id}  → hapus artikel
+        Route::put('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'update'])->name('admin.edukasi.update');
+        Route::post('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'update'])->name('admin.edukasi.update.post');
+        Route::delete('/edukasi-gizi/{id}', [AdminEdukasiGiziController::class, 'destroy'])->name('admin.edukasi.destroy');
 
-    // Data Edukasi Gizi: Atur Status Publikasi (PBI-021)
-    // URL: POST /admin/edukasi-gizi/{id}/toggle-status → toggle terbit/draft langsung dari tabel
-    Route::post('/edukasi-gizi/{id}/toggle-status', [AdminEdukasiGiziController::class, 'toggleStatus'])->name('admin.edukasi.toggle-status');
+        // Data Edukasi Gizi: Atur Status Publikasi (PBI-021)
+        // URL: POST /admin/edukasi-gizi/{id}/toggle-status → toggle terbit/draft langsung dari tabel
+        Route::post('/edukasi-gizi/{id}/toggle-status', [AdminEdukasiGiziController::class, 'toggleStatus'])->name('admin.edukasi.toggle-status');
 
-    // Data Layanan Kesehatan: Tambah Fasilitas (PBI-022)
-    // URL: GET  /admin/layanan-kesehatan  → tampilkan direktori fasilitas kesehatan
-    // URL: POST /admin/layanan-kesehatan  → simpan fasilitas kesehatan baru
-    Route::get('/layanan-kesehatan', [AdminFasilitasKesehatanController::class, 'index'])->name('admin.fasilitas.index');
-    Route::get('/data-layanan-kesehatan', [AdminFasilitasKesehatanController::class, 'index'])->name('admin.fasilitas.alias');
-    Route::post('/layanan-kesehatan', [AdminFasilitasKesehatanController::class, 'store'])->name('admin.fasilitas.store');
+        // Data Layanan Kesehatan: Tambah Fasilitas (PBI-022)
+        // URL: GET  /admin/layanan-kesehatan  → tampilkan direktori fasilitas kesehatan
+        // URL: POST /admin/layanan-kesehatan  → simpan fasilitas kesehatan baru
+        Route::get('/layanan-kesehatan', [AdminFasilitasKesehatanController::class, 'index'])->name('admin.fasilitas.index');
+        Route::get('/data-layanan-kesehatan', [AdminFasilitasKesehatanController::class, 'index'])->name('admin.fasilitas.alias');
+        Route::post('/layanan-kesehatan', [AdminFasilitasKesehatanController::class, 'store'])->name('admin.fasilitas.store');
 
-    // Data Layanan Kesehatan: Ubah & Hapus Fasilitas (PBI-023)
-    // URL: PUT    /admin/layanan-kesehatan/{id}  → perbarui fasilitas kesehatan
-    // URL: POST   /admin/layanan-kesehatan/{id}  → perbarui fasilitas (alias kompatibilitas browser)
-    // URL: DELETE /admin/layanan-kesehatan/{id}  → hapus fasilitas kesehatan
-    Route::put('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'update'])->name('admin.fasilitas.update');
-    Route::post('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'update'])->name('admin.fasilitas.update.post');
-    Route::delete('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'destroy'])->name('admin.fasilitas.destroy');
+        // Data Layanan Kesehatan: Ubah & Hapus Fasilitas (PBI-023)
+        // URL: PUT    /admin/layanan-kesehatan/{id}  → perbarui fasilitas kesehatan
+        // URL: POST   /admin/layanan-kesehatan/{id}  → perbarui fasilitas (alias kompatibilitas browser)
+        // URL: DELETE /admin/layanan-kesehatan/{id}  → hapus fasilitas kesehatan
+        Route::put('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'update'])->name('admin.fasilitas.update');
+        Route::post('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'update'])->name('admin.fasilitas.update.post');
+        Route::delete('/layanan-kesehatan/{id}', [AdminFasilitasKesehatanController::class, 'destroy'])->name('admin.fasilitas.destroy');
 
-    // Manajemen Akun Admin: Tambah Akun Administrator (PBI-028)
-    Route::get('/manajemen-akun', [AdminManajemenAkunController::class, 'index'])->name('admin.akun.index');
-    Route::get('/manajemen-akun/tambah', [AdminManajemenAkunController::class, 'create'])->name('admin.akun.create');
-    Route::post('/manajemen-akun', [AdminManajemenAkunController::class, 'store'])->name('admin.akun.store');
+        // Manajemen Akun Admin: Tambah Akun Administrator (PBI-028)
+        Route::get('/manajemen-akun', [AdminManajemenAkunController::class, 'index'])->name('admin.akun.index');
+        Route::get('/manajemen-akun/tambah', [AdminManajemenAkunController::class, 'create'])->name('admin.akun.create');
+        Route::post('/manajemen-akun', [AdminManajemenAkunController::class, 'store'])->name('admin.akun.store');
 
-    // Pengelolaan Pengukuran dan Status Gizi Anak (PBI-016 / F-06)
-    Route::get('/pengukuran-anak', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.index');
-    Route::get('/tumbuh-kembang-anak', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.tumbuh-kembang');
-    Route::get('/data-tumbuh-kembang', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.alias');
-    Route::post('/pengukuran-anak', [AdminPengukuranAnakController::class, 'store'])->name('admin.pengukuran.store');
-    Route::delete('/pengukuran-anak/{id}', [AdminPengukuranAnakController::class, 'destroy'])->name('admin.pengukuran.destroy');
+        // Pengelolaan Pengukuran dan Status Gizi Anak (PBI-016 / F-06)
+        // Acceptance Criteria: Admin memilih pengguna dan anak, lalu mengisi hasil pengukuran
+        Route::get('/pengukuran-anak', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.index');
+        Route::get('/tumbuh-kembang-anak', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.tumbuh-kembang');
+        Route::get('/data-tumbuh-kembang', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.alias');
+        Route::post('/pengukuran-anak', [AdminPengukuranAnakController::class, 'store'])->name('admin.pengukuran.store');
+        // PBI-018: Edit & Update pengukuran
+        Route::get('/pengukuran-anak/{id}/edit', [AdminPengukuranAnakController::class, 'edit'])->name('admin.pengukuran.edit');
+        Route::put('/pengukuran-anak/{id}', [AdminPengukuranAnakController::class, 'update'])->name('admin.pengukuran.update');
+        Route::post('/pengukuran-anak/{id}/update', [AdminPengukuranAnakController::class, 'update'])->name('admin.pengukuran.update.post');
+        Route::delete('/pengukuran-anak/{id}', [AdminPengukuranAnakController::class, 'destroy'])->name('admin.pengukuran.destroy');
+    });
 
     // Beralih Peran Superadmin / Admin (Demonstrasi & Pengujian)
     Route::get('/switch-role/{role}', [AdminDashboardController::class, 'switchRole'])->name('admin.switch-role');
