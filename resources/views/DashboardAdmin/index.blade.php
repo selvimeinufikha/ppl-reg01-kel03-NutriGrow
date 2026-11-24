@@ -2,7 +2,7 @@
 @php
     $adminName = $adminName ?? (Auth::check() ? Auth::user()->name : 'dr. Siti Nurhaliza, Sp.A');
     $adminEmail = $adminEmail ?? (Auth::check() ? Auth::user()->email : 'admin@nutrigrow.id');
-    $adminRole = $adminRole ?? (Auth::check() && Auth::user()->role === 'nakes' ? 'Tenaga Kesehatan (Bidan/Dokter)' : 'Administrator Faskes');
+    $adminRole = $adminRole ?? (Auth::check() ? Auth::user()->role_label : 'Administrator Faskes');
     $faskesName = $faskesName ?? (Auth::check() && Auth::user()->faskes_name ? Auth::user()->faskes_name : 'Puskesmas Gambir');
     $nipStr = $nipStr ?? (Auth::check() && Auth::user()->nip_str ? Auth::user()->nip_str : 'STR-19880412-2023-019');
     \Carbon\Carbon::setLocale('id');
@@ -200,7 +200,8 @@
                         <span>Data Informasi Nutrisi</span>
                     </a>
 
-                    <!-- 8. Manajemen Akun Admin (SUPER - PBI-028) -->
+                    <!-- 8. Manajemen Akun Admin (HANYA UNTUK SUPER ADMIN - PBI-028/PBI-029) -->
+                    @if(Auth::check() && Auth::user()->isSuperAdmin())
                     <a
                         href="{{ Route::has('admin.akun.index') ? route('admin.akun.index') : 'javascript:void(0)' }}"
                         class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
@@ -216,6 +217,23 @@
                             SUPER
                         </span>
                     </a>
+
+                    <!-- 9. Log Aktivitas & Audit (HANYA UNTUK SUPER ADMIN - PBI-030) -->
+                    <a
+                        href="{{ route('admin.log.index') }}"
+                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                    >
+                        <div class="flex items-center gap-3">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span>Log Aktivitas &amp; Audit</span>
+                        </div>
+                        <span class="px-1.5 py-0.5 rounded-md bg-rose-50 text-[9px] font-black uppercase text-[#e11d48] border border-rose-100">
+                            AUDIT
+                        </span>
+                    </a>
+                    @endif
                 </nav>
             </div>
 

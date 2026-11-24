@@ -133,20 +133,27 @@ class AuthController extends Controller
             /** @var \App\Models\User $authUser */
             $authUser = Auth::user();
 
-            // Jika yang login adalah Admin atau Nakes, tolak akses ke portal pengguna
-            // dan arahkan ke portal admin. (PBI-016: Pemisahan akses Admin & User)
-            if ($authUser->isStaffOrAdmin()) {
+            // Validasi status akun (PBI-029)
+            if (($authUser->status ?? 'active') === 'inactive') {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
                 return back()->withErrors([
-                    'login_error' => 'Akun Anda terdaftar sebagai Admin / Tenaga Kesehatan. Silakan masuk melalui Portal Admin.',
-                ])->withInput($request->only('email', 'remember'))
-                  ->with('redirect_admin', true);
+                    'login_error' => 'Akun Anda dinonaktifkan oleh administrator. Silakan hubungi pusat layanan.',
+                ])->withInput($request->only('email'));
             }
 
             session()->flash('success_login', 'Selamat datang kembali, ' . $authUser->name . '!');
+
+            // Redirect sesuai peran akun: Super Admin, Pegawai/Nakes, atau Pengguna
+            if (method_exists($authUser, 'isSuperAdmin') && $authUser->isSuperAdmin()) {
+                return redirect()->route('superadmin.dashboard');
+            }
+
+            if ($authUser->isStaffOrAdmin()) {
+                return redirect()->route('admin.dashboard');
+            }
 
             if (view()->exists('DashboardPengguna.index')) {
                 return redirect()->route('dashboard.pengguna');
