@@ -201,8 +201,6 @@
 
                     <!-- 8. Manajemen Akun Admin (SUPER) -->
                     <a
-                    <!-- 8. Manajemen Akun Admin (SUPER) -->
-                    <a
                         href="{{ Route::has('admin.akun.index') ? route('admin.akun.index') : 'javascript:void(0)' }}"
                         class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
                     >
