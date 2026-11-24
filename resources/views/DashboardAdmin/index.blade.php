@@ -144,8 +144,7 @@
 
                     <!-- 3. Data Pemeriksaan Kehamilan -->
                     <a
-                        href="javascript:void(0)"
-                        onclick="switchTableTab('anc')"
+                        href="{{ Route::has('admin.pemeriksaan.index') ? route('admin.pemeriksaan.index') : 'javascript:void(0)' }}"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -156,10 +155,8 @@
 
                     <!-- 4. Data Tumbuh Kembang Anak (PBI-016) -->
                     <a
-                    <!-- 4. Data Tumbuh Kembang Anak (PBI-016) -->
-                    <a
                         href="{{ Route::has('admin.pengukuran.index') ? route('admin.pengukuran.index') : 'javascript:void(0)' }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -169,7 +166,7 @@
 
                     <!-- 5. Data Edukasi Gizi -->
                     <a
-                        href="{{ route('admin.edukasi.index') }}"
+                        href="{{ Route::has('admin.edukasi.index') ? route('admin.edukasi.index') : 'javascript:void(0)' }}"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -180,7 +177,7 @@
 
                     <!-- 6. Data Layanan Kesehatan -->
                     <a
-                        href="{{ route('admin.fasilitas.index') }}"
+                        href="{{ Route::has('admin.fasilitas.index') ? route('admin.fasilitas.index') : 'javascript:void(0)' }}"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -204,7 +201,8 @@
                     @if(Auth::check() && Auth::user()->isSuperAdmin())
                     <a
                         href="{{ Route::has('admin.akun.index') ? route('admin.akun.index') : 'javascript:void(0)' }}"
-                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
+                    >
                     >
                         <div class="flex items-center gap-3">
                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -322,18 +320,38 @@
             <!-- Dashboard Body -->
             <div class="p-4 sm:p-6 lg:p-8 space-y-6">
 
-                <!-- Title & Action Buttons -->
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                            Dashboard Pemantauan Klinis &amp; Gizi
-                        </h1>
-                        <p class="text-xs sm:text-[13px] text-slate-500 mt-1 leading-relaxed">
-                            Ringkasan data kesehatan ibu hamil, tumbuh kembang balita, dan deteksi dini stunting wilayah {{ $faskesName }}.
+                <!-- Welcome Hero Banner (Sesuai Mockup Desain Portal Admin) -->
+                <div class="relative rounded-3xl overflow-hidden border border-pink-100 shadow-sm min-h-[170px] sm:min-h-[190px] flex flex-col md:flex-row items-center justify-between px-6 sm:px-10 py-6" style="background: linear-gradient(90deg, #fcecee 0%, #fdeff2 35%, #fce9ee 60%, #fbd8e1 100%);">
+                    <!-- Left: Greetings & Subtitle -->
+                    <div class="z-10 py-1 max-w-md sm:max-w-lg">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-snug">
+                            Selamat Datang,<br>
+                            <span class="text-slate-900 font-black">{{ $adminName }}!</span>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-600 font-medium mt-2 leading-relaxed">
+                            Bersama kita wujudkan generasi sehat, bebas stunting.
                         </p>
+                        <!-- Pink Doodle Heart Icon -->
+                        <div class="mt-3 text-pink-400">
+                            <svg class="w-6 h-6 transform -rotate-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                        </div>
                     </div>
 
-                    <!-- Two Action Buttons (Pink + Blue) -->
+                    <!-- Right: Posyandu Measurement Illustration Image -->
+                    <div class="relative md:absolute md:right-0 md:top-0 md:bottom-0 h-44 sm:h-52 md:h-full w-full md:w-auto flex items-center justify-end overflow-hidden pointer-events-none mt-4 md:mt-0">
+                        <img
+                            src="{{ asset('images/dashboard-banner-illustration.png') }}?v={{ filemtime(public_path('images/dashboard-banner-illustration.png')) }}"
+                            alt="Pemantauan Posyandu Tumbuh Kembang Sehat Bebas Stunting"
+                            class="h-full w-auto object-cover object-right"
+                        />
+                    </div>
+                </div>
+
+                <!-- Action Buttons & Filter Controls Bar -->
+                <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-white rounded-2xl border border-slate-200/80 shadow-2xs">
+                    <!-- Action Buttons (Pink + Blue) -->
                     <div class="flex flex-wrap items-center gap-2.5 shrink-0">
                         <!-- Primary Pink: Catat Tumbuh Kembang (PBI-016) -->
                         <a
@@ -347,22 +365,18 @@
                         </a>
 
                         <!-- Secondary Blue: Catat Pemeriksaan Kehamilan -->
-                        <button
-                            type="button"
-                            onclick="openAncModal()"
+                        <a
+                            href="{{ Route::has('admin.pemeriksaan.index') ? route('admin.pemeriksaan.index') : 'javascript:void(0)' }}"
                             class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] active:bg-[#075985] text-white text-xs font-bold shadow-sm shadow-sky-500/25 transition transform hover:-translate-y-0.5 cursor-pointer"
                         >
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                             </svg>
                             <span>Catat Pemeriksaan Kehamilan</span>
-                        </button>
+                        </a>
                     </div>
-                </div>
-                </div>
 
-                <!-- Filter Controls Bar -->
-                <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-white rounded-2xl border border-slate-200/80 shadow-2xs">
+                    <!-- Filter Controls -->
                     <div class="flex flex-wrap items-center gap-2 text-xs">
                         <!-- Dropdown 1: Bulan -->
                         <div class="relative">
@@ -373,7 +387,7 @@
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
-                                <span>Bulan ini: Oktober 2025</span>
+                                <span>Bulan ini: {{ \Carbon\Carbon::now()->translatedFormat('F Y') }}</span>
                                 <svg class="w-3 h-3 text-slate-400 ml-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                                 </svg>
@@ -426,26 +440,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Welcome Hero Banner (Sesuai Mockup Desain Portal Admin) -->
-                <div class="relative rounded-3xl overflow-hidden border border-pink-100 shadow-sm min-h-[170px] sm:min-h-[190px] flex flex-col md:flex-row items-center justify-between px-6 sm:px-10 py-6" style="background: linear-gradient(90deg, #fcecee 0%, #fdeff2 35%, #fce9ee 60%, #fbd8e1 100%);">
-                    <!-- Left: Greetings & Subtitle -->
-                    <div class="z-10 py-1 max-w-md sm:max-w-lg">
-                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-snug">
-                            Selamat Datang,<br>
-                            <span class="text-slate-900 font-black">{{ $adminName }}!</span>
-                        </h2>
-                        <p class="text-xs sm:text-sm text-slate-600 font-medium mt-2 leading-relaxed">
-                            Bersama kita wujudkan generasi sehat, bebas stunting.
-                        </p>
-                        <!-- Pink Doodle Heart Icon -->
-                        <div class="mt-3 text-pink-400">
-                            <svg class="w-6 h-6 transform -rotate-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                            </svg>
-                        </div>
-                    </div>
-
                     <!-- Right: Posyandu Measurement Illustration Image -->
                     <div class="relative md:absolute md:right-0 md:top-0 md:bottom-0 h-44 sm:h-52 md:h-full w-full md:w-auto flex items-center justify-end overflow-hidden pointer-events-none mt-4 md:mt-0">
                         <img

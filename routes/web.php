@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminFasilitasKesehatanController;
 use App\Http\Controllers\AdminManajemenAkunController;
 use App\Http\Controllers\SuperAdminDashboardController;
 use App\Http\Controllers\AdminAuditLogController;
+use App\Http\Controllers\AdminPemeriksaanKehamilanController;
 use App\Http\Controllers\DashboardPenggunaController;
 use App\Http\Controllers\PasanganController;
 use App\Http\Controllers\KehamilanController;
@@ -226,6 +227,18 @@ Route::prefix('admin')->group(function () {
         Route::get('/log-aktivitas', [AdminAuditLogController::class, 'index'])->name('admin.log.index');
         Route::get('/log-aktivitas/export-pdf', [AdminAuditLogController::class, 'exportPdf'])->name('admin.log.export-pdf');
 
+        // Data Pemeriksaan Kehamilan (ANC) — PBI-013, PBI-014, PBI-015
+        Route::get('/pemeriksaan-kehamilan', [AdminPemeriksaanKehamilanController::class, 'index'])->name('admin.pemeriksaan.index');
+        Route::get('/data-pemeriksaan-kehamilan', [AdminPemeriksaanKehamilanController::class, 'index'])->name('admin.pemeriksaan.alias');
+        Route::get('/pemeriksaan-kehamilan/create', [AdminPemeriksaanKehamilanController::class, 'create'])->name('admin.pemeriksaan.create');
+        Route::post('/pemeriksaan-kehamilan', [AdminPemeriksaanKehamilanController::class, 'store'])->name('admin.pemeriksaan.store');
+        Route::get('/pemeriksaan-kehamilan/pasien/{kehamilanId}', [AdminPemeriksaanKehamilanController::class, 'getPasienInfo'])->name('admin.pemeriksaan.pasien-info');
+        Route::get('/pemeriksaan-kehamilan/{id}', [AdminPemeriksaanKehamilanController::class, 'show'])->name('admin.pemeriksaan.show');
+        Route::get('/pemeriksaan-kehamilan/{id}/edit', [AdminPemeriksaanKehamilanController::class, 'edit'])->name('admin.pemeriksaan.edit');
+        Route::put('/pemeriksaan-kehamilan/{id}', [AdminPemeriksaanKehamilanController::class, 'update'])->name('admin.pemeriksaan.update');
+        Route::post('/pemeriksaan-kehamilan/{id}', [AdminPemeriksaanKehamilanController::class, 'update'])->name('admin.pemeriksaan.update.post');
+        Route::delete('/pemeriksaan-kehamilan/{id}', [AdminPemeriksaanKehamilanController::class, 'destroy'])->name('admin.pemeriksaan.destroy');
+
         // Pengelolaan Pengukuran dan Status Gizi Anak (PBI-016 / F-06)
         Route::get('/pengukuran-anak', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.index');
         Route::get('/tumbuh-kembang-anak', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.tumbuh-kembang');
@@ -277,6 +290,9 @@ Route::get('/admin/lupa-password', function () {
 Route::get('/dashboard-admin', function () {
     return redirect()->route('admin.dashboard');
 })->name('dashboard.admin');
+Route::get('/pemeriksaan-kehamilan', function () {
+    return redirect()->route('admin.pemeriksaan.index');
+});
 
 // Rute Data Kehamilan (PBI-004, PBI-005, PBI-006: Pencatatan, Usia Kehamilan, Trimester, Perbarui & Hapus)
 Route::prefix('data-kehamilan')->name('kehamilan.')->group(function () {
