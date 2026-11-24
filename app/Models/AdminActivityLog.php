@@ -100,8 +100,8 @@ class AdminActivityLog extends Model
             ],
             'UBAH_HAK_AKSES' => [
                 'label' => 'Ubah Hak Akses',
-                'bg' => 'bg-pink-50 text-pink-700 border-pink-200',
-                'dot' => 'bg-pink-500',
+                'bg' => 'bg-sky-50 text-sky-700 border-sky-200',
+                'dot' => 'bg-sky-500',
                 'icon' => 'shield-check',
             ],
             'TOGGLE_STATUS' => [
@@ -112,8 +112,8 @@ class AdminActivityLog extends Model
             ],
             'LOGIN_ADMIN' => [
                 'label' => 'Login Super Admin',
-                'bg' => 'bg-rose-50 text-rose-700 border-rose-200',
-                'dot' => 'bg-rose-500',
+                'bg' => 'bg-blue-50 text-blue-700 border-blue-200',
+                'dot' => 'bg-blue-500',
                 'icon' => 'login',
             ],
             default => [

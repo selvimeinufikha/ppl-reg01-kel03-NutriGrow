@@ -34,7 +34,7 @@ class CheckRole
         // Pastikan pengguna sudah login
         if (! $user) {
             // Tentukan halaman login yang tepat sesuai URL yang diakses
-            if ($request->is('admin/*') || $request->is('admin')) {
+            if ($request->is('admin/*') || $request->is('admin') || $request->is('superadmin/*') || $request->is('superadmin')) {
                 return redirect()->route('admin.login')
                     ->with('error', 'Silakan masuk menggunakan akun petugas / admin faskes.');
             }
@@ -42,10 +42,19 @@ class CheckRole
                 ->with('error', 'Anda harus login terlebih dahulu.');
         }
 
+        // Superadmin memiliki hak akses tertinggi ke seluruh fitur portal admin & nakes
+        if ($user->role === 'superadmin' || (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin())) {
+            // Jika rute ini khusus untuk user biasa (misalnya orang tua), arahkan ke dashboard admin
+            if (in_array('user', $roles) && !in_array('superadmin', $roles)) {
+                return redirect()->route('admin.dashboard');
+            }
+            return $next($request);
+        }
+
         // Periksa apakah role user termasuk dalam daftar $roles yang diizinkan
         if (! in_array($user->role, $roles)) {
             // Jika pengguna biasa (role: user) mencoba akses portal admin
-            if (in_array($user->role, ['user']) && ($request->is('admin/*') || $request->is('admin'))) {
+            if (in_array($user->role, ['user']) && ($request->is('admin/*') || $request->is('admin') || $request->is('superadmin/*') || $request->is('superadmin'))) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();

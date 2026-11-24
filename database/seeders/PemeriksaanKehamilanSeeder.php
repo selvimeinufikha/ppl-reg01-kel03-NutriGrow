@@ -258,7 +258,7 @@ class PemeriksaanKehamilanSeeder extends Seeder
 
             // Buat Data Kehamilan Aktif
             $kehamilan = Kehamilan::updateOrCreate(
-                ['user_id' => $user->id, 'status' => 'aktif'],
+                ['user_id' => $user->id],
                 [
                     'gravida' => $item['gravida'],
                     'hpl' => $item['hpl'],
@@ -266,7 +266,7 @@ class PemeriksaanKehamilanSeeder extends Seeder
                     'tinggi_badan' => $item['tinggi_badan'],
                     'berat_badan_pra_hamil' => $item['berat_badan_pra_hamil'],
                     'lila_pra_hamil' => $item['lila_pra_hamil'],
-                    'status' => 'aktif',
+                    'status' => 'berlangsung',
                 ]
             );
 

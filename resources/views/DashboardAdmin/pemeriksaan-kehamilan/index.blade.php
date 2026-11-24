@@ -69,25 +69,26 @@
             animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Custom Dropdown Styling: Hover Warna Biru Muda Cantik */
+        /* Custom Dropdown Styling: Hover & Active Warna Pink Cantik */
         .custom-dropdown-option {
             transition: background-color 0.15s ease, color 0.15s ease;
         }
         .custom-dropdown-option:hover {
-            background-color: #e0f2fe !important; /* sky-100 (biru muda) */
-            color: #0369a1 !important; /* sky-700 */
+            background-color: #fce7f3 !important; /* pink-100 */
+            color: #be185d !important; /* pink-700 */
         }
         .custom-dropdown-option.is-selected {
-            background-color: #e0f2fe !important; /* sky-100 */
-            color: #0369a1 !important; /* sky-700 */
+            background-color: #fdf2f8 !important; /* pink-50 */
+            border-color: #f472b6 !important; /* pink-400 */
+            color: #be185d !important; /* pink-700 */
             font-weight: 700 !important;
         }
         /* Fallback bila browser mendukung styling option */
         select option:hover,
         select option:focus,
         select option:checked {
-            background-color: #e0f2fe !important;
-            color: #0369a1 !important;
+            background-color: #fce7f3 !important;
+            color: #be185d !important;
         }
 
         /* Lucu & Playful Animation untuk Ikon Tempat Sampah (PBI-014) */
@@ -164,185 +165,10 @@
     <div class="min-h-screen flex flex-col lg:flex-row">
 
         <!-- =============================================================== -->
-        <!-- 1. SIDEBAR NAVIGASI (PERSIS SESUAI GAMBAR REFERENSI ADMIN)       -->
+        <!-- 1. SIDEBAR NAVIGASI (TERPUSAT, KONSISTEN & UNIFIED)             -->
         <!-- =============================================================== -->
-        <aside id="sidebarMenu" class="fixed inset-y-0 left-0 z-50 w-[260px] xl:w-[275px] border-r border-sky-200/80 shadow-xs flex flex-col justify-between py-4 px-3.5 shrink-0 transform -translate-x-full lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:max-h-screen lg:self-start lg:z-30 transition-transform duration-300 ease-in-out" style="background: linear-gradient(180deg, #e8f3fc 0%, #f1f7fd 35%, #e2eefa 70%, #d8e9f8 100%);">
-            <div class="overflow-y-auto no-scrollbar flex-1 flex flex-col min-h-0">
-                <!-- Brand Header -->
-                <div class="px-2 mb-4">
-                    <a href="{{ route('admin.dashboard') }}" class="block">
-                        <img src="{{ asset('images/nutrigrow-logo.png') }}" alt="NutriGrow" class="h-7 sm:h-8 w-auto object-contain">
-                        <div class="text-[9.5px] font-black uppercase tracking-widest text-[#e11d48] mt-1">
-                            PORTAL ADMIN <span class="text-slate-500 font-normal">| TENAGA KESEHATAN</span>
-                        </div>
-                    </a>
+        @include('components.admin-sidebar', ['active' => 'pemeriksaan-kehamilan'])
 
-                    <!-- Verified Badge (Rounded Full with 2-line Text) -->
-                    <div class="mt-3.5 inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xs border border-sky-200/90 shadow-2xs w-full">
-                        <svg class="w-4 h-4 text-[#0284c7] shrink-0 ml-0.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                        </svg>
-                        <div class="text-[10px] font-extrabold tracking-tight text-[#0369a1] leading-tight">
-                            <div>TENAGA KESEHATAN</div>
-                            <div>TERVERIFIKASI</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Navigation Links -->
-                <nav class="space-y-1 text-xs font-semibold">
-                    <!-- 1. Dashboard Admin -->
-                    <a
-                        href="{{ route('admin.dashboard') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
-                    >
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-                            <rect x="14" y="3" width="7" height="7" rx="1.5"/>
-                            <rect x="14" y="14" width="7" height="7" rx="1.5"/>
-                            <rect x="3" y="14" width="7" height="7" rx="1.5"/>
-                        </svg>
-                        <span>Dashboard Admin</span>
-                    </a>
-
-                    <!-- 2. Data Pengguna -->
-                    <a
-                        href="javascript:void(0)"
-                        onclick="alert('Fitur Data Pengguna sedang sinkronisasi dengan database terpusat.')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
-                    >
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                        </svg>
-                        <span>Data Pengguna</span>
-                    </a>
-
-                    <!-- 3. Data Pemeriksaan Kehamilan (AKTIF) -->
-                    <a
-                        href="{{ route('admin.pemeriksaan.index') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#0284c7] text-white shadow-xs font-bold transition"
-                    >
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                        <span>Data Pemeriksaan Kehamilan</span>
-                    </a>
-
-                    <!-- 4. Data Tumbuh Kembang Anak -->
-                    <a
-                        href="{{ Route::has('admin.pengukuran.index') ? route('admin.pengukuran.index') : 'javascript:void(0)' }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
-                    >
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <span>Data Tumbuh Kembang Anak</span>
-                    </a>
-
-                    <!-- 5. Data Edukasi Gizi -->
-                    <a
-                        href="{{ Route::has('admin.edukasi.index') ? route('admin.edukasi.index') : 'javascript:void(0)' }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
-                    >
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                        <span>Data Edukasi Gizi</span>
-                    </a>
-
-                    <!-- 6. Data Layanan Kesehatan -->
-                    <a
-                        href="{{ Route::has('admin.fasilitas.index') ? route('admin.fasilitas.index') : 'javascript:void(0)' }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
-                    >
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                        </svg>
-                        <span>Data Layanan Kesehatan</span>
-                    </a>
-
-                    <!-- 7. Data Informasi Nutrisi -->
-                    <a
-                        href="{{ Route::has('admin.informasi-nutrisi.index') ? route('admin.informasi-nutrisi.index') : 'javascript:void(0)' }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
-                    >
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
-                        </svg>
-                        <span>Data Informasi Nutrisi</span>
-                    </a>
-
-                    <!-- 8. Manajemen Akun Admin (HANYA UNTUK SUPER ADMIN - PBI-028/PBI-029) -->
-                    @if(Auth::check() && Auth::user()->isSuperAdmin())
-                    <a
-                        href="{{ Route::has('admin.akun.index') ? route('admin.akun.index') : 'javascript:void(0)' }}"
-                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
-                    >
-                        <div class="flex items-center gap-3">
-                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                            <span>Manajemen Akun Admin</span>
-                        </div>
-                        <span class="px-1.5 py-0.5 rounded-md bg-rose-50 text-[9px] font-black uppercase text-[#e11d48] border border-rose-100">
-                            SUPER
-                        </span>
-                    </a>
-
-                    <!-- 9. Log Aktivitas & Audit (HANYA UNTUK SUPER ADMIN - PBI-030) -->
-                    <a
-                        href="{{ route('admin.log.index') }}"
-                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
-                    >
-                        <div class="flex items-center gap-3">
-                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                            <span>Log Aktivitas &amp; Audit</span>
-                        </div>
-                        <span class="px-1.5 py-0.5 rounded-md bg-rose-50 text-[9px] font-black uppercase text-[#e11d48] border border-rose-100">
-                            AUDIT
-                        </span>
-                    </a>
-                    @endif
-                </nav>
-            </div>
-
-            <!-- Bottom Section of Sidebar -->
-            <div class="pt-3 border-t border-sky-200/60 shrink-0 space-y-2 mt-auto">
-                <!-- Faskes Card -->
-                <div class="p-3 rounded-2xl bg-white/85 backdrop-blur-xs border border-sky-200/80 shadow-2xs flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0 text-sky-600 shadow-2xs">
-                        <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                        </svg>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-xs font-bold text-slate-800 truncate">{{ $faskesName ?? 'Puskesmas Kecamatan Tebet' }}</p>
-                        <p class="text-[10px] font-semibold text-[#e11d48]">Akreditasi Paripurna</p>
-                        <p class="text-[9.5px] text-slate-400 flex items-center gap-1 mt-0.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
-                            <span>Faskes Wilayah 01</span>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Keluar Portal -->
-                <form action="{{ route('admin.logout') }}" method="POST" class="mt-2">
-                    @csrf
-                    <button
-                        type="submit"
-                        class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-[#e11d48] hover:bg-rose-50/80 transition cursor-pointer"
-                    >
-                        <svg class="w-4 h-4 text-[#e11d48]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                        </svg>
-                        <span>Keluar Portal</span>
-                    </button>
-                </form>
-            </div>
-        </aside>
 
         <!-- =============================================================== -->
         <!-- 2. MAIN CONTENT AREA                                            -->
@@ -405,6 +231,38 @@
             <!-- Main Body Content -->
             <div class="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
 
+                @php
+                    $successMsg = session('success') ?? session('deleted') ?? '';
+                    $isHapus = session('action') === 'delete' || session('deleted') || ($successMsg && str_contains(strtolower($successMsg), 'hapus'));
+                    $isEdit = session('action') === 'update' || ($successMsg && (str_contains(strtolower($successMsg), 'perubahan') || str_contains(strtolower($successMsg), 'diperbarui')));
+                @endphp
+
+                <!-- Notifikasi Banner Kotak Hijau di Atas Saat Data Berhasil Disimpan / Diperbarui / Dihapus -->
+                @if($successMsg)
+                <div id="alertSuccessBanner" class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between shadow-xs transition-all duration-500 animate-scale-up">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                        <div>
+                            @if($isHapus)
+                                <p class="font-bold text-emerald-950 text-xs">Berhasil Dihapus!</p>
+                            @elseif($isEdit)
+                                <p class="font-bold text-emerald-950 text-xs">Perubahan Berhasil Disimpan!</p>
+                            @else
+                                <p class="font-bold text-emerald-950 text-xs">Pemeriksaan Berhasil Disimpan!</p>
+                            @endif
+                            <p class="text-[11.5px] text-emerald-700 mt-0.5">{{ $successMsg }}</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="dismissAlertBanner()" class="text-emerald-500 hover:text-emerald-700 p-1.5 rounded-lg hover:bg-emerald-100/50 transition cursor-pointer" aria-label="Tutup notifikasi">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                @endif
+
                 @if(!empty($errors) && $errors->any())
                 <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold shadow-xs">
                     <p class="font-bold mb-1">Terdapat kesalahan pengisian formulir:</p>
@@ -425,16 +283,15 @@
 
                     <div class="flex items-center gap-2.5 shrink-0">
                         <!-- Unduh Rekap (XLS) Button -->
-                        <button
-                            type="button"
-                            onclick="exportExcelNotice()"
-                            class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-emerald-300 bg-emerald-50/70 hover:bg-emerald-100/80 text-emerald-800 text-xs font-bold transition shadow-2xs"
+                        <a
+                            href="{{ route('admin.pemeriksaan.export', request()->query()) }}"
+                            class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-emerald-300 bg-emerald-50/70 hover:bg-emerald-100/80 text-emerald-800 text-xs font-bold transition shadow-2xs cursor-pointer"
                         >
                             <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                             </svg>
                             <span>Unduh Rekap (XLS)</span>
-                        </button>
+                        </a>
 
                         <!-- Tambah Pemeriksaan Button (Ikon plus tunggal) -->
                         <button
@@ -1097,7 +954,7 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                             <!-- Pilih Ibu Hamil (Custom Dropdown dengan Hover Biru Muda) -->
-                            <div class="space-y-1 sm:col-span-1 relative custom-dropdown" id="dropdownModalTambahPasienWrapper">
+                            <div class="space-y-1 sm:col-span-1 relative z-30 custom-dropdown" id="dropdownModalTambahPasienWrapper">
                                 <label class="block text-xs font-bold text-slate-700">
                                     Pilih Ibu Hamil <span class="text-rose-500">*</span>
                                 </label>
@@ -1126,26 +983,53 @@
                                 <button
                                     type="button"
                                     onclick="toggleCustomDropdown('dropdownModalTambahPasienMenu', event)"
-                                    class="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition text-left cursor-pointer"
+                                    class="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-white hover:bg-pink-50/40 border border-slate-300 text-xs font-semibold text-slate-800 focus:outline-hidden focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition text-left cursor-pointer"
                                     id="dropdownModalTambahPasienBtn"
                                 >
-                                    <span id="dropdownModalTambahPasienLabel" class="truncate text-slate-500">Pilih nama ibu hamil (NIK / No. KIA)...</span>
+                                    <span id="dropdownModalTambahPasienLabel" class="truncate text-slate-400 font-normal">Pilih nama ibu hamil (NIK / No. KIA)...</span>
                                     <svg class="w-4 h-4 text-slate-400 transition-transform shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                                 </button>
 
-                                <div id="dropdownModalTambahPasienMenu" class="hidden absolute left-0 right-0 top-full mt-1.5 max-h-56 overflow-y-auto custom-scrollbar bg-white rounded-2xl shadow-xl border border-slate-100 p-1.5 z-50 animate-scale-up space-y-0.5">
-                                    @foreach($daftarIbuHamil as $ibuOption)
-                                        <div
-                                            onclick="pilihPasienModalTambah('{{ $ibuOption['kehamilan_id'] }}', '{{ addslashes($ibuOption['nama'] . ' (NIK: ' . $ibuOption['nik'] . ')') }}')"
-                                            class="custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl text-slate-700 cursor-pointer transition flex items-center justify-between"
-                                        >
-                                            <div>
-                                                <span class="font-bold text-slate-900 block">{{ $ibuOption['nama'] }}</span>
-                                                <span class="text-[10.5px] text-slate-400 block mt-0.5">NIK: {{ $ibuOption['nik'] }} • {{ $ibuOption['gravida'] }}</span>
-                                            </div>
-                                            <span class="text-sky-600 text-xs font-bold shrink-0 ml-2">✓</span>
+                                <div id="dropdownModalTambahPasienMenu" class="hidden absolute left-0 right-0 top-full mt-1.5 max-h-64 overflow-y-auto custom-scrollbar bg-white rounded-2xl shadow-xl border border-pink-100 p-2 z-50 animate-scale-up space-y-1">
+                                    <!-- Search Input Pencarian Ibu Hamil -->
+                                    <div class="sticky top-0 bg-white pb-1.5 z-10" onclick="event.stopPropagation()">
+                                        <div class="relative">
+                                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-pink-400">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                            </span>
+                                            <input
+                                                type="text"
+                                                id="searchIbuHamilModalInput"
+                                                placeholder="Ketik nama, NIK, atau No. KIA..."
+                                                oninput="filterIbuHamilDropdown(this.value)"
+                                                onclick="event.stopPropagation()"
+                                                class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-pink-200 bg-pink-50/40 text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-pink-500 focus:bg-white focus:ring-2 focus:ring-pink-500/20 transition"
+                                            >
                                         </div>
-                                    @endforeach
+                                    </div>
+
+                                    <div id="ibuHamilOptionsList" class="space-y-0.5 max-h-48 overflow-y-auto no-scrollbar">
+                                        @forelse($daftarIbuHamil as $ibuOption)
+                                            <div
+                                                onclick="pilihPasienModalTambah('{{ $ibuOption['kehamilan_id'] }}', '{{ addslashes($ibuOption['nama'] . ' (NIK: ' . $ibuOption['nik'] . ')') }}', this)"
+                                                data-search="{{ strtolower($ibuOption['nama'] . ' ' . $ibuOption['nik'] . ' ' . ($ibuOption['no_kia'] ?? '') . ' ' . $ibuOption['gravida']) }}"
+                                                class="ibu-option-item custom-dropdown-option px-3 py-2 text-xs font-semibold rounded-xl text-slate-700 cursor-pointer transition flex items-center justify-between hover:bg-pink-100 hover:text-pink-900 border border-transparent hover:border-pink-200"
+                                            >
+                                                <div>
+                                                    <span class="font-bold text-slate-900 block">{{ $ibuOption['nama'] }}</span>
+                                                    <span class="text-[10.5px] text-slate-500 block mt-0.5">NIK: {{ $ibuOption['nik'] }} • {{ $ibuOption['gravida'] }}</span>
+                                                </div>
+                                                <span class="text-pink-600 text-xs font-bold shrink-0 ml-2 check-icon hidden">✓</span>
+                                            </div>
+                                        @empty
+                                            <div class="p-3 text-center text-xs text-slate-400 font-semibold">
+                                                Belum ada data ibu hamil aktif terdaftar
+                                            </div>
+                                        @endforelse
+                                        <div id="noIbuHamilFound" class="p-3 text-center text-xs text-slate-400 hidden">
+                                            Tidak ada data ibu hamil yang sesuai pencarian
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -1157,9 +1041,9 @@
                                 <input
                                     type="text"
                                     id="displayGravidaHpl"
-                                    placeholder="G2P1A0 • HPL 28 Des 2025"
+                                    placeholder="Otomatis terisi setelah memilih ibu hamil..."
                                     readonly
-                                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100/80 border border-slate-200 text-xs font-semibold text-slate-700 cursor-not-allowed"
+                                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100/70 border border-slate-200 text-xs font-semibold text-slate-600 cursor-not-allowed placeholder:text-slate-400 placeholder:font-normal"
                                 >
                             </div>
 
@@ -1174,7 +1058,7 @@
                                     name="tgl_periksa"
                                     value="{{ date('Y-m-d') }}"
                                     required
-                                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition"
+                                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-800 focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
                                 >
                             </div>
 
@@ -1190,11 +1074,11 @@
                                         name="usia_gestasi_minggu"
                                         min="1"
                                         max="45"
-                                        value="32"
+                                        value=""
                                         required
                                         oninput="liveClinicalAssessment()"
-                                        placeholder="32"
-                                        class="w-full pl-3.5 pr-14 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition"
+                                        placeholder="Contoh: 32"
+                                        class="w-full pl-3.5 pr-14 py-2.5 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
                                     >
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-slate-400 font-medium pointer-events-none">
                                         Minggu
@@ -1223,13 +1107,13 @@
                                         step="0.1"
                                         id="inputBb"
                                         name="berat_badan"
-                                        value="64.5"
+                                        value=""
                                         min="35"
                                         max="180"
                                         required
                                         oninput="liveClinicalAssessment()"
-                                        placeholder="64.5"
-                                        class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition"
+                                        placeholder="Contoh: 64.5"
+                                        class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
                                     >
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-400 font-medium pointer-events-none">
                                         kg
@@ -1247,13 +1131,13 @@
                                         type="text"
                                         id="inputTd"
                                         name="tekanan_darah"
-                                        value="118/78"
+                                        value=""
                                         required
                                         pattern="^\d{2,3}\/\d{2,3}$"
                                         title="Format tekanan darah harus sistol/diastol (contoh: 120/80)"
                                         oninput="liveClinicalAssessment()"
-                                        placeholder="118/78"
-                                        class="w-full pl-3.5 pr-14 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition"
+                                        placeholder="Contoh: 120/80"
+                                        class="w-full pl-3.5 pr-14 py-2.5 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
                                     >
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-400 font-medium pointer-events-none">
                                         mmHg
@@ -1275,13 +1159,13 @@
                                         step="0.1"
                                         id="inputLila"
                                         name="lila"
-                                        value="25.0"
+                                        value=""
                                         min="15"
                                         max="50"
                                         required
                                         oninput="liveClinicalAssessment()"
-                                        placeholder="25.0"
-                                        class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition"
+                                        placeholder="Contoh: 25.0"
+                                        class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
                                     >
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-400 font-medium pointer-events-none">
                                         cm
@@ -1303,13 +1187,13 @@
                                         step="0.1"
                                         id="inputHb"
                                         name="hb"
-                                        value="12.1"
+                                        value=""
                                         min="4"
                                         max="20"
                                         required
                                         oninput="liveClinicalAssessment()"
-                                        placeholder="12.1"
-                                        class="w-full pl-3.5 pr-12 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition"
+                                        placeholder="Contoh: 12.0"
+                                        class="w-full pl-3.5 pr-12 py-2.5 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
                                     >
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-400 font-medium pointer-events-none">
                                         g/dL
@@ -1328,13 +1212,13 @@
                                         step="0.1"
                                         id="inputTfu"
                                         name="tfu"
-                                        value="28"
+                                        value=""
                                         min="5"
                                         max="50"
                                         required
                                         oninput="liveClinicalAssessment()"
-                                        placeholder="28"
-                                        class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition"
+                                        placeholder="Contoh: 28"
+                                        class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
                                     >
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-400 font-medium pointer-events-none">
                                         cm
@@ -1352,13 +1236,13 @@
                                         type="number"
                                         id="inputDjj"
                                         name="djj"
-                                        value="142"
+                                        value=""
                                         min="60"
                                         max="220"
                                         required
                                         oninput="liveClinicalAssessment()"
-                                        placeholder="142"
-                                        class="w-full pl-3.5 pr-12 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition"
+                                        placeholder="Contoh: 140"
+                                        class="w-full pl-3.5 pr-12 py-2.5 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
                                     >
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-400 font-medium pointer-events-none">
                                         dpm
@@ -1375,16 +1259,14 @@
                             <h4 class="text-xs font-black uppercase tracking-wider text-slate-700">PREVIEW PENILAIAN RISIKO OTOMATIS</h4>
                         </div>
 
-                        <div id="riskPreviewBox" class="p-4 rounded-2xl bg-sky-50/80 border border-sky-200/80 flex items-start gap-3 transition-colors duration-300">
-                            <div id="riskIconContainer" class="w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center shrink-0 mt-0.5">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                                </svg>
+                        <div id="riskPreviewBox" class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3 transition-colors duration-300">
+                            <div id="riskIconContainer" class="w-6 h-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
+                                ℹ
                             </div>
                             <div class="text-xs leading-relaxed">
-                                <p id="riskTitle" class="font-bold text-sky-950">Kondisi Parameter Terpantau Baik / Normal</p>
-                                <p id="riskDescription" class="text-slate-600 mt-0.5">
-                                    LiLA &ge; 23.5 cm (Nutrisi adekuat) dan Hb &ge; 11.0 g/dL. Tidak terdeteksi risiko KEK maupun anemia gestasional.
+                                <p id="riskTitle" class="font-bold text-slate-700">Menunggu Input Data Antropometri</p>
+                                <p id="riskDescription" class="text-slate-500 mt-0.5">
+                                    Masukkan nilai Berat Badan, Tekanan Darah, LiLA, dan Hb untuk melihat hasil penapisan klinis otomatis.
                                 </p>
                             </div>
                         </div>
@@ -1409,9 +1291,9 @@
                                     rows="2"
                                     required
                                     minlength="3"
-                                    placeholder="Lanjutkan konsumsi Tablet Tambah Darah (TTD) 1x1 tablet malam hari, konseling senam hamil Trimester 3, dan pemantauan gerakan janin mandiri."
-                                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-hidden focus:border-sky-500 transition resize-none"
-                                >Lanjutkan konsumsi Tablet Tambah Darah (TTD) 1x1 tablet malam hari, konseling senam hamil Trimester 3, dan pemantauan gerakan janin mandiri.</textarea>
+                                    placeholder="Contoh: Lanjutkan konsumsi Tablet Tambah Darah (TTD) 1x1 tablet malam hari, konseling gizi dan senam hamil..."
+                                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition resize-none"
+                                ></textarea>
                             </div>
 
                             <!-- Tanggal Kontrol Berikutnya + Quick Shortcuts -->
@@ -1424,9 +1306,9 @@
                                         type="date"
                                         id="inputTglKontrol"
                                         name="tgl_kontrol_berikutnya"
-                                        value="{{ date('Y-m-d', strtotime('+4 weeks')) }}"
+                                        value=""
                                         required
-                                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-hidden focus:border-sky-500 transition"
+                                        class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-800 focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
                                     >
                                 </div>
 
@@ -1905,40 +1787,72 @@
     </div>
 
     <!-- =================================================================== -->
-    <!-- MODAL POPUP BERHASIL SIMPAN (CENTER DIALOG CENTANG HIJAU)           -->
+    <!-- MODAL POPUP NOTIFIKASI BERHASIL (SIMPAN & EDIT SAJA)                -->
     <!-- =================================================================== -->
-    <div id="modalSuccessSave" class="fixed inset-0 z-50 overflow-y-auto {{ session('success') ? 'flex' : 'hidden' }} items-center justify-center p-4">
+    @php
+        $isEdit = session('action') === 'update' || ($successMsg && (str_contains(strtolower($successMsg), 'perubahan') || str_contains(strtolower($successMsg), 'diperbarui')));
+    @endphp
+    <div id="modalSuccessSave" class="fixed inset-0 z-50 overflow-y-auto hidden items-center justify-center p-4">
         <!-- Backdrop Blur -->
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="closeSuccessModal()"></div>
 
         <!-- Modal Card in Center -->
         <div class="relative bg-white rounded-3xl max-w-sm sm:max-w-md w-full shadow-2xl border border-slate-100 p-6 sm:p-8 z-10 text-center transform transition-all animate-scale-up">
-            <!-- Big Centered Green Checkmark Circle with ripple ring -->
-            <div class="mx-auto w-20 h-20 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-5 ring-8 ring-emerald-50/70 shadow-inner">
-                <div class="w-14 h-14 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/20">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                    </svg>
+            @if($isEdit)
+                <!-- Icon Ubah Berhasil (Biru Langit) -->
+                <div class="mx-auto w-20 h-20 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center mb-5 ring-8 ring-sky-50/70 shadow-inner">
+                    <div class="w-14 h-14 rounded-full bg-[#0284c7] text-white flex items-center justify-center shadow-md shadow-sky-500/20">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
                 </div>
-            </div>
 
-            <h3 class="text-xl font-black text-slate-900 tracking-tight">Pemeriksaan Berhasil Disimpan!</h3>
-            <p id="successModalMessage" class="text-xs text-slate-600 mt-2 leading-relaxed px-2">
-                {{ session('success') ?? 'Data rekam medis antropometri & tanda vital ibu hamil telah berhasil dicatat ke sistem NutriGrow.' }}
-            </p>
+                <h3 class="text-xl font-black text-slate-900 tracking-tight">Perubahan Berhasil Disimpan!</h3>
+                <p id="successModalMessage" class="text-xs text-slate-600 mt-2 leading-relaxed px-2">
+                    {{ $successMsg }}
+                </p>
 
-            <div class="mt-6">
-                <button
-                    type="button"
-                    onclick="closeSuccessModal()"
-                    class="w-full py-3 px-5 rounded-2xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold shadow-md hover:shadow-lg transition flex items-center justify-center gap-2"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    <span>Selesai &amp; Lihat Data</span>
-                </button>
-            </div>
+                <div class="mt-6">
+                    <button
+                        type="button"
+                        onclick="closeSuccessModal()"
+                        class="w-full py-3 px-5 rounded-2xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span>Selesai &amp; Lihat Data</span>
+                    </button>
+                </div>
+            @else
+                <!-- Icon Simpan Baru Berhasil (Hijau Emerald) -->
+                <div class="mx-auto w-20 h-20 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-5 ring-8 ring-emerald-50/70 shadow-inner">
+                    <div class="w-14 h-14 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/20">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-black text-slate-900 tracking-tight">Pemeriksaan Berhasil Disimpan!</h3>
+                <p id="successModalMessage" class="text-xs text-slate-600 mt-2 leading-relaxed px-2">
+                    {{ $successMsg ?: 'Data rekam medis antropometri & tanda vital ibu hamil telah berhasil dicatat ke sistem NutriGrow.' }}
+                </p>
+
+                <div class="mt-6">
+                    <button
+                        type="button"
+                        onclick="closeSuccessModal()"
+                        class="w-full py-3 px-5 rounded-2xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span>Selesai &amp; Lihat Data</span>
+                    </button>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -2038,6 +1952,12 @@
 
             if (isHidden) {
                 menu.classList.remove('hidden');
+                if (menuId === 'dropdownModalTambahPasienMenu') {
+                    setTimeout(() => {
+                        const input = document.getElementById('searchIbuHamilModalInput');
+                        if (input) input.focus();
+                    }, 50);
+                }
             }
         }
 
@@ -2076,8 +1996,29 @@
             }
         }
 
-        // Fungsi memilih pasien pada Modal Tambah Rekam Medis
-        function pilihPasienModalTambah(kehamilanId, labelText) {
+        // Filter Pencarian Ibu Hamil di Dalam Dropdown Modal Tambah
+        function filterIbuHamilDropdown(keyword) {
+            const query = (keyword || '').toLowerCase().trim();
+            const items = document.querySelectorAll('#ibuHamilOptionsList .ibu-option-item');
+            let foundCount = 0;
+            items.forEach(el => {
+                const searchData = el.getAttribute('data-search') || '';
+                if (!query || searchData.includes(query)) {
+                    el.classList.remove('hidden');
+                    foundCount++;
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+            const noFound = document.getElementById('noIbuHamilFound');
+            if (noFound) {
+                if (foundCount === 0) noFound.classList.remove('hidden');
+                else noFound.classList.add('hidden');
+            }
+        }
+
+        // Fungsi memilih pasien pada Modal Tambah Rekam Medis (Pink Highlight & Active State)
+        function pilihPasienModalTambah(kehamilanId, labelText, el) {
             const selectEl = document.getElementById('inputKehamilanId');
             if (selectEl) {
                 selectEl.value = kehamilanId;
@@ -2086,9 +2027,27 @@
             const label = document.getElementById('dropdownModalTambahPasienLabel');
             if (label) {
                 label.innerText = labelText;
-                label.classList.remove('text-slate-500');
-                label.classList.add('text-slate-900', 'font-bold');
+                label.classList.remove('text-slate-400', 'font-normal');
+                label.classList.add('text-pink-900', 'font-bold');
             }
+            const btn = document.getElementById('dropdownModalTambahPasienBtn');
+            if (btn) {
+                btn.classList.remove('border-rose-500', 'bg-rose-50/50');
+                btn.classList.add('bg-pink-50/40', 'border-pink-300');
+            }
+
+            // Tandai item terpilih dengan warna pink & tampilkan centang
+            document.querySelectorAll('#ibuHamilOptionsList .ibu-option-item').forEach(item => {
+                item.classList.remove('is-selected', 'bg-pink-100', 'text-pink-900', 'border-pink-300', 'font-bold');
+                const check = item.querySelector('.check-icon');
+                if (check) check.classList.add('hidden');
+            });
+            if (el) {
+                el.classList.add('is-selected', 'bg-pink-100', 'text-pink-900', 'border-pink-300', 'font-bold');
+                const check = el.querySelector('.check-icon');
+                if (check) check.classList.remove('hidden');
+            }
+
             closeAllCustomDropdowns();
         }
 
@@ -2109,12 +2068,12 @@
             const selectEl = document.getElementById('inputKehamilanId');
             if (selectEl && selectEl.value) {
                 onPasienSelected(selectEl.value);
-                const selectedOpt = selectEl.options[selectEl.selectedIndex];
+                const selectedOpt = selectEl.querySelector('option[value="' + selectEl.value + '"]') || selectEl.options[selectEl.selectedIndex];
                 if (selectedOpt) {
                     const label = document.getElementById('dropdownModalTambahPasienLabel');
                     if (label) {
                         label.innerText = selectedOpt.text;
-                        label.classList.remove('text-slate-500');
+                        label.classList.remove('text-slate-400', 'font-normal');
                         label.classList.add('text-slate-900', 'font-bold');
                     }
                 }
@@ -2122,9 +2081,11 @@
                 const label = document.getElementById('dropdownModalTambahPasienLabel');
                 if (label) {
                     label.innerText = 'Pilih nama ibu hamil (NIK / No. KIA)...';
-                    label.classList.add('text-slate-500');
+                    label.classList.add('text-slate-400', 'font-normal');
                     label.classList.remove('text-slate-900', 'font-bold');
                 }
+                const disp = document.getElementById('displayGravidaHpl');
+                if (disp) disp.value = '';
             }
             liveClinicalAssessment();
         }
@@ -2137,7 +2098,8 @@
         // Event saat pasien dipilih dari dropdown
         function onPasienSelected(kehamilanId) {
             const selectEl = document.getElementById('inputKehamilanId');
-            const selectedOption = selectEl.options[selectEl.selectedIndex];
+            if (!selectEl) return;
+            const selectedOption = selectEl.querySelector('option[value="' + kehamilanId + '"]') || selectEl.options[selectEl.selectedIndex];
             
             if (!kehamilanId || !selectedOption) {
                 document.getElementById('displayGravidaHpl').value = '';
@@ -2146,13 +2108,11 @@
 
             const gravidaHpl = selectedOption.getAttribute('data-gravida-hpl');
             const gestasi = selectedOption.getAttribute('data-gestasi');
-            const bb = selectedOption.getAttribute('data-bb');
-            const lila = selectedOption.getAttribute('data-lila');
 
             if (gravidaHpl) document.getElementById('displayGravidaHpl').value = gravidaHpl;
-            if (gestasi) document.getElementById('inputGestasi').value = gestasi;
-            if (bb) document.getElementById('inputBb').value = bb;
-            if (lila) document.getElementById('inputLila').value = lila;
+            if (gestasi && !document.getElementById('inputGestasi').value) {
+                document.getElementById('inputGestasi').value = gestasi;
+            }
 
             liveClinicalAssessment();
         }
@@ -2171,6 +2131,18 @@
             const iconContainer = document.getElementById('riskIconContainer');
             const titleEl = document.getElementById('riskTitle');
             const descEl = document.getElementById('riskDescription');
+
+            // Jika belum ada data antropometri yang diisi, tampilkan status menunggu input
+            if (bbVal === 0 && lilaVal === 0 && hbVal === 0 && !tdVal) {
+                box.className = 'p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3 transition-colors duration-300';
+                iconContainer.className = 'w-6 h-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold';
+                iconContainer.innerHTML = 'ℹ';
+                titleEl.className = 'font-bold text-slate-700';
+                titleEl.innerHTML = 'Menunggu Input Data Antropometri';
+                descEl.className = 'text-slate-500 mt-0.5 text-xs';
+                descEl.innerHTML = 'Masukkan nilai Berat Badan, Tekanan Darah, LiLA, dan Hb untuk melihat hasil penapisan klinis otomatis.';
+                return;
+            }
 
             // Parse Tekanan Darah (Sistol / Diastol)
             let sistol = 120;
@@ -2684,19 +2656,77 @@
             document.body.style.overflow = 'auto';
         }
 
+        // Dismiss Notifikasi Banner Hijau (Auto-dismiss 3 Detik / Klik Manual)
+        function dismissAlertBanner() {
+            const banner = document.getElementById('alertSuccessBanner');
+            if (banner) {
+                banner.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                banner.style.opacity = '0';
+                banner.style.transform = 'translateY(-10px)';
+                setTimeout(function() {
+                    banner.remove();
+                }, 500);
+            }
+        }
+
         // Tutup Modal Pop-up Berhasil Simpan
         function closeSuccessModal() {
             const modal = document.getElementById('modalSuccessSave');
             if (modal) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
+                modal.style.transition = 'opacity 0.3s ease-out';
+                modal.style.opacity = '0';
+                setTimeout(function() {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    modal.style.opacity = '1';
+                    document.body.style.overflow = 'auto';
+                }, 300);
+            } else {
+                document.body.style.overflow = 'auto';
             }
-            document.body.style.overflow = 'auto';
         }
 
         function exportExcelNotice() {
             alert('Mengunduh rekapitulasi data pemeriksaan kehamilan (Format XLS/Spreadsheet Dinkes)...');
         }
+
+        // Inisialisasi Saat Halaman Dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto dismiss banner notifikasi hijau setelah 3 detik
+            const alertBanner = document.getElementById('alertSuccessBanner');
+            if (alertBanner) {
+                setTimeout(function() {
+                    dismissAlertBanner();
+                }, 3000);
+            }
+
+            // Auto dismiss modal berhasil simpan/edit setelah 3 detik jika tampil
+            const modalSuccess = document.getElementById('modalSuccessSave');
+            if (modalSuccess && !modalSuccess.classList.contains('hidden')) {
+                setTimeout(function() {
+                    closeSuccessModal();
+                }, 3000);
+            }
+
+            // Validasi Pemilihan Ibu Hamil Sebelum Submit Form Tambah
+            const formTambah = document.getElementById('formTambahPemeriksaan');
+            if (formTambah) {
+                formTambah.addEventListener('submit', function(e) {
+                    const selectEl = document.getElementById('inputKehamilanId');
+                    if (!selectEl || !selectEl.value) {
+                        e.preventDefault();
+                        const btn = document.getElementById('dropdownModalTambahPasienBtn');
+                        if (btn) {
+                            btn.classList.add('border-rose-500', 'bg-rose-50/50');
+                            btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        toggleCustomDropdown('dropdownModalTambahPasienMenu');
+                        alert('Silakan pilih salah satu ibu hamil dari daftar terlebih dahulu.');
+                        return false;
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>

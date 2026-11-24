@@ -18,5 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->respond(function ($response, Throwable $exception, $request) {
+            if ($response->getStatusCode() === 419) {
+                return back()->with([
+                    'login_error' => 'Sesi formulir kedaluwarsa (CSRF token refreshed). Silakan masukkan kembali kata sandi dan klik Masuk.',
+                ])->withInput($request->except('password', '_token'));
+            }
+            return $response;
+        });
     })->create();

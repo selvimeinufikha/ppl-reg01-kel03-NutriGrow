@@ -66,59 +66,8 @@
 
     <div class="min-h-screen flex flex-col lg:flex-row">
 
-        <!-- SIDEBAR -->
-        <aside id="adminSidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] xl:w-[275px] bg-white border-r border-slate-200 flex flex-col justify-between py-5 px-4 shrink-0 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto transition-transform duration-300 ease-in-out">
-            <div>
-                <div class="px-2 mb-4">
-                    <a href="{{ route('admin.dashboard') }}" class="block">
-                        <img src="{{ asset('images/nutrigrow-logo.png') }}" alt="NutriGrow" class="h-7 sm:h-8 w-auto object-contain">
-                        <div class="text-[9.5px] font-black uppercase tracking-widest text-[#e11d48] mt-1">
-                            PORTAL ADMIN
-                            <span class="block text-[8px] tracking-wider text-slate-400 font-semibold">TENAGA KESEHATAN</span>
-                        </div>
-                    </a>
-                </div>
-
-                <nav class="space-y-1 text-xs font-semibold">
-                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        <span>Dashboard Admin</span>
-                    </a>
-                    <a href="{{ route('admin.fasilitas.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                        <span>Fasilitas Kesehatan</span>
-                    </a>
-                    <a href="{{ route('admin.edukasi.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                        <span>Edukasi Gizi &amp; KIA</span>
-                    </a>
-                    <!-- ACTIVE MENU: MANAJEMEN AKUN ADMIN (PINK ACCENT) -->
-                    <a href="{{ route('admin.akun.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-xs font-bold transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        <span>Manajemen Akun Admin</span>
-                    </a>
-                    @if (Auth::check() && Auth::user()->isSuperAdmin())
-                        <!-- MENU LOG AKTIVITAS (PBI-030) -->
-                        <a href="{{ route('admin.log.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition">
-                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                            <span>Log Aktivitas &amp; Audit</span>
-                        </a>
-                    @endif
-                </nav>
-            </div>
-
-            <div class="pt-4 border-t border-slate-100 px-2 space-y-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-pink-100 text-[#e11d48] font-bold text-xs flex items-center justify-center">
-                        {{ strtoupper(substr($adminName, 0, 2)) }}
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-xs font-bold text-slate-800 truncate">{{ $adminName }}</p>
-                        <p class="text-[10px] text-slate-400 truncate">{{ $adminRole }}</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
+        <!-- SIDEBAR NAVIGASI TERPUSAT -->
+        @include('components.admin-sidebar', ['active' => 'manajemen-akun'])
 
         <!-- MAIN CONTENT AREA -->
         <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
@@ -145,9 +94,12 @@
                         <span>{{ $tanggalHariIni }}</span>
                     </div>
 
-                    <!-- TOMBOL TAMBAH AKUN (PBI-028) -->
-                    <a href="{{ route('admin.akun.create') }}" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white font-bold text-xs shadow-md shadow-sky-600/20 hover:shadow-lg transition flex items-center gap-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                    <!-- TOMBOL TAMBAH AKUN (PBI-028) - BIRU SOLID PILL -->
+                    <a href="{{ route('admin.akun.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0284c7] hover:bg-sky-700 text-white text-xs font-bold shadow-xs hover:shadow transition cursor-pointer">
+                        <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9.5"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8m-4-4h8"/>
+                        </svg>
                         <span>Tambah Akun Administrator</span>
                     </a>
                 </div>
@@ -157,14 +109,19 @@
 
                 <!-- Flash Success Notification -->
                 @if (session('success'))
-                    <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-3 shadow-xs">
-                        <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <div id="alertSuccessBannerAkun" class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center justify-between shadow-xs transition-all duration-500 animate-scale-up">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold">Pendaftaran Akun Berhasil!</p>
+                                <p class="text-emerald-700">{{ session('success') }}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-bold">Pendaftaran Akun Berhasil!</p>
-                            <p class="text-emerald-700">{{ session('success') }}</p>
-                        </div>
+                        <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 p-1.5 rounded-lg hover:bg-emerald-100/50 transition cursor-pointer" aria-label="Tutup notifikasi">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
                     </div>
                 @endif
 
@@ -269,7 +226,7 @@
                                             'superadmin' => 'bg-purple-50 text-purple-700 border-purple-200',
                                             'admin' => 'bg-sky-50 text-sky-700 border-sky-200',
                                             'dokter' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                            'bidan' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                            'bidan' => 'bg-teal-50 text-teal-700 border-teal-200',
                                             'ahli_gizi' => 'bg-amber-50 text-amber-700 border-amber-200',
                                             default => 'bg-slate-100 text-slate-700 border-slate-200',
                                         };
@@ -329,7 +286,7 @@
 
                                         <!-- Aksi Ubah Hak Akses (PBI-029) -->
                                         <td class="px-5 py-4 text-right whitespace-nowrap">
-                                            <a href="{{ request()->routeIs('superadmin.*') || request()->is('superadmin/*') ? route('superadmin.akun.edit', $adm->id) : route('admin.akun.edit', $adm->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-pink-50 hover:bg-pink-100 text-[#e11d48] font-bold text-xs transition border border-pink-200 shadow-2xs">
+                                            <a href="{{ request()->routeIs('superadmin.*') || request()->is('superadmin/*') ? route('superadmin.akun.edit', $adm->id) : route('admin.akun.edit', $adm->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-[#0284c7] font-bold text-xs transition border border-sky-200 shadow-2xs">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                                 <span>Ubah Akses</span>
                                             </a>
@@ -360,6 +317,21 @@
             sidebar.classList.toggle('-translate-x-full');
             backdrop.classList.toggle('hidden');
         }
+
+        // Auto-dismiss banner notifikasi setelah 3 detik
+        document.addEventListener('DOMContentLoaded', function() {
+            const alertBanner = document.getElementById('alertSuccessBannerAkun');
+            if (alertBanner) {
+                setTimeout(function() {
+                    alertBanner.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                    alertBanner.style.opacity = '0';
+                    alertBanner.style.transform = 'translateY(-10px)';
+                    setTimeout(function() {
+                        alertBanner.remove();
+                    }, 500);
+                }, 3000);
+            }
+        });
     </script>
 </body>
 </html>

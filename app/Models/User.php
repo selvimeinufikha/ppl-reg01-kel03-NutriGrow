@@ -124,7 +124,8 @@ class User extends Authenticatable
             || str_ends_with($this->email, '@puskesmas.go.id')
             || str_ends_with($this->email, '@kemkes.go.id')
             || str_ends_with($this->email, '@dinkes.go.id')
-            || $this->email === 'selvi@gmail.com';
+            || $this->email === 'selvi@gmail.com'
+            || $this->email === 'selvi@nutrigrow.id';
     }
 
     /**
@@ -134,7 +135,8 @@ class User extends Authenticatable
     {
         return $this->role === 'superadmin'
             || str_starts_with($this->email, 'superadmin@')
-            || $this->email === 'selvi@gmail.com';
+            || $this->email === 'selvi@gmail.com'
+            || $this->email === 'selvi@nutrigrow.id';
     }
 
     /**
@@ -143,7 +145,7 @@ class User extends Authenticatable
     public function getRoleLabelAttribute(): string
     {
         return match ($this->role) {
-            'superadmin' => 'Super Administrator (Kemenkes/Dinkes)',
+            'superadmin' => 'Super Admin',
             'admin' => 'Administrator Faskes / Puskesmas',
             'nakes' => 'Tenaga Kesehatan (Bidan / Dokter)',
             'dokter' => 'Dokter Spesialis Anak / Umum',
@@ -161,7 +163,8 @@ class User extends Authenticatable
         return in_array($this->role, ['admin', 'superadmin'])
             || str_starts_with($this->email, 'admin@')
             || str_starts_with($this->email, 'superadmin@')
-            || $this->email === 'selvi@gmail.com';
+            || $this->email === 'selvi@gmail.com'
+            || $this->email === 'selvi@nutrigrow.id';
     }
 
     /**

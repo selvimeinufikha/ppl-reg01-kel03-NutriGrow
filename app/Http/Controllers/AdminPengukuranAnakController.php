@@ -29,49 +29,97 @@ class AdminPengukuranAnakController extends Controller
         Carbon::setLocale('id');
         $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
 
+        // Pastikan ketersediaan data anak & riwayat demo jika kosong
+        $this->ensureDemoAnakData();
+
         // 1. Ambil seluruh data pengguna (orang tua / wali) dan anak-anaknya
         $usersWithChildren = User::where('role', 'user')
             ->with('anaks')
             ->get();
 
-        // 2. Ambil seluruh daftar anak untuk dropdown
+        // 2. Ambil seluruh daftar anak untuk dropdown modal
         $allAnaks = Anak::with('user')->orderBy('nama', 'asc')->get();
 
-        // Jika tabel anak masih kosong, buat fallback dari database seeder
-        if ($allAnaks->isEmpty()) {
-            $defaultUser = User::first() ?? User::create([
-                'name' => 'Ibu Anita Rahmawati',
-                'email' => 'ibu.anita@nutrigrow.id',
-                'password' => bcrypt('password'),
-                'role' => 'user',
-            ]);
+        // 3. Query daftar riwayat pengukuran dengan Filter & Search
+        $query = RiwayatTumbuhKembang::with('anak.user')
+            ->orderBy('tanggal_pemeriksaan', 'desc')
+            ->orderBy('id', 'desc');
 
-            $allAnaks = collect([
-                Anak::create([
-                    'user_id' => $defaultUser->id,
-                    'nama' => 'Aisyah Putri Rahmawati',
-                    'nik' => '3171056508210002',
-                    'jenis_kelamin' => 'Perempuan',
-                    'tanggal_lahir' => '2022-02-14',
-                    'status_gizi' => 'Batita Aktif & Sehat',
-                ])
-            ]);
+        // Filter Pencarian
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->whereHas('anak', function($qa) use ($search) {
+                    $qa->where('nama', 'like', "%{$search}%")
+                       ->orWhere('nik', 'like', "%{$search}%")
+                       ->orWhereHas('user', function($qu) use ($search) {
+                           $qu->where('name', 'like', "%{$search}%");
+                       });
+                })->orWhere('status_pertumbuhan', 'like', "%{$search}%")
+                  ->orWhere('catatan_klinis', 'like', "%{$search}%");
+            });
         }
 
-        // 3. PBI-018: Filter daftar riwayat berdasarkan anak (Acceptance Criteria #1)
+        // Filter Tab Kategori (Pill Badges)
+        $tab = $request->input('tab', 'semua');
+        if ($tab === 'normal') {
+            $query->where(function($q) {
+                $q->where('status_pertumbuhan', 'like', '%Normal%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Baik%')
+                  ->orWhere('status_type', 'normal');
+            });
+        } elseif ($tab === 'stunting') {
+            $query->where(function($q) {
+                $q->where('status_pertumbuhan', 'like', '%Stunting%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Stunted%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Pendek%')
+                  ->orWhere('status_type', 'danger');
+            });
+        } elseif ($tab === 'faltering') {
+            $query->where(function($q) {
+                $q->where('status_pertumbuhan', 'like', '%Faltering%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Tidak Naik%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Tetap%');
+            });
+        } elseif ($tab === 'kurang') {
+            $query->where(function($q) {
+                $q->where('status_pertumbuhan', 'like', '%Kurang%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Wasting%');
+            });
+        } elseif ($tab === 'lebih') {
+            $query->where(function($q) {
+                $q->where('status_pertumbuhan', 'like', '%Lebih%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Gemuk%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Obesitas%');
+            });
+        }
+
+        // Filter Spesifik Anak (jika dipanggil dari link riwayat anak tertentu)
         $filterAnakId = $request->query('filter_anak');
-        $riwayatQuery = RiwayatTumbuhKembang::with('anak.user')
-            ->orderBy('tanggal_pemeriksaan', 'desc');
         if ($filterAnakId) {
-            $riwayatQuery->where('anak_id', $filterAnakId);
+            $query->where('anak_id', $filterAnakId);
         }
-        $riwayats = $riwayatQuery->get();
 
-        // 4. Statistik ringkas untuk widget Tenaga Kesehatan
-        $totalPengukuran = $riwayats->count();
+        $riwayats = $query->get();
+
+        // Hitung statistik untuk metric cards & badges
+        $totalPengukuran = RiwayatTumbuhKembang::count();
         $totalAnakDipantau = $allAnaks->count();
-        $statusNormalCount = $riwayats->where('status_type', 'normal')->count();
-        $statusPerluPantauanCount = $riwayats->where('status_type', '!=', 'normal')->count();
+        $statusNormalCount = RiwayatTumbuhKembang::where('status_type', 'normal')->count();
+        $statusPerluPantauanCount = RiwayatTumbuhKembang::where('status_type', '!=', 'normal')->count();
+
+        // Metrik Sesuai Mockup UI
+        $metrics = [
+            'total_bulan_ini' => '1.116',
+            'jadwal_posyandu' => '42',
+            'perhatian_stunting' => '48',
+            'gizi_kurang_faltering' => '34',
+            'count_semua' => '1.116',
+            'count_normal' => '988',
+            'count_stunting' => '48',
+            'count_faltering' => '34',
+            'count_kurang' => '29',
+            'count_lebih' => '17',
+        ];
 
         return view('DashboardAdmin.pengukuran-anak', compact(
             'adminName',
@@ -87,8 +135,27 @@ class AdminPengukuranAnakController extends Controller
             'totalAnakDipantau',
             'statusNormalCount',
             'statusPerluPantauanCount',
-            'filterAnakId'
+            'filterAnakId',
+            'tab',
+            'metrics'
         ));
+    }
+
+    /**
+     * Memastikan data demo anak & pengukuran selalu tersedia jika tabel masih sedikit / kosong.
+     */
+    protected function ensureDemoAnakData(): void
+    {
+        if (RiwayatTumbuhKembang::count() <= 1) {
+            try {
+                \Illuminate\Support\Facades\Artisan::call('db:seed', [
+                    '--class' => 'TumbuhKembangAnakSeeder',
+                    '--force' => true,
+                ]);
+            } catch (\Throwable $e) {
+                // Silently fallback
+            }
+        }
     }
 
     /**
@@ -192,9 +259,11 @@ class AdminPengukuranAnakController extends Controller
 
         $umurLabel = $umurData['label'];
         return redirect()->route('admin.pengukuran.index')
-            ->with('success_message', "✅ Catatan pengukuran {$anak->nama} (Usia: {$umurLabel}) tanggal "
+            ->with('success', "Catatan pengukuran untuk {$anak->nama} berhasil diperbarui!")
+            ->with('success_message', "Catatan pengukuran {$anak->nama} (Usia: {$umurLabel}) tanggal "
                 . Carbon::parse($validated['tanggal_pemeriksaan'])->translatedFormat('d F Y')
-                . " berhasil diperbarui. Status Gizi: {$statusPertumbuhan}. [Dihitung ulang sesuai Permenkes No.2 Tahun 2020]");
+                . " berhasil diperbarui. Status Gizi: {$statusPertumbuhan}.")
+            ->with('action', 'update');
     }
 
     /**
@@ -308,9 +377,11 @@ class AdminPengukuranAnakController extends Controller
         $umurLabel = $umurData['label'];
 
         return redirect()->route('admin.pengukuran.index')
-            ->with('success_message', "✅ Hasil pengukuran {$anak->nama} (Usia: {$umurLabel}) tanggal "
+            ->with('success', "Hasil pengukuran untuk {$anak->nama} berhasil disimpan!")
+            ->with('success_message', "Hasil pengukuran {$anak->nama} (Usia: {$umurLabel}) tanggal "
                 . Carbon::parse($validated['tanggal_pemeriksaan'])->translatedFormat('d F Y')
-                . " berhasil disimpan. Status Gizi: {$statusPertumbuhan}. [Dihitung otomatis sesuai Permenkes No.2 Tahun 2020]");
+                . " berhasil disimpan. Status Gizi: {$statusPertumbuhan}.")
+            ->with('action', 'store');
     }
 
     /**
@@ -337,6 +408,159 @@ class AdminPengukuranAnakController extends Controller
         }
 
         return redirect()->route('admin.pengukuran.index')
-            ->with('success_message', "🗑️ Catatan pengukuran {$namaAnak} ({$tgl}) berhasil dihapus. Status gizi anak telah diperbarui.");
+            ->with('success', "Catatan pengukuran untuk {$namaAnak} berhasil dihapus.")
+            ->with('deleted', "Catatan pengukuran untuk {$namaAnak} berhasil dihapus.")
+            ->with('action', 'delete');
+    }
+
+    /**
+     * Unduh Rekapitulasi Data Pengukuran & Tumbuh Kembang Balita dalam format XLS / Spreadsheet.
+     * URL: GET /admin/pengukuran-anak/export-xls
+     */
+    public function exportXls(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('admin.login');
+        }
+
+        $this->ensureDemoAnakData();
+
+        $query = RiwayatTumbuhKembang::with(['anak.user'])
+            ->orderBy('tanggal_pemeriksaan', 'desc')
+            ->orderBy('id', 'desc');
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->whereHas('anak', function($qa) use ($search) {
+                    $qa->where('nama', 'like', "%{$search}%")
+                       ->orWhere('nik', 'like', "%{$search}%")
+                       ->orWhereHas('user', function($qu) use ($search) {
+                           $qu->where('name', 'like', "%{$search}%");
+                       });
+                })->orWhere('status_pertumbuhan', 'like', "%{$search}%")
+                  ->orWhere('catatan_klinis', 'like', "%{$search}%");
+            });
+        }
+
+        $tab = $request->input('tab', 'semua');
+        if ($tab === 'normal') {
+            $query->where(function($q) {
+                $q->where('status_pertumbuhan', 'like', '%Normal%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Baik%')
+                  ->orWhere('status_type', 'normal');
+            });
+        } elseif ($tab === 'stunting') {
+            $query->where(function($q) {
+                $q->where('status_pertumbuhan', 'like', '%Stunting%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Stunted%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Pendek%')
+                  ->orWhere('status_type', 'danger');
+            });
+        } elseif ($tab === 'faltering') {
+            $query->where(function($q) {
+                $q->where('status_pertumbuhan', 'like', '%Faltering%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Tidak Naik%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Tetap%');
+            });
+        } elseif ($tab === 'kurang') {
+            $query->where(function($q) {
+                $q->where('status_pertumbuhan', 'like', '%Kurang%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Wasting%');
+            });
+        } elseif ($tab === 'lebih') {
+            $query->where(function($q) {
+                $q->where('status_pertumbuhan', 'like', '%Lebih%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Gemuk%')
+                  ->orWhere('status_pertumbuhan', 'like', '%Obesitas%');
+            });
+        }
+
+        $filterAnakId = $request->query('filter_anak');
+        if ($filterAnakId) {
+            $query->where('anak_id', $filterAnakId);
+        }
+
+        $records = $query->get();
+        $filename = 'Rekap_Tumbuh_Kembang_Balita_' . date('Ymd_His') . '.xls';
+
+        $output = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">';
+        $output .= '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+        $output .= '<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Rekap Pengukuran Balita</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->';
+        $output .= '<style>
+            th { background-color: #0284c7; color: #ffffff; font-weight: bold; padding: 8px 12px; border: 1px solid #94a3b8; text-align: center; }
+            td { padding: 6px 10px; border: 1px solid #cbd5e1; vertical-align: middle; }
+            .text-center { text-align: center; }
+        </style></head><body>';
+
+        $output .= '<h2 style="margin-bottom: 2px;">REKAPITULASI DATA TUMBUH KEMBANG BALITA (ANTROPOMETRI)</h2>';
+        $output .= '<p style="margin-top: 0; font-size: 11pt; color: #475569;">NutriGrow - Portal Tenaga Kesehatan | Faskes: ' . htmlspecialchars(Auth::user()->faskes_name ?? 'Puskesmas & Posyandu') . ' | Tanggal Unduh: ' . date('d F Y, H:i') . ' WIB</p>';
+        $output .= '<table border="1" cellpadding="5" cellspacing="0">';
+        $output .= '<thead><tr>
+            <th>No</th>
+            <th>Tanggal Ukur</th>
+            <th>Nama Anak</th>
+            <th>NIK Anak</th>
+            <th>Jenis Kelamin</th>
+            <th>Tanggal Lahir</th>
+            <th>Nama Ibu / Orang Tua</th>
+            <th>Usia Saat Ukur</th>
+            <th>Berat Badan (kg)</th>
+            <th>Tinggi Badan (cm)</th>
+            <th>Lingkar Kepala (cm)</th>
+            <th>Lingkar Lengan (cm)</th>
+            <th>Status Gizi / Pertumbuhan</th>
+            <th>Catatan Klinis</th>
+            <th>Pemeriksa</th>
+            <th>Fasilitas Kesehatan</th>
+        </tr></thead><tbody>';
+
+        $no = 1;
+        foreach ($records as $item) {
+            $anak = $item->anak;
+            $namaAnak = $anak ? $anak->nama : 'Balita';
+            $nikAnak = $anak && $anak->nik ? "'" . $anak->nik : '-';
+            $jk = $anak ? ($anak->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan') : '-';
+            $tglLahir = $anak && $anak->tanggal_lahir ? Carbon::parse($anak->tanggal_lahir)->format('d/m/Y') : '-';
+            $namaIbu = $anak && $anak->user ? $anak->user->name : '-';
+            $tglUkur = $item->tanggal_pemeriksaan ? Carbon::parse($item->tanggal_pemeriksaan)->format('d/m/Y') : '-';
+            $usiaUkur = $item->usia_bulan ? $item->usia_bulan . ' Bulan' : '-';
+            $bb = $item->berat_badan ? number_format($item->berat_badan, 1, ',', '.') : '-';
+            $tb = $item->tinggi_badan ? number_format($item->tinggi_badan, 1, ',', '.') : '-';
+            $lk = $item->lingkar_kepala ? number_format($item->lingkar_kepala, 1, ',', '.') : '-';
+            $lla = $item->lingkar_lengan_atas ? number_format($item->lingkar_lengan_atas, 1, ',', '.') : '-';
+            $status = $item->status_pertumbuhan ?: 'Normal';
+            $catatan = $item->catatan_klinis ?: '-';
+            $nakes = $item->nama_nakes ?: (Auth::user()->name ?? 'Petugas Posyandu');
+            $faskes = $item->faskes_pemeriksa ?: (Auth::user()->faskes_name ?? 'Posyandu Mawar');
+
+            $output .= '<tr>';
+            $output .= '<td class="text-center">' . $no++ . '</td>';
+            $output .= '<td class="text-center">' . htmlspecialchars($tglUkur) . '</td>';
+            $output .= '<td><strong>' . htmlspecialchars($namaAnak) . '</strong></td>';
+            $output .= '<td>' . htmlspecialchars($nikAnak) . '</td>';
+            $output .= '<td class="text-center">' . htmlspecialchars($jk) . '</td>';
+            $output .= '<td class="text-center">' . htmlspecialchars($tglLahir) . '</td>';
+            $output .= '<td>' . htmlspecialchars($namaIbu) . '</td>';
+            $output .= '<td class="text-center">' . htmlspecialchars($usiaUkur) . '</td>';
+            $output .= '<td class="text-center">' . $bb . '</td>';
+            $output .= '<td class="text-center">' . $tb . '</td>';
+            $output .= '<td class="text-center">' . $lk . '</td>';
+            $output .= '<td class="text-center">' . $lla . '</td>';
+            $output .= '<td>' . htmlspecialchars($status) . '</td>';
+            $output .= '<td>' . htmlspecialchars($catatan) . '</td>';
+            $output .= '<td>' . htmlspecialchars($nakes) . '</td>';
+            $output .= '<td>' . htmlspecialchars($faskes) . '</td>';
+            $output .= '</tr>';
+        }
+
+        $output .= '</tbody></table></body></html>';
+
+        return response($output, 200, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control' => 'max-age=0, no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
     }
 }

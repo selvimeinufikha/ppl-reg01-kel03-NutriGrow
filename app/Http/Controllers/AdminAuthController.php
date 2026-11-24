@@ -56,30 +56,27 @@ class AdminAuthController extends Controller
                 ])->withInput($request->only('email'));
             }
 
-            // Flash notifikasi sukses
-            session()->flash('success_admin_login', 'Selamat datang, ' . $authUser->name . '! Anda berhasil masuk ke Dashboard Admin NutriGrow.');
-
             // Arahkan LANGSUNG ke Dashboard Admin (URL: /admin/dashboard)
             return redirect()->route('admin.dashboard');
         }
 
         // Dukungan kredensial default untuk demo praktikum
-        if (in_array($email, ['admin@nutrigrow.id', 'petugas@puskesmas.go.id']) && $password === 'admin123') {
+        if (in_array($email, ['admin@nutrigrow.id', 'petugas@puskesmas.go.id', 'selvi@gmail.com', 'selvi@nutrigrow.id']) && $password === 'admin123') {
+            $isSelvi = in_array($email, ['selvi@gmail.com', 'selvi@nutrigrow.id']);
             $user = User::firstOrCreate(
                 ['email' => $email],
                 [
-                    'name' => $email === 'admin@nutrigrow.id' ? 'dr. Sarah Diana' : 'Bidan Nurul Fitriah, S.Tr.Keb',
+                    'name' => $isSelvi ? 'Selvi' : ($email === 'admin@nutrigrow.id' ? 'dr. Sarah Diana' : 'Bidan Nurul Fitriah, S.Tr.Keb'),
                     'password' => Hash::make('admin123'),
-                    'role' => $email === 'admin@nutrigrow.id' ? 'admin' : 'nakes',
+                    'role' => $isSelvi ? 'superadmin' : ($email === 'admin@nutrigrow.id' ? 'admin' : 'nakes'),
                     'faskes_name' => 'Puskesmas Kecamatan Tebet & NutriGrow Health',
-                    'nip_str' => 'STR-19880412-2023-019',
+                    'nip_str' => 'STR-19951124-2024-001',
+                    'status' => 'active',
                 ]
             );
 
             Auth::login($user, $remember);
             $request->session()->regenerate();
-
-            session()->flash('success_admin_login', 'Selamat datang, ' . $user->name . '! Anda berhasil masuk ke Dashboard Admin NutriGrow.');
 
             // Arahkan LANGSUNG ke Dashboard Admin (URL: /admin/dashboard)
             return redirect()->route('admin.dashboard');

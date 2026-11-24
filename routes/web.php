@@ -184,10 +184,10 @@ Route::prefix('admin')->group(function () {
     Route::post('/reset-password', [AdminAuthController::class, 'resetPassword'])->name('admin.password.update');
 
     // ===================================================================
-    // Route yang hanya boleh diakses oleh Admin & Tenaga Kesehatan (Nakes)
+    // Route yang hanya boleh diakses oleh Admin & Tenaga Kesehatan (Nakes) serta Super Admin
     // PBI-016: Pemisahan akses berdasarkan role
     // ===================================================================
-    Route::middleware(['auth', 'role:admin,nakes'])->group(function () {
+    Route::middleware(['auth', 'role:admin,nakes,superadmin'])->group(function () {
         // Dashboard Admin (URL: /admin/dashboard)
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
@@ -231,6 +231,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/pemeriksaan-kehamilan', [AdminPemeriksaanKehamilanController::class, 'index'])->name('admin.pemeriksaan.index');
         Route::get('/data-pemeriksaan-kehamilan', [AdminPemeriksaanKehamilanController::class, 'index'])->name('admin.pemeriksaan.alias');
         Route::get('/pemeriksaan-kehamilan/create', [AdminPemeriksaanKehamilanController::class, 'create'])->name('admin.pemeriksaan.create');
+        Route::get('/pemeriksaan-kehamilan/export-xls', [AdminPemeriksaanKehamilanController::class, 'exportXls'])->name('admin.pemeriksaan.export');
         Route::post('/pemeriksaan-kehamilan', [AdminPemeriksaanKehamilanController::class, 'store'])->name('admin.pemeriksaan.store');
         Route::get('/pemeriksaan-kehamilan/pasien/{kehamilanId}', [AdminPemeriksaanKehamilanController::class, 'getPasienInfo'])->name('admin.pemeriksaan.pasien-info');
         Route::get('/pemeriksaan-kehamilan/{id}', [AdminPemeriksaanKehamilanController::class, 'show'])->name('admin.pemeriksaan.show');
@@ -243,6 +244,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/pengukuran-anak', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.index');
         Route::get('/tumbuh-kembang-anak', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.tumbuh-kembang');
         Route::get('/data-tumbuh-kembang', [AdminPengukuranAnakController::class, 'index'])->name('admin.pengukuran.alias');
+        Route::get('/pengukuran-anak/export-xls', [AdminPengukuranAnakController::class, 'exportXls'])->name('admin.pengukuran.export');
         Route::post('/pengukuran-anak', [AdminPengukuranAnakController::class, 'store'])->name('admin.pengukuran.store');
         // PBI-018: Edit & Update pengukuran
         Route::get('/pengukuran-anak/{id}/edit', [AdminPengukuranAnakController::class, 'edit'])->name('admin.pengukuran.edit');

@@ -38,6 +38,9 @@ class AdminPemeriksaanKehamilanController extends Controller
             ]);
         }
 
+        // Pastikan ketersediaan data pasien demo jika belum ada di database
+        $this->ensureDemoPatients();
+
         // Data Akun Petugas
         $adminName = $user->name ?: 'dr. Siti Nurhaliza, Sp.A';
         $adminEmail = $user->email;
@@ -169,22 +172,25 @@ class AdminPemeriksaanKehamilanController extends Controller
 
         // 5. Data Pasien Ibu Hamil Aktif untuk Formulir Pemilihan Pasien (Modal Tambah)
         $daftarIbuHamil = Kehamilan::with('ibu')
-            ->where('status', 'aktif')
+            ->whereIn('status', ['aktif', 'berlangsung'])
+            ->orWhereNull('status')
             ->get()
             ->map(function ($k) {
                 $ibu = $k->ibu;
                 $pemeriksaanTerakhir = $k->pemeriksaans()->first();
+                $gravida = $k->gravida ?: 'G1P0A0';
+                $hplFormatted = $k->hpl ? Carbon::parse($k->hpl)->translatedFormat('d M Y') : 'HPL Belum Ada';
                 return [
                     'kehamilan_id' => $k->id,
                     'user_id' => $k->user_id,
                     'nama' => $ibu ? $ibu->name : 'Ibu Hamil',
-                    'nik' => $ibu ? $ibu->nik : '-',
-                    'no_kia' => $ibu ? $ibu->no_kia : '-',
+                    'nik' => $ibu ? ($ibu->nik ?: '-') : '-',
+                    'no_kia' => $ibu ? ($ibu->no_kia ?: '-') : '-',
                     'usia' => $ibu ? $ibu->usia_tahun : null,
-                    'gravida' => $k->gravida ?: 'G1P0A0',
+                    'gravida' => $gravida,
                     'hpl' => $k->hpl ? Carbon::parse($k->hpl)->format('Y-m-d') : null,
-                    'hpl_formatted' => $k->hpl ? Carbon::parse($k->hpl)->translatedFormat('d M Y') : 'HPL Belum Ada',
-                    'gravida_hpl_label' => ($k->gravida ?: 'G1P0A0') . ' • HPL ' . ($k->hpl ? Carbon::parse($k->hpl)->translatedFormat('d M Y') : '-'),
+                    'hpl_formatted' => $hplFormatted,
+                    'gravida_hpl_label' => $gravida . ' • HPL ' . ($k->hpl ? Carbon::parse($k->hpl)->translatedFormat('d M Y') : '-'),
                     'estimasi_gestasi' => $k->estimasi_gestasi_minggu,
                     'bb_terakhir' => $pemeriksaanTerakhir ? (float) $pemeriksaanTerakhir->berat_badan : ($k->berat_badan_pra_hamil ? (float) $k->berat_badan_pra_hamil : 55.0),
                     'lila_terakhir' => $pemeriksaanTerakhir ? (float) $pemeriksaanTerakhir->lila : ($k->lila_pra_hamil ? (float) $k->lila_pra_hamil : 24.0),
@@ -392,7 +398,9 @@ class AdminPemeriksaanKehamilanController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.pemeriksaan.index')->with('success', $pesanSukses);
+        return redirect()->route('admin.pemeriksaan.index')
+            ->with('success', $pesanSukses)
+            ->with('action', 'create');
     }
 
     /**
@@ -569,7 +577,9 @@ class AdminPemeriksaanKehamilanController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.pemeriksaan.index')->with('success', $pesanSukses);
+        return redirect()->route('admin.pemeriksaan.index')
+            ->with('success', $pesanSukses)
+            ->with('action', 'update');
     }
 
     /**
@@ -592,7 +602,173 @@ class AdminPemeriksaanKehamilanController extends Controller
         }
 
         return redirect()->route('admin.pemeriksaan.index')
-            ->with('success', $pesanSukses);
+            ->with('success', $pesanSukses)
+            ->with('action', 'delete');
+    }
+
+    /**
+     * Unduh Rekapitulasi Data Pemeriksaan Kehamilan dalam format XLS / Spreadsheet.
+     * URL: GET /admin/pemeriksaan-kehamilan/export-xls
+     */
+    public function exportXls(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('admin.login');
+        }
+
+        $this->ensureDemoPatients();
+
+        $query = PemeriksaanKehamilan::with(['ibu', 'kehamilan', 'nakes'])
+            ->orderBy('tgl_periksa', 'desc')
+            ->orderBy('id', 'desc');
+
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('ibu', function ($u) use ($search) {
+                    $u->where('name', 'like', "%{$search}%")
+                      ->orWhere('nik', 'like', "%{$search}%")
+                      ->orWhere('no_kia', 'like', "%{$search}%");
+                })->orWhereHas('kehamilan', function ($k) use ($search) {
+                    $k->where('gravida', 'like', "%{$search}%");
+                })->orWhere('catatan_klinis', 'like', "%{$search}%");
+            });
+        }
+
+        $tab = $request->input('tab', 'semua');
+        if ($tab === 'kek') {
+            $query->whereIn('status_kek', ['risiko_kek', 'kek_berat']);
+        } elseif ($tab === 'anemia') {
+            $query->where('status_anemia', '!=', 'normal');
+        } elseif ($tab === 'normal') {
+            $query->where('status_kek', 'normal')->where('status_anemia', 'normal');
+        } elseif ($tab === 'trimester_1') {
+            $query->where('trimester', 1);
+        } elseif ($tab === 'trimester_2') {
+            $query->where('trimester', 2);
+        } elseif ($tab === 'trimester_3') {
+            $query->where('trimester', 3);
+        }
+
+        if ($filterRisiko = $request->input('filter_risiko')) {
+            if ($filterRisiko === 'kek') {
+                $query->whereIn('status_kek', ['risiko_kek', 'kek_berat']);
+            } elseif ($filterRisiko === 'anemia') {
+                $query->where('status_anemia', '!=', 'normal');
+            } elseif ($filterRisiko === 'normal') {
+                $query->where('status_kek', 'normal')->where('status_anemia', 'normal');
+            } elseif ($filterRisiko === 'hipertensi') {
+                $query->whereIn('status_tekanan_darah', ['pra_hipertensi', 'hipertensi']);
+            }
+        }
+
+        if ($selectedKehamilanId = $request->input('kehamilan_id')) {
+            $query->where('kehamilan_id', $selectedKehamilanId);
+        }
+
+        $records = $query->get();
+        $filename = 'Rekap_Pemeriksaan_Kehamilan_' . date('Ymd_His') . '.xls';
+
+        $output = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">';
+        $output .= '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+        $output .= '<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Rekap Pemeriksaan ANC</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->';
+        $output .= '<style>
+            th { background-color: #0284c7; color: #ffffff; font-weight: bold; padding: 8px 12px; border: 1px solid #94a3b8; text-align: center; }
+            td { padding: 6px 10px; border: 1px solid #cbd5e1; vertical-align: middle; }
+            .text-center { text-align: center; }
+        </style></head><body>';
+
+        $output .= '<h2 style="margin-bottom: 2px;">REKAPITULASI DATA PEMERIKSAAN KEHAMILAN (ANC)</h2>';
+        $output .= '<p style="margin-top: 0; font-size: 11pt; color: #475569;">NutriGrow - Portal Tenaga Kesehatan | Faskes: ' . htmlspecialchars(Auth::user()->faskes_name ?? 'Puskesmas Gambir') . ' | Tanggal Unduh: ' . date('d F Y, H:i') . ' WIB</p>';
+        $output .= '<table border="1" cellpadding="5" cellspacing="0">';
+        $output .= '<thead><tr>
+            <th>No</th>
+            <th>Tanggal Periksa</th>
+            <th>Nama Ibu Hamil</th>
+            <th>NIK</th>
+            <th>No. KIA</th>
+            <th>Status Gravida</th>
+            <th>Usia Gestasi</th>
+            <th>Trimester</th>
+            <th>Berat Badan (kg)</th>
+            <th>Tekanan Darah</th>
+            <th>LiLA (cm)</th>
+            <th>Status KEK</th>
+            <th>Hb (g/dL)</th>
+            <th>Status Anemia</th>
+            <th>TFU (cm)</th>
+            <th>DJJ (dpm)</th>
+            <th>Kesimpulan Risiko</th>
+            <th>Catatan &amp; Saran Klinis</th>
+            <th>Kontrol Berikutnya</th>
+            <th>Pemeriksa</th>
+            <th>Fasilitas Kesehatan</th>
+        </tr></thead><tbody>';
+
+        $no = 1;
+        foreach ($records as $item) {
+            $ibuNama = $item->ibu ? $item->ibu->name : 'Ibu Hamil';
+            $ibuNik = $item->ibu && $item->ibu->nik ? "'" . $item->ibu->nik : '-';
+            $noKia = $item->ibu && $item->ibu->no_kia ? "'" . $item->ibu->no_kia : '-';
+            $gravida = $item->kehamilan ? $item->kehamilan->gravida : '-';
+            $tglPeriksa = $item->tgl_periksa ? $item->tgl_periksa->format('d/m/Y') : '-';
+            $kontrolBerikutnya = $item->tgl_kontrol_berikutnya ? $item->tgl_kontrol_berikutnya->format('d/m/Y') : '-';
+            $nakesNama = $item->nakes ? $item->nakes->name : (Auth::user()->name ?? 'Bidan Puskesmas');
+            $faskes = $item->nakes && $item->nakes->faskes_name ? $item->nakes->faskes_name : (Auth::user()->faskes_name ?? 'Puskesmas');
+
+            $statusKekLabel = $item->status_kek === 'normal' ? 'Normal (Nutrisi Cukup)' : 'Risiko KEK (LiLA < 23.5 cm)';
+            $statusAnemiaLabel = $item->status_anemia === 'normal' ? 'Normal' : 'Anemia (Hb < 11.0 g/dL)';
+
+            $output .= '<tr>';
+            $output .= '<td class="text-center">' . $no++ . '</td>';
+            $output .= '<td class="text-center">' . htmlspecialchars($tglPeriksa) . '</td>';
+            $output .= '<td><strong>' . htmlspecialchars($ibuNama) . '</strong></td>';
+            $output .= '<td>' . htmlspecialchars($ibuNik) . '</td>';
+            $output .= '<td>' . htmlspecialchars($noKia) . '</td>';
+            $output .= '<td class="text-center">' . htmlspecialchars($gravida) . '</td>';
+            $output .= '<td class="text-center">' . $item->usia_gestasi_minggu . ' Minggu</td>';
+            $output .= '<td class="text-center">Trimester ' . $item->trimester . '</td>';
+            $output .= '<td class="text-center">' . number_format($item->berat_badan, 1, ',', '.') . '</td>';
+            $output .= '<td class="text-center">' . htmlspecialchars($item->tekanan_darah ?: '-') . '</td>';
+            $output .= '<td class="text-center">' . number_format($item->lila, 1, ',', '.') . '</td>';
+            $output .= '<td>' . htmlspecialchars($statusKekLabel) . '</td>';
+            $output .= '<td class="text-center">' . number_format($item->hb, 1, ',', '.') . '</td>';
+            $output .= '<td>' . htmlspecialchars($statusAnemiaLabel) . '</td>';
+            $output .= '<td class="text-center">' . ($item->tfu ? number_format($item->tfu, 1, ',', '.') : '-') . '</td>';
+            $output .= '<td class="text-center">' . ($item->djj ? $item->djj . ' dpm' : '-') . '</td>';
+            $output .= '<td>' . htmlspecialchars($item->kesimpulan_risiko ?: 'Normal') . '</td>';
+            $output .= '<td>' . htmlspecialchars($item->catatan_klinis ?: '-') . '</td>';
+            $output .= '<td class="text-center">' . htmlspecialchars($kontrolBerikutnya) . '</td>';
+            $output .= '<td>' . htmlspecialchars($nakesNama) . '</td>';
+            $output .= '<td>' . htmlspecialchars($faskes) . '</td>';
+            $output .= '</tr>';
+        }
+
+        $output .= '</tbody></table></body></html>';
+
+        return response($output, 200, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control' => 'max-age=0, no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
+    }
+
+    /**
+     * Memastikan data demo pasien ibu hamil selalu tersedia untuk kelancaran pengujian form pemeriksaan.
+     */
+    protected function ensureDemoPatients(): void
+    {
+        if (Kehamilan::count() <= 1) {
+            try {
+                \Illuminate\Support\Facades\Artisan::call('db:seed', [
+                    '--class' => 'PemeriksaanKehamilanSeeder',
+                    '--force' => true,
+                ]);
+            } catch (\Throwable $e) {
+                // Silently fallback if seeding fails
+            }
+        }
     }
 }
 

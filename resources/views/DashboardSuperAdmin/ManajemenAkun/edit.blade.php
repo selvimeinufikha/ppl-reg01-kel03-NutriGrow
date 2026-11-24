@@ -67,52 +67,8 @@
 
     <div class="min-h-screen flex flex-col lg:flex-row">
 
-        <!-- SIDEBAR -->
-        <aside id="adminSidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] xl:w-[275px] bg-white border-r border-slate-200 flex flex-col justify-between py-5 px-4 shrink-0 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto transition-transform duration-300 ease-in-out">
-            <div>
-                <div class="px-2 mb-4">
-                    <a href="{{ route('admin.dashboard') }}" class="block">
-                        <img src="{{ asset('images/nutrigrow-logo.png') }}" alt="NutriGrow" class="h-7 sm:h-8 w-auto object-contain">
-                        <div class="text-[9.5px] font-black uppercase tracking-widest text-[#e11d48] mt-1">
-                            PORTAL ADMIN
-                            <span class="block text-[8px] tracking-wider text-slate-400 font-semibold">TENAGA KESEHATAN</span>
-                        </div>
-                    </a>
-                </div>
-
-                <nav class="space-y-1 text-xs font-semibold">
-                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        <span>Dashboard Admin</span>
-                    </a>
-                    <a href="{{ route('admin.fasilitas.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                        <span>Fasilitas Kesehatan</span>
-                    </a>
-                    <a href="{{ route('admin.edukasi.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                        <span>Edukasi Gizi &amp; KIA</span>
-                    </a>
-                    <!-- ACTIVE MENU: MANAJEMEN AKUN ADMIN - PINK -->
-                    <a href="{{ route('admin.akun.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-xs font-bold transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        <span>Manajemen Akun Admin</span>
-                    </a>
-                </nav>
-            </div>
-
-            <div class="pt-4 border-t border-slate-100 px-2 space-y-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-pink-100 text-[#e11d48] font-bold text-xs flex items-center justify-center">
-                        {{ strtoupper(substr($adminName, 0, 2)) }}
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-xs font-bold text-slate-800 truncate">{{ $adminName }}</p>
-                        <p class="text-[10px] text-slate-400 truncate">{{ $adminRole }}</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
+        <!-- SIDEBAR NAVIGASI TERPUSAT -->
+        @include('components.admin-sidebar', ['active' => 'manajemen-akun'])
 
         <!-- MAIN CONTENT -->
         <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
@@ -120,9 +76,9 @@
             <!-- Top Header -->
             <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-30">
                 <div class="flex items-center gap-2 text-xs text-slate-400">
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-rose-600 transition">Portal Admin</a>
+                    <a href="{{ route('admin.dashboard') }}" class="hover:text-sky-600 transition">Portal Admin</a>
                     <span>/</span>
-                    <a href="{{ route('admin.akun.index') }}" class="hover:text-rose-600 transition">Manajemen Akun</a>
+                    <a href="{{ route('admin.akun.index') }}" class="hover:text-sky-600 transition">Manajemen Akun</a>
                     <span>/</span>
                     <span class="text-slate-800 font-bold">Ubah Hak Akses &amp; Status (PBI-029)</span>
                 </div>
@@ -134,15 +90,15 @@
 
             <div class="p-6 md:p-8 max-w-5xl w-full mx-auto space-y-6">
 
-                <!-- Banner Header - PINK ACCENT -->
-                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-rose-600 via-rose-700 to-pink-800 p-6 md:p-8 text-white shadow-lg shadow-pink-600/15">
+                <!-- Banner Header - BIRU ACCENT -->
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-sky-600 via-sky-700 to-blue-800 p-6 md:p-8 text-white shadow-lg shadow-sky-600/15">
                     <div class="relative z-10 max-w-2xl space-y-2">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-[11px] font-bold text-white">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                             PBI-029: Mengelola Akun dan Hak Akses Administrator
                         </span>
                         <h1 class="text-xl md:text-2xl font-black tracking-tight">Ubah Hak Akses &amp; Status Akun Administrator</h1>
-                        <p class="text-xs md:text-sm text-pink-100 leading-relaxed">
+                        <p class="text-xs md:text-sm text-sky-100 leading-relaxed">
                             Perbarui peran akses klinis atau ubah status keaktifan akun petugas <strong>{{ $target->name }}</strong> agar kontrol otoritas sistem NutriGrow tetap terjaga.
                         </p>
                     </div>
@@ -172,8 +128,8 @@
 
                             <!-- SECTION 1: PROFIL & IDENTITAS -->
                             <div>
-                                <h3 class="text-xs font-bold uppercase tracking-wider text-rose-700 mb-4 flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full bg-rose-600"></span>
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-sky-700 mb-4 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-sky-600"></span>
                                     <span>Identitas Petugas / Nakes</span>
                                 </h3>
 
@@ -182,7 +138,7 @@
                                         <label for="name" class="block text-xs font-bold text-slate-700 mb-1.5">
                                             Nama Lengkap &amp; Gelar
                                         </label>
-                                        <input type="text" id="name" name="name" value="{{ old('name', $target->name) }}" required oninput="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition">
+                                        <input type="text" id="name" name="name" value="{{ old('name', $target->name) }}" required oninput="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition">
                                     </div>
 
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -197,7 +153,7 @@
                                             <label for="phone" class="block text-xs font-bold text-slate-700 mb-1.5">
                                                 No. Telepon / WhatsApp
                                             </label>
-                                            <input type="tel" id="phone" name="phone" value="{{ old('phone', $target->phone) }}" placeholder="Contoh: 081298765432" oninput="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition font-mono">
+                                            <input type="tel" id="phone" name="phone" value="{{ old('phone', $target->phone) }}" placeholder="Contoh: 081298765432" oninput="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition font-mono">
                                         </div>
                                     </div>
 
@@ -206,14 +162,14 @@
                                             <label for="nip_str" class="block text-xs font-bold text-slate-700 mb-1.5">
                                                 Nomor Induk Pegawai (NIP) / Nomor STR
                                             </label>
-                                            <input type="text" id="nip_str" name="nip_str" value="{{ old('nip_str', $target->nip_str) }}" placeholder="Contoh: STR-19880412-2023-019" oninput="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition font-mono">
+                                            <input type="text" id="nip_str" name="nip_str" value="{{ old('nip_str', $target->nip_str) }}" placeholder="Contoh: STR-19880412-2023-019" oninput="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition font-mono">
                                         </div>
 
                                         <div>
                                             <label for="jabatan" class="block text-xs font-bold text-slate-700 mb-1.5">
                                                 Jabatan Struktural / Fungsional
                                             </label>
-                                            <input type="text" id="jabatan" name="jabatan" value="{{ old('jabatan', $target->jabatan) }}" placeholder="Contoh: Bidan Koordinator / Kepala Poli KIA" oninput="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition">
+                                            <input type="text" id="jabatan" name="jabatan" value="{{ old('jabatan', $target->jabatan) }}" placeholder="Contoh: Bidan Koordinator / Kepala Poli KIA" oninput="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition">
                                         </div>
                                     </div>
                                 </div>
@@ -221,8 +177,8 @@
 
                             <!-- SECTION 2: HAK AKSES & FASILITAS KESEHATAN (PBI-029 INTI) -->
                             <div>
-                                <h3 class="text-xs font-bold uppercase tracking-wider text-rose-700 mb-4 flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full bg-rose-600"></span>
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-sky-700 mb-4 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-sky-600"></span>
                                     <span>Hak Akses &amp; Penugasan Fasilitas Kesehatan (PBI-029)</span>
                                 </h3>
 
@@ -231,7 +187,7 @@
                                         <label for="role" class="block text-xs font-bold text-slate-700 mb-1.5">
                                             Peran / Hak Akses Sistem <span class="text-rose-500">*</span>
                                         </label>
-                                        <select id="role" name="role" required onchange="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition font-semibold text-slate-800">
+                                        <select id="role" name="role" required onchange="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition font-semibold text-slate-800">
                                             <option value="admin" {{ old('role', $target->role) === 'admin' ? 'selected' : '' }}>Administrator Faskes / Puskesmas</option>
                                             <option value="dokter" {{ old('role', $target->role) === 'dokter' ? 'selected' : '' }}>Dokter Spesialis Anak / Umum</option>
                                             <option value="bidan" {{ old('role', $target->role) === 'bidan' ? 'selected' : '' }}>Bidan Koordinator KIA</option>
@@ -244,7 +200,7 @@
                                         <label for="faskes_name" class="block text-xs font-bold text-slate-700 mb-1.5">
                                             Fasilitas Kesehatan Penugasan <span class="text-rose-500">*</span>
                                         </label>
-                                        <input type="text" id="faskes_name" name="faskes_name" list="faskesList" value="{{ old('faskes_name', $target->faskes_name) }}" required placeholder="Pilih atau ketik nama faskes..." oninput="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition">
+                                        <input type="text" id="faskes_name" name="faskes_name" list="faskesList" value="{{ old('faskes_name', $target->faskes_name) }}" required placeholder="Pilih atau ketik nama faskes..." oninput="updateAdminPreview()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition">
                                         <datalist id="faskesList">
                                             @foreach ($daftarFaskes ?? ['Puskesmas Gambir', 'Puskesmas Menteng', 'RSUD Tarakan Jakarta', 'RSIA Bunda Sehat'] as $f)
                                                 <option value="{{ $f }}"></option>
@@ -256,12 +212,12 @@
 
                             <!-- SECTION 3: STATUS AKUN (PBI-029 INTI) -->
                             <div>
-                                <h3 class="text-xs font-bold uppercase tracking-wider text-rose-700 mb-4 flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full bg-rose-600"></span>
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-sky-700 mb-4 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-sky-600"></span>
                                     <span>Status Keaktifan Akun (PBI-029)</span>
                                 </h3>
 
-                                <div class="p-4 rounded-2xl bg-pink-50/60 border border-pink-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div class="p-4 rounded-2xl bg-slate-50/60 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                     <div>
                                         <p class="font-bold text-xs text-slate-900">Kontrol Status Akses Login</p>
                                         <p class="text-[11px] text-slate-500">Akun nonaktif tidak akan dapat masuk ke portal tenaga kesehatan NutriGrow.</p>
@@ -272,20 +228,20 @@
                                             <input type="radio" name="status" value="active" {{ old('status', $target->status) === 'active' ? 'checked' : '' }} onchange="updateAdminPreview()" class="text-emerald-600 focus:ring-emerald-500">
                                             <span class="text-emerald-700">Aktif</span>
                                         </label>
-                                        <label class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 cursor-pointer hover:border-rose-300 transition">
-                                            <input type="radio" name="status" value="inactive" {{ old('status', $target->status) === 'inactive' ? 'checked' : '' }} onchange="updateAdminPreview()" class="text-rose-600 focus:ring-rose-500">
-                                            <span class="text-rose-700">Nonaktif</span>
+                                        <label class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 cursor-pointer hover:border-slate-300 transition">
+                                            <input type="radio" name="status" value="inactive" {{ old('status', $target->status) === 'inactive' ? 'checked' : '' }} onchange="updateAdminPreview()" class="text-slate-600 focus:ring-slate-500">
+                                            <span class="text-slate-700">Nonaktif</span>
                                         </label>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- BUTTON AKSI - PINK GRADIENT -->
+                            <!-- BUTTON AKSI - BIRU GRADIENT -->
                             <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
                                 <a href="{{ route('admin.akun.index') }}" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold transition">
                                     Batal
                                 </a>
-                                <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold text-xs shadow-md shadow-pink-600/20 hover:shadow-lg transition flex items-center gap-2 cursor-pointer">
+                                <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white font-bold text-xs shadow-md shadow-sky-600/20 hover:shadow-lg transition flex items-center gap-2 cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                                     <span>Simpan Perubahan Hak Akses</span>
                                 </button>
@@ -294,28 +250,28 @@
                         </form>
                     </div>
 
-                    <!-- Live Preview Card (1 col) - PINK -->
+                    <!-- Live Preview Card (1 col) - BIRU -->
                     <div class="space-y-4">
                         <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs">
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Pratinjau Hasil Perubahan</h3>
-                                <span class="px-2 py-0.5 rounded-full bg-pink-50 text-rose-700 text-[10px] font-bold">Preview Live</span>
+                                <span class="px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 text-[10px] font-bold">Preview Live</span>
                             </div>
 
-                            <div class="p-5 rounded-2xl bg-gradient-to-br from-pink-50/70 via-white to-rose-50/60 border border-pink-100 space-y-4">
+                            <div class="p-5 rounded-2xl bg-gradient-to-br from-sky-50/70 via-white to-blue-50/60 border border-sky-100 space-y-4">
                                 <div class="flex items-center gap-3">
-                                    <div id="previewAvatar" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-600 to-pink-600 text-white flex items-center justify-center font-black text-base shadow-sm">
+                                    <div id="previewAvatar" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-600 to-blue-700 text-white flex items-center justify-center font-black text-base shadow-sm">
                                         {{ $target->inisial }}
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <p id="previewName" class="font-black text-slate-900 text-sm truncate">{{ $target->name }}</p>
-                                        <span id="previewRoleBadge" class="inline-block mt-0.5 px-2.5 py-0.5 rounded-full bg-pink-100 text-rose-800 text-[10px] font-bold">
+                                        <span id="previewRoleBadge" class="inline-block mt-0.5 px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">
                                             {{ $target->role_label }}
                                         </span>
                                     </div>
                                 </div>
 
-                                <div class="space-y-2 text-xs border-t border-pink-100/70 pt-3">
+                                <div class="space-y-2 text-xs border-t border-sky-100/70 pt-3">
                                     <div class="flex justify-between items-center text-slate-500">
                                         <span>Status Akses:</span>
                                         <span id="previewStatus" class="font-bold text-emerald-600">{{ $target->status === 'inactive' ? 'Nonaktif' : 'Aktif' }}</span>

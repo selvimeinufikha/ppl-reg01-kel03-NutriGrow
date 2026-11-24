@@ -428,7 +428,10 @@ class AdminEdukasiGiziController extends Controller
 
         session()->put('admin_articles', $newArticles);
 
-        return redirect()->route('admin.edukasi.index')->with('success', 'Artikel berhasil dihapus dari sistem edukasi gizi.');
+        return redirect()->route('admin.edukasi.index')
+            ->with('success', 'Artikel berhasil dihapus dari sistem edukasi gizi.')
+            ->with('action', 'delete')
+            ->with('deleted', true);
     }
 
     /**
