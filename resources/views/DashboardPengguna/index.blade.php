@@ -98,17 +98,23 @@
                     DATA KELUARGA &amp; PROFIL
                 </span>
                 <nav class="space-y-1">
-                    <a href="{{ route('pasangan.index') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
+                    <a href="{{ Route::has('profil.index') ? route('profil.index') : '#profil' }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <span>Data Pasangan</span>
+                        <span>Profil Pengguna</span>
                     </a>
-                    <a href="#data-kehamilan" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
+                    <a href="{{ Route::has('kehamilan.index') ? route('kehamilan.index') : '#kehamilan' }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
                         <span>Data Kehamilan</span>
+                    </a>
+                    <a href="{{ Route::has('pasangan.index') ? route('pasangan.index') : '#data-pasangan' }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                        <span>Data Pasangan</span>
                     </a>
                     <a href="#data-anak" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -257,11 +263,15 @@
                 </div>
 
                 <!-- Profile Avatar -->
-                <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand-600 to-pink-500 text-white font-bold text-xs flex items-center justify-center shadow-xs">
-                        {{ strtoupper(substr($userName, 4, 1) ?: 'S') }}
-                    </div>
-                </div>
+                <a href="{{ route('profil.index') }}" class="flex items-center gap-2 hover:opacity-90 transition">
+                    @if (isset($user) && $user && $user->foto_profil_url)
+                        <img src="{{ $user->foto_profil_url }}" alt="{{ $userName }}" class="w-9 h-9 rounded-full object-cover ring-2 ring-pink-100 shadow-xs">
+                    @else
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand-600 to-pink-500 text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                            {{ strtoupper(substr($userName, 4, 1) ?: 'S') }}
+                        </div>
+                    @endif
+                </a>
             </div>
         </header>
 

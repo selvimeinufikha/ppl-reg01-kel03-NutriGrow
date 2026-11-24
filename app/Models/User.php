@@ -28,6 +28,14 @@ class User extends Authenticatable
         'phone',
         'status',
         'jabatan',
+        'no_telepon',
+        'alamat',
+        'kota',
+        'kecamatan',
+        'kelurahan',
+        'nik',
+        'tanggal_lahir',
+        'foto_profil',
     ];
 
     /**
@@ -50,6 +58,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'tanggal_lahir' => 'date',
         ];
     }
 
@@ -122,10 +131,64 @@ class User extends Authenticatable
     }
 
     /**
-     * Relasi ke data Pasangan milik pengguna ini.
+     * Relasi ke data Pasangan milik pengguna ini (hasMany).
      */
     public function pasangans()
     {
         return $this->hasMany(Pasangan::class);
+    }
+
+    /**
+     * Relasi ke data Pasangan (hasOne).
+     */
+    public function pasangan()
+    {
+        return $this->hasOne(Pasangan::class, 'user_id');
+    }
+
+    /**
+     * Relasi ke seluruh riwayat Kehamilan pengguna.
+     */
+    public function kehamilans()
+    {
+        return $this->hasMany(Kehamilan::class, 'user_id')->orderBy('kehamilan_ke', 'desc');
+    }
+
+    /**
+     * Relasi ke kehamilan aktif yang sedang berlangsung.
+     */
+    public function kehamilanAktif()
+    {
+        return $this->hasOne(Kehamilan::class, 'user_id')->where('status', 'berlangsung')->latestOfMany();
+    }
+
+    /**
+     * Rekomendasi fasilitas kesehatan berdasarkan acuan alamat profil pengguna.
+     */
+    public function getRekomendasiFaskesAttribute(): array
+    {
+        if (class_exists(\App\Services\HealthFacilityRecommendationService::class)) {
+            return \App\Services\HealthFacilityRecommendationService::getRekomendasi(
+                $this->alamat,
+                $this->kota,
+                $this->kecamatan
+            );
+        }
+        return [];
+    }
+
+    /**
+     * URL Foto Profil pengguna (terhubung dengan akun) atau null jika belum ada.
+     */
+    public function getFotoProfilUrlAttribute(): ?string
+    {
+        if ($this->foto_profil) {
+            if (str_starts_with($this->foto_profil, 'http')) {
+                return $this->foto_profil;
+            }
+            return asset('storage/' . $this->foto_profil);
+        }
+
+        return null;
     }
 }

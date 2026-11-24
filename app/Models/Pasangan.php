@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Pasangan extends Model
 {
@@ -16,10 +17,15 @@ class Pasangan extends Model
     protected $fillable = [
         'user_id',
         'nama',
+        'nama_lengkap',
+        'nik',
+        'tempat_lahir',
         'tanggal_lahir',
         'pekerjaan',
+        'no_telepon',
         'golongan_darah',
         'status_pasangan',
+        'hubungan',
     ];
 
     protected function casts(): array
@@ -30,11 +36,11 @@ class Pasangan extends Model
     }
 
     /**
-     * Relasi ke User (pemilik akun).
+     * Relasi ke User (pemilik akun / istri).
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -60,12 +66,20 @@ class Pasangan extends Model
      */
     public function getStatusLabelAttribute(): string
     {
-        return match ($this->status_pasangan) {
+        return match ($this->status_pasangan ?? $this->hubungan) {
             'suami'        => 'Suami',
             'istri'        => 'Istri',
             'calon_suami'  => 'Calon Suami',
             'calon_istri'  => 'Calon Istri',
-            default        => $this->status_pasangan,
+            default        => $this->status_pasangan ?? $this->hubungan ?? '-',
         };
+    }
+
+    /**
+     * Relasi ke seluruh riwayat kehamilan pasangan.
+     */
+    public function kehamilans(): HasMany
+    {
+        return $this->hasMany(Kehamilan::class, 'pasangan_id');
     }
 }

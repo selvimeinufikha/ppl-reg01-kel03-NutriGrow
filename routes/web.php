@@ -10,6 +10,8 @@ use App\Http\Controllers\AdminFasilitasKesehatanController;
 use App\Http\Controllers\AdminManajemenAkunController;
 use App\Http\Controllers\DashboardPenggunaController;
 use App\Http\Controllers\PasanganController;
+use App\Http\Controllers\KehamilanController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -145,3 +147,25 @@ Route::get('/admin/lupa-password', function () {
 Route::get('/dashboard-admin', function () {
     return redirect()->route('admin.dashboard');
 })->name('dashboard.admin');
+
+// Rute Data Kehamilan (PBI-004, PBI-005, PBI-006: Pencatatan, Usia Kehamilan, Trimester, Perbarui & Hapus)
+Route::prefix('data-kehamilan')->name('kehamilan.')->group(function () {
+    Route::get('/', [KehamilanController::class, 'index'])->name('index');
+    Route::get('/catat', [KehamilanController::class, 'create'])->name('create');
+    Route::post('/', [KehamilanController::class, 'store'])->name('store');
+    Route::post('/kalkulator', [KehamilanController::class, 'kalkulator'])->name('kalkulator');
+    Route::get('/kalkulator', [KehamilanController::class, 'kalkulator'])->name('kalkulator.get');
+    Route::get('/{id}', [KehamilanController::class, 'show'])->name('show');
+    Route::get('/{id}/edit', [KehamilanController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [KehamilanController::class, 'update'])->name('update');
+    Route::delete('/{id}', [KehamilanController::class, 'destroy'])->name('destroy');
+});
+
+// Rute Profil Pengguna (PBI-010: Kelola Profil Pengguna & PBI-011: Upload Foto Profil)
+Route::prefix('profil')->name('profil.')->group(function () {
+    Route::get('/', [ProfileController::class, 'index'])->name('index');
+    Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+    Route::put('/', [ProfileController::class, 'update'])->name('update');
+    Route::post('/foto', [ProfileController::class, 'uploadFoto'])->name('foto.upload');
+    Route::delete('/foto', [ProfileController::class, 'hapusFoto'])->name('foto.destroy');
+});

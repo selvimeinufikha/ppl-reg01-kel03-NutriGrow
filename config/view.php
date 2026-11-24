@@ -15,6 +15,12 @@ return [
 
     'paths' => [
         resource_path('views'),
+        resource_path('HomePages'),
+        resource_path('HalamanLogin'),
+        resource_path('DashboardPengguna'),
+        resource_path('DashboardAdmin'),
+        resource_path('DataKehamilan'),
+        resource_path(),
     ],
 
     /*
