@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kehamilan;
 use App\Models\Pasangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,11 @@ class PasanganController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('DataPasangan.index', compact('pasangans'));
+        $kehamilanAktif = Kehamilan::where('user_id', $user->id)
+            ->latest()
+            ->first();
+
+        return view('DataPasangan.index', compact('pasangans', 'kehamilanAktif', 'user'));
     }
 
     /**
