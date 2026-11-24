@@ -11,19 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pasangans', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('nama_lengkap');
-            $table->string('nik', 20)->nullable();
-            $table->string('tempat_lahir')->nullable();
-            $table->date('tanggal_lahir')->nullable();
-            $table->string('pekerjaan')->nullable();
-            $table->string('no_telepon', 20)->nullable();
-            $table->string('golongan_darah', 5)->nullable();
-            $table->string('hubungan', 50)->default('Suami'); // e.g. Suami / Calon Ayah
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('pasangans')) {
+            Schema::create('pasangans', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+                $table->string('nama')->nullable();
+                $table->string('nama_lengkap')->nullable();
+                $table->string('nik', 20)->nullable();
+                $table->string('tempat_lahir')->nullable();
+                $table->date('tanggal_lahir')->nullable();
+                $table->string('pekerjaan')->nullable();
+                $table->string('no_telepon', 20)->nullable();
+                $table->string('golongan_darah', 5)->nullable();
+                $table->string('status_pasangan', 30)->default('suami');
+                $table->string('hubungan', 50)->default('Suami');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

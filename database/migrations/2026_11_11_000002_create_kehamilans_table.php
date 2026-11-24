@@ -11,24 +11,47 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kehamilans', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('pasangan_id')->nullable()->constrained('pasangans')->nullOnDelete();
-            $table->unsignedInteger('kehamilan_ke')->default(1);
-            $table->date('hpht'); // Hari Pertama Haid Terakhir
-            $table->date('hpl')->nullable();  // Hari Perkiraan Lahir
-            $table->string('status', 30)->default('berlangsung'); // 'berlangsung', 'melahirkan', 'keguguran'
-            $table->string('gravida', 20)->nullable(); // e.g. G2P1A0
-            $table->date('tanggal_persalinan')->nullable();
-            $table->string('status_persalinan')->nullable(); // e.g. 'Aterm (Cukup Bulan)'
-            $table->string('nama_anak')->nullable(); // jika status sudah melahirkan
-            $table->decimal('tinggi_badan', 5, 2)->nullable(); // cm
-            $table->decimal('berat_badan_pra_hamil', 5, 2)->nullable(); // kg
-            $table->decimal('lila_pra_hamil', 4, 1)->nullable(); // cm
-            $table->text('catatan')->nullable(); // Catatan kondisi ibu / perkembangan
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('kehamilans')) {
+            Schema::create('kehamilans', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+                $table->foreignId('pasangan_id')->nullable()->constrained('pasangans')->nullOnDelete();
+                $table->unsignedInteger('kehamilan_ke')->default(1);
+                $table->date('hpht'); // Hari Pertama Haid Terakhir
+                $table->date('hpl')->nullable();  // Hari Perkiraan Lahir
+                $table->string('status', 30)->default('berlangsung'); // 'berlangsung', 'melahirkan', 'keguguran'
+                $table->string('gravida', 20)->nullable(); // e.g. G2P1A0
+                $table->date('tanggal_persalinan')->nullable();
+                $table->string('status_persalinan')->nullable(); // e.g. 'Aterm (Cukup Bulan)'
+                $table->string('nama_anak')->nullable(); // jika status sudah melahirkan
+                $table->decimal('tinggi_badan', 5, 2)->nullable(); // cm
+                $table->decimal('berat_badan_pra_hamil', 5, 2)->nullable(); // kg
+                $table->decimal('lila_pra_hamil', 4, 1)->nullable(); // cm
+                $table->text('catatan')->nullable(); // Catatan kondisi ibu / perkembangan
+                $table->timestamps();
+            });
+        } else {
+            Schema::table('kehamilans', function (Blueprint $table) {
+                if (!Schema::hasColumn('kehamilans', 'pasangan_id')) {
+                    $table->foreignId('pasangan_id')->nullable()->constrained('pasangans')->nullOnDelete();
+                }
+                if (!Schema::hasColumn('kehamilans', 'kehamilan_ke')) {
+                    $table->unsignedInteger('kehamilan_ke')->default(1);
+                }
+                if (!Schema::hasColumn('kehamilans', 'tanggal_persalinan')) {
+                    $table->date('tanggal_persalinan')->nullable();
+                }
+                if (!Schema::hasColumn('kehamilans', 'status_persalinan')) {
+                    $table->string('status_persalinan')->nullable();
+                }
+                if (!Schema::hasColumn('kehamilans', 'nama_anak')) {
+                    $table->string('nama_anak')->nullable();
+                }
+                if (!Schema::hasColumn('kehamilans', 'catatan')) {
+                    $table->text('catatan')->nullable();
+                }
+            });
+        }
     }
 
     /**
