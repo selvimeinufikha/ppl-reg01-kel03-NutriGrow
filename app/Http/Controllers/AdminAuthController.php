@@ -68,7 +68,7 @@ class AdminAuthController extends Controller
             $user = User::firstOrCreate(
                 ['email' => $email],
                 [
-                    'name' => $email === 'admin@nutrigrow.id' ? 'dr. Sarah Nakes (Admin Faskes)' : 'Bidan Nurul Fitriah, S.Tr.Keb',
+                    'name' => $email === 'admin@nutrigrow.id' ? 'dr. Sarah Diana' : 'Bidan Nurul Fitriah, S.Tr.Keb',
                     'password' => Hash::make('admin123'),
                     'role' => $email === 'admin@nutrigrow.id' ? 'admin' : 'nakes',
                     'faskes_name' => 'Puskesmas Kecamatan Tebet & NutriGrow Health',

@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@nutrigrow.id'],
             [
-                'name' => 'dr. Sarah Nakes (Admin Faskes)',
+                'name' => 'dr. Sarah Diana',
                 'password' => Hash::make('admin123'),
                 'role' => 'admin',
                 'faskes_name' => 'Puskesmas Kecamatan Tebet & NutriGrow Health',
@@ -201,7 +201,10 @@ class DatabaseSeeder extends Seeder
         if (class_exists(\Database\Seeders\DataAnakSeeder::class)) {
             $this->call(\Database\Seeders\DataAnakSeeder::class);
         }
-    }
-}
+
+        // 9. Data Direktori Fasilitas Kesehatan & Jejaring Rujukan Stunting
+        if (class_exists(\Database\Seeders\FasilitasKesehatanSeeder::class)) {
+            $this->call(\Database\Seeders\FasilitasKesehatanSeeder::class);
+        }
     }
 }

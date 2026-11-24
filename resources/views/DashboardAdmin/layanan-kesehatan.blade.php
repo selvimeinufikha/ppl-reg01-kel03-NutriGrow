@@ -91,23 +91,26 @@
         <!-- =============================================================== -->
         <!-- 1. SIDEBAR NAVIGASI (PORTAL ADMIN TENAGA KESEHATAN)             -->
         <!-- =============================================================== -->
-        <aside id="adminSidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] xl:w-[275px] bg-white border-r border-slate-200 flex flex-col justify-between py-5 px-4 shrink-0 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto transition-transform duration-300 ease-in-out">
-            <div>
+        <aside id="adminSidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] xl:w-[275px] border-r border-sky-200/80 shadow-xs flex flex-col justify-between py-4 px-3.5 shrink-0 transform -translate-x-full lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:max-h-screen lg:self-start lg:z-30 transition-transform duration-300 ease-in-out" style="background: linear-gradient(180deg, #e8f3fc 0%, #f1f7fd 35%, #e2eefa 70%, #d8e9f8 100%);">
+            <div class="overflow-y-auto no-scrollbar flex-1 flex flex-col min-h-0">
                 <!-- Brand Header -->
                 <div class="px-2 mb-4">
                     <a href="{{ route('admin.dashboard') }}" class="block">
                         <img src="{{ asset('images/nutrigrow-logo.png') }}" alt="NutriGrow" class="h-7 sm:h-8 w-auto object-contain">
                         <div class="text-[9.5px] font-black uppercase tracking-widest text-[#e11d48] mt-1">
-                            PORTAL ADMIN <span class="text-slate-400 font-normal">| TENAGA KESEHATAN</span>
+                            PORTAL ADMIN <span class="text-slate-500 font-normal">| TENAGA KESEHATAN</span>
                         </div>
                     </a>
 
                     <!-- Badge Nakes Terverifikasi -->
-                    <div class="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-700 text-[10px] font-bold">
-                        <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    <div class="mt-3.5 inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xs border border-sky-200/90 shadow-2xs w-full">
+                        <svg class="w-4 h-4 text-[#0284c7] shrink-0 ml-0.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
-                        <span>TENAGA KESEHATAN TERVERIFIKASI</span>
+                        <div class="text-[10px] font-extrabold tracking-tight text-[#0369a1] leading-tight">
+                            <div>TENAGA KESEHATAN</div>
+                            <div>TERVERIFIKASI</div>
+                        </div>
                     </div>
                 </div>
 
@@ -116,7 +119,7 @@
                     <!-- 1. Dashboard Admin -->
                     <a
                         href="{{ route('admin.dashboard') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
@@ -128,7 +131,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="showFeatureNotice('Data Pengguna')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -140,7 +143,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="showFeatureNotice('Data Pemeriksaan Kehamilan')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -152,7 +155,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="showFeatureNotice('Data Tumbuh Kembang Anak')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -163,7 +166,7 @@
                     <!-- 5. Data Edukasi Gizi -->
                     <a
                         href="{{ route('admin.edukasi.index') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
@@ -186,7 +189,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="showFeatureNotice('Data Informasi Nutrisi')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
@@ -196,7 +199,9 @@
 
                     <!-- 8. Manajemen Akun Admin -->
                     <a
-                        href="{{ route('admin.akun.index') }}"
+                    <!-- 8. Manajemen Akun Admin -->
+                    <a
+                        href="{{ Route::has('admin.akun.index') ? route('admin.akun.index') : 'javascript:void(0)' }}"
                         class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
                     >
                         <div class="flex items-center gap-3">
@@ -214,9 +219,9 @@
             </div>
 
             <!-- Footer Sidebar: Faskes Card & Logout -->
-            <div class="pt-4 border-t border-slate-100">
-                <div class="p-3 bg-slate-50 border border-slate-200/60 rounded-2xl mb-3 flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-[#0284c7] shadow-2xs shrink-0">
+            <div class="pt-3 border-t border-sky-200/60 shrink-0 space-y-2 mt-auto">
+                <div class="p-3 bg-white/85 backdrop-blur-xs border border-sky-200/80 rounded-2xl flex items-center gap-3 shadow-2xs">
+                    <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center text-[#0284c7] shadow-2xs shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                         </svg>
@@ -230,9 +235,9 @@
                 <button
                     type="button"
                     onclick="openLogoutModal()"
-                    class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-[#e11d48] hover:bg-rose-50 transition cursor-pointer"
+                    class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-white/70 hover:text-rose-700 transition cursor-pointer"
                 >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                     </svg>
                     <span>Keluar Portal</span>
@@ -246,43 +251,43 @@
         <main class="flex-1 min-w-0 flex flex-col min-h-screen">
 
             <!-- Top Header Bar -->
-            <header class="bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between sticky top-0 z-30">
+            <header class="bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sticky top-0 z-30">
                 <!-- Breadcrumbs -->
-                <div class="flex items-center gap-2 text-xs text-slate-400">
-                    <span class="hover:text-slate-600 transition">Portal Faskes</span>
-                    <svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-                    </svg>
-                    <span class="font-bold text-slate-800">Monitoring Klinis</span>
+                <div class="flex items-center gap-2 text-xs text-slate-500">
+                    <span class="font-medium text-slate-400">Portal Tenaga Kesehatan</span>
+                    <span>/</span>
+                    <span class="font-bold text-slate-800">Data Layanan Kesehatan</span>
                 </div>
 
-                <!-- Header Actions (Notifikasi & Profil) -->
+                <!-- Right Elements: Notifications, Profile Dropdown -->
                 <div class="flex items-center gap-3">
+                    <!-- Notification Bell -->
                     <button
                         type="button"
                         onclick="showToast('Notifikasi', '3 fasilitas kesehatan dalam peninjauan integrasi SatuSehat.')"
-                        class="relative p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+                        class="relative p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer"
                         title="Notifikasi"
                     >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                         </svg>
-                        <span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#e11d48] text-white text-[9.5px] font-black flex items-center justify-center">
-                            3
-                        </span>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
                     </button>
 
-                    <!-- Profile Pill -->
-                    <div class="flex items-center gap-2.5 pl-2 border-l border-slate-200">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0284c7] to-sky-400 text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <!-- User Profile Dropdown -->
+                    <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
+                        <div class="w-8 h-8 rounded-full bg-[#0284c7] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
                         </div>
-                        <div class="hidden sm:block text-left leading-tight">
-                            <div class="text-xs font-bold text-slate-800">{{ $adminName }}</div>
-                            <div class="text-[10px] font-medium text-slate-400">{{ $adminRole }}</div>
+                        <div class="hidden sm:block text-left">
+                            <p class="text-xs font-bold text-slate-800 leading-tight">{{ $adminName }}</p>
+                            <p class="text-[10px] text-slate-400 leading-tight">{{ $adminRole }}</p>
                         </div>
+                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                        </svg>
                     </div>
                 </div>
             </header>
@@ -290,34 +295,7 @@
             <!-- Page Body Content -->
             <div class="p-4 sm:p-6 lg:p-8 space-y-6">
 
-                <!-- Alert Feedback (Success / Error) -->
-                @if(session('success'))
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-2xl text-xs flex items-center justify-between shadow-xs">
-                    <div class="flex items-center gap-2.5">
-                        <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                        </svg>
-                        <span>{{ session('success') }}</span>
-                    </div>
-                    <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 cursor-pointer text-sm font-bold">&times;</button>
-                </div>
-                @endif
-
-                @if(isset($errors) && $errors->any())
-                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-2xl text-xs shadow-xs space-y-1">
-                    <div class="font-bold flex items-center gap-2">
-                        <svg class="w-4 h-4 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                        </svg>
-                        <span>Gagal Menyimpan Data Fasilitas Kesehatan:</span>
-                    </div>
-                    <ul class="list-disc pl-6 space-y-0.5 text-[11px] text-rose-700">
-                        @foreach($errors->all() as $err)
-                            <li>{{ $err }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif
+                <!-- Notifikasi Berhasil & Gagal ditampilkan dalam bentuk Modal Pop Up di tengah layar -->
 
                 <!-- =========================================================== -->
                 <!-- HEADER HALAMAN & TOMBOL AKSI                                -->
@@ -365,30 +343,7 @@
                     </div>
                 </div>
 
-                <!-- =========================================================== -->
-                <!-- BANNER SUMBER REKOMENDASI TERDEKAT (SESUAI MOCKUP)          -->
-                <!-- =========================================================== -->
-                <div class="p-4 sm:p-5 rounded-2xl bg-[#eef6ff] border border-sky-200/70 shadow-2xs flex items-start gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-white border border-sky-200 text-[#0284c7] flex items-center justify-center shrink-0 shadow-2xs">
-                        <svg class="w-5 h-5 text-[#0284c7]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <h3 class="text-xs sm:text-sm font-bold text-slate-900">
-                                Sumber Rekomendasi Terdekat Aplikasi NutriGrow Ibu &amp; Balita
-                            </h3>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-rose-100 text-[#e11d48] text-[10px] font-extrabold uppercase">
-                                SatuSehat Ready
-                            </span>
-                        </div>
-                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                            Data faskes di halaman ini merupakan rujukan utama yang dihitung berdasarkan radius GPS pada aplikasi pengguna. Digunakan saat ibu mencari jadwal penimbangan Posyandu, skrining gizi Puskesmas, maupun intervensi kegawatdaruratan stunting/KEK ke Rumah Sakit Rujukan.
-                        </p>
-                    </div>
-                </div>
+
 
                 <!-- =========================================================== -->
                 <!-- STATISTIK RINGKASAN (4 CARDS SESUAI MOCKUP)                 -->
@@ -742,7 +697,29 @@
                                 @empty
                                 <tr>
                                     <td colspan="8" class="text-center py-12 px-4 bg-slate-50/50">
-                                        <div class="max-w-sm mx-auto text-center">
+                                        <div class="max-w-md mx-auto text-center">
+                                            @if(($statistics['total_fasilitas']['val'] ?? '0') === '0' || ($statistics['total_fasilitas']['val'] ?? 0) == 0)
+                                            <div class="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284c7] mx-auto flex items-center justify-center mb-3 border border-sky-200/70 shadow-2xs">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                                </svg>
+                                            </div>
+                                            <h4 class="text-sm font-bold text-slate-800">Belum Ada Data Fasilitas Kesehatan</h4>
+                                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                                Tabel fasilitas kesehatan saat ini masih kosong. Silakan gunakan tombol di bawah untuk mulai input data fasilitas secara manual.
+                                            </p>
+                                            <button
+                                                type="button"
+                                                onclick="openAddFacilityModal()"
+                                                class="mt-3.5 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0284c7] hover:bg-sky-700 text-white text-xs font-bold transition cursor-pointer shadow-xs"
+                                            >
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <circle cx="12" cy="12" r="9"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8m-4-4h8"/>
+                                                </svg>
+                                                <span>Tambah Fasilitas Sekarang</span>
+                                            </button>
+                                            @else
                                             <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 mx-auto flex items-center justify-center mb-3 border border-amber-200/70 shadow-2xs">
                                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -761,6 +738,7 @@
                                                 </svg>
                                                 <span>Reset Pencarian &amp; Filter</span>
                                             </a>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -1338,6 +1316,74 @@
     </div>
 
     <!-- =================================================================== -->
+    <!-- MODAL POP UP SUKSES & ERROR (PERSIS MOCKUP REFERENSI)               -->
+    <!-- =================================================================== -->
+    @php
+        $hasFlashSuccess = session()->has('success');
+        $flashSuccessMsg = session('success');
+        $hasFlashError = session()->has('error') || (isset($errors) && $errors->any());
+        $flashErrorMsg = session('error') ?? ($hasFlashError && isset($errors) ? $errors->first() : '');
+    @endphp
+
+    <!-- 1. POP UP SUKSES (LINGKARAN HIJAU CENTANG PUTIH) -->
+    <div id="successModalPopup" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs {{ $hasFlashSuccess ? '' : 'hidden' }}">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-7 sm:p-8 shadow-2xl text-center border border-slate-100 transform transition-all duration-200">
+            <!-- Icon Lingkaran Hijau Centang Putih -->
+            <div class="w-16 h-16 rounded-full bg-[#22c55e] text-white mx-auto flex items-center justify-center mb-4 shadow-lg shadow-green-500/25">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            
+            <h3 id="successModalTitle" class="text-lg font-black text-[#22c55e] uppercase tracking-wider mb-2">
+                BERHASIL!
+            </h3>
+            
+            <p id="successModalMessage" class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6 font-medium">
+                {{ $flashSuccessMsg ?? 'Operasi data berhasil diproses oleh sistem.' }}
+            </p>
+            
+            <button
+                type="button"
+                id="successModalBtn"
+                onclick="closeSuccessModalPopup()"
+                class="w-full py-3 px-6 rounded-2xl bg-[#22c55e] hover:bg-[#16a34a] text-white font-extrabold text-xs sm:text-sm shadow-md hover:shadow-lg transition cursor-pointer active:scale-95"
+            >
+                Lanjutkan
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. POP UP ERROR (LINGKARAN MERAH TANDA SERU PUTIH) -->
+    <div id="errorModalPopup" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs {{ $hasFlashError ? '' : 'hidden' }}">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-7 sm:p-8 shadow-2xl text-center border border-slate-100 transform transition-all duration-200">
+            <!-- Icon Lingkaran Merah Tanda Seru Putih -->
+            <div class="w-16 h-16 rounded-full bg-[#ef4444] text-white mx-auto flex items-center justify-center mb-4 shadow-lg shadow-rose-500/25">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v5m0 4h.01"/>
+                </svg>
+            </div>
+            
+            <h3 id="errorModalTitle" class="text-lg font-black text-[#ef4444] uppercase tracking-wider mb-2">
+                GAGAL!
+            </h3>
+            
+            <p id="errorModalMessage" class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6 font-medium">
+                {{ $flashErrorMsg ?: 'Terjadi kesalahan saat memproses data. Silakan coba kembali.' }}
+            </p>
+            
+            <button
+                type="button"
+                id="errorModalBtn"
+                onclick="closeErrorModalPopup()"
+                class="w-full py-3 px-6 rounded-2xl bg-[#ef4444] hover:bg-rose-600 text-white font-extrabold text-xs sm:text-sm shadow-md hover:shadow-lg transition cursor-pointer active:scale-95"
+            >
+                Coba Lagi
+            </button>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
     <!-- TOAST NOTIFICATION CONTAINER                                        -->
     <!-- =================================================================== -->
     <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
@@ -1379,19 +1425,47 @@
             showToast(featureName, 'Modul ' + featureName + ' sedang dalam sinkronisasi faskes.');
         }
 
-        // Toast Helper
+        let successModalCallback = null;
+        let errorModalCallback = null;
+
+        // Modal Pop Up Helpers (Sesuai Mockup Referensi)
+        function showSuccessPopup(title = 'BERHASIL!', message = 'Operasi data berhasil diproses oleh sistem.', buttonText = 'Lanjutkan', callback = null) {
+            document.getElementById('successModalTitle').textContent = title;
+            document.getElementById('successModalMessage').textContent = message;
+            document.getElementById('successModalBtn').textContent = buttonText;
+            successModalCallback = callback;
+            document.getElementById('successModalPopup').classList.remove('hidden');
+        }
+
+        function closeSuccessModalPopup() {
+            document.getElementById('successModalPopup').classList.add('hidden');
+            if (typeof successModalCallback === 'function') {
+                const cb = successModalCallback;
+                successModalCallback = null;
+                cb();
+            }
+        }
+
+        function showErrorPopup(title = 'GAGAL!', message = 'Terjadi kesalahan saat memproses data. Silakan coba kembali.', buttonText = 'Coba Lagi', callback = null) {
+            document.getElementById('errorModalTitle').textContent = title;
+            document.getElementById('errorModalMessage').textContent = message;
+            document.getElementById('errorModalBtn').textContent = buttonText;
+            errorModalCallback = callback;
+            document.getElementById('errorModalPopup').classList.remove('hidden');
+        }
+
+        function closeErrorModalPopup() {
+            document.getElementById('errorModalPopup').classList.add('hidden');
+            if (typeof errorModalCallback === 'function') {
+                const cb = errorModalCallback;
+                errorModalCallback = null;
+                cb();
+            }
+        }
+
+        // Toast Helper (dialihkan ke Modal Pop Up Baru)
         function showToast(title, message) {
-            const toast = document.getElementById('toastNotification');
-            document.getElementById('toastTitle').textContent = title;
-            document.getElementById('toastMessage').textContent = message;
-
-            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-                toast.classList.remove('translate-y-0', 'opacity-100');
-            }, 3500);
+            showSuccessPopup(title || 'BERHASIL!', message || 'Pesan Anda berhasil diproses.');
         }
 
         // Modal Tambah Fasilitas

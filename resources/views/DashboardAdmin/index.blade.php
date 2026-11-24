@@ -91,24 +91,26 @@
         <!-- =============================================================== -->
         <!-- 1. SIDEBAR NAVIGASI (PERSIS SESUAI GAMBAR REFERENSI ADMIN)       -->
         <!-- =============================================================== -->
-        <aside id="adminSidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] xl:w-[275px] bg-white border-r border-slate-200 flex flex-col justify-between py-5 px-4 shrink-0 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto transition-transform duration-300 ease-in-out">
-            <div>
+        <aside id="adminSidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] xl:w-[275px] border-r border-sky-200/80 shadow-xs flex flex-col justify-between py-4 px-3.5 shrink-0 transform -translate-x-full lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:max-h-screen lg:self-start lg:z-30 transition-transform duration-300 ease-in-out" style="background: linear-gradient(180deg, #e8f3fc 0%, #f1f7fd 35%, #e2eefa 70%, #d8e9f8 100%);">
+            <div class="overflow-y-auto no-scrollbar flex-1 flex flex-col min-h-0">
                 <!-- Brand Header -->
                 <div class="px-2 mb-4">
                     <a href="{{ route('admin.dashboard') }}" class="block">
                         <img src="{{ asset('images/nutrigrow-logo.png') }}" alt="NutriGrow" class="h-7 sm:h-8 w-auto object-contain">
                         <div class="text-[9.5px] font-black uppercase tracking-widest text-[#e11d48] mt-1">
-                            PORTAL ADMIN
-                            <span class="block text-[8px] tracking-wider text-slate-400 font-semibold">TENAGA KESEHATAN</span>
+                            PORTAL ADMIN <span class="text-slate-500 font-normal">| TENAGA KESEHATAN</span>
                         </div>
                     </a>
 
-                    <!-- Verified Badge -->
-                    <div class="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-50 border border-sky-100/90 text-[10px] font-bold text-sky-700 tracking-tight w-full">
-                        <svg class="w-3.5 h-3.5 text-sky-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <!-- Verified Badge (Rounded Full with 2-line Text) -->
+                    <div class="mt-3.5 inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xs border border-sky-200/90 shadow-2xs w-full">
+                        <svg class="w-4 h-4 text-[#0284c7] shrink-0 ml-0.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
-                        <span>TENAGA KESEHATAN TERVERIFIKASI</span>
+                        <div class="text-[10px] font-extrabold tracking-tight text-[#0369a1] leading-tight">
+                            <div>TENAGA KESEHATAN</div>
+                            <div>TERVERIFIKASI</div>
+                        </div>
                     </div>
                 </div>
 
@@ -132,7 +134,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="showFeatureNotice('Data Pengguna')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -144,7 +146,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="switchTableTab('anc')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -154,7 +156,9 @@
 
                     <!-- 4. Data Tumbuh Kembang Anak (PBI-016) -->
                     <a
-                        href="{{ route('admin.pengukuran.index') }}"
+                    <!-- 4. Data Tumbuh Kembang Anak (PBI-016) -->
+                    <a
+                        href="{{ Route::has('admin.pengukuran.index') ? route('admin.pengukuran.index') : 'javascript:void(0)' }}"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -165,9 +169,8 @@
 
                     <!-- 5. Data Edukasi Gizi -->
                     <a
-                        href="javascript:void(0)"
-                        onclick="showFeatureNotice('Data Edukasi Gizi')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        href="{{ route('admin.edukasi.index') }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
@@ -178,7 +181,7 @@
                     <!-- 6. Data Layanan Kesehatan -->
                     <a
                         href="{{ route('admin.fasilitas.index') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
@@ -190,7 +193,7 @@
                     <a
                         href="javascript:void(0)"
                         onclick="showFeatureNotice('Data Informasi Nutrisi')"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
@@ -200,7 +203,7 @@
 
                     <!-- 8. Manajemen Akun Admin (SUPER - PBI-028) -->
                     <a
-                        href="{{ route('admin.akun.index') }}"
+                        href="{{ Route::has('admin.akun.index') ? route('admin.akun.index') : 'javascript:void(0)' }}"
                         class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition"
                     >
                         <div class="flex items-center gap-3">
@@ -218,10 +221,10 @@
             </div>
 
             <!-- Bottom Section of Sidebar -->
-            <div class="pt-4 border-t border-slate-100 space-y-3">
+            <div class="pt-3 border-t border-sky-200/60 shrink-0 space-y-2 mt-auto">
                 <!-- Faskes Card -->
-                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0 text-sky-600 shadow-2xs">
+                <div class="p-3 rounded-2xl bg-white/85 backdrop-blur-xs border border-sky-200/80 shadow-2xs flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0 text-sky-600 shadow-2xs">
                         <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                         </svg>
@@ -241,12 +244,12 @@
                     @csrf
                     <button
                         type="submit"
-                        class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                        class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-white/70 hover:text-rose-700 transition cursor-pointer"
                     >
-                        <span>Keluar Portal</span>
                         <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                         </svg>
+                        <span>Keluar Portal</span>
                     </button>
                 </form>
             </div>
@@ -288,7 +291,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
                         </div>
-                        <div class="hidden md:block text-left">
+                        <div class="hidden sm:block text-left">
                             <p class="text-xs font-bold text-slate-800 leading-tight">{{ $adminName }}</p>
                             <p class="text-[10px] text-slate-400 leading-tight">{{ $adminRole }}</p>
                         </div>
@@ -405,18 +408,35 @@
                             </button>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Unduh Laporan Action -->
-                    <button
-                        type="button"
-                        onclick="exportReport()"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 transition cursor-pointer"
-                    >
-                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                        </svg>
-                        <span>Unduh Laporan (PDF/XLS)</span>
-                    </button>
+                <!-- Welcome Hero Banner (Sesuai Mockup Desain Portal Admin) -->
+                <div class="relative rounded-3xl overflow-hidden border border-pink-100 shadow-sm min-h-[170px] sm:min-h-[190px] flex flex-col md:flex-row items-center justify-between px-6 sm:px-10 py-6" style="background: linear-gradient(90deg, #fcecee 0%, #fdeff2 35%, #fce9ee 60%, #fbd8e1 100%);">
+                    <!-- Left: Greetings & Subtitle -->
+                    <div class="z-10 py-1 max-w-md sm:max-w-lg">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-snug">
+                            Selamat Datang,<br>
+                            <span class="text-slate-900 font-black">{{ $adminName }}!</span>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-600 font-medium mt-2 leading-relaxed">
+                            Bersama kita wujudkan generasi sehat, bebas stunting.
+                        </p>
+                        <!-- Pink Doodle Heart Icon -->
+                        <div class="mt-3 text-pink-400">
+                            <svg class="w-6 h-6 transform -rotate-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Right: Posyandu Measurement Illustration Image -->
+                    <div class="relative md:absolute md:right-0 md:top-0 md:bottom-0 h-44 sm:h-52 md:h-full w-full md:w-auto flex items-center justify-end overflow-hidden pointer-events-none mt-4 md:mt-0">
+                        <img
+                            src="{{ asset('images/dashboard-banner-illustration.png') }}?v={{ filemtime(public_path('images/dashboard-banner-illustration.png')) }}"
+                            alt="Pemantauan Posyandu Tumbuh Kembang Sehat Bebas Stunting"
+                            class="h-full w-auto object-cover object-right"
+                        />
+                    </div>
                 </div>
 
                 <!-- =========================================================== -->
@@ -678,7 +698,7 @@
                                     <span>+32% Sem. II</span>
                                 </span>
                             </div>
-                            <p class="text-[11px] text-slate-400 mt-0.5">Kunjungan Posyandu Balita vs ANC Ibu Hamil (Mei - Okt 2025)</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Kunjungan Posyandu Balita vs ANC Ibu Hamil (Mei - Okt 2026)</p>
 
                             <!-- Smooth SVG Line Chart Graphic -->
                             <div class="w-full h-40 my-3 relative">
@@ -807,12 +827,12 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-100/80">
                                         @foreach ($recentChildren as $child)
-                                            <tr class="hover:bg-slate-50/60 transition group patient-row" data-name="{{ strtolower($child['nama']) }}">
+                                            <tr class="hover:bg-slate-50/60 transition group patient-row" data-name="{{ strtolower($child['nama']) }}" data-posyandu="{{ strtolower($child['sub_info']) }}" data-alert="{{ $child['is_alert'] ? '1' : '0' }}" data-badge="{{ $child['badge'] }}">
                                                 <td class="py-3 px-2">
                                                     <div class="flex items-center gap-1.5">
                                                         <span class="font-bold text-slate-800">{{ $child['nama'] }}</span>
                                                         @if ($child['is_alert'])
-                                                            <span class="w-2 h-2 rounded-full bg-rose-500 inline-block" title="Perlu Perhatian Khusus"></span>
+                                                             <span class="w-2 h-2 rounded-full bg-rose-500 inline-block" title="Perlu Perhatian Khusus"></span>
                                                         @endif
                                                     </div>
                                                     <span class="text-[10.5px] text-slate-400 font-normal block">{{ $child['sub_info'] }}</span>
@@ -862,6 +882,18 @@
                                                 </td>
                                             </tr>
                                         @endforeach
+                                        <tr id="emptyBalitaNotice" class="hidden">
+                                            <td colspan="5" class="py-8 text-center text-slate-400">
+                                                <svg class="w-8 h-8 mx-auto text-slate-300 mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                                <p class="font-bold text-slate-600 text-xs">Data Pasien Balita Tidak Ditemukan</p>
+                                                <p class="text-[11px] text-slate-400 mt-0.5">Tidak ada data yang sesuai dengan filter wilayah atau status yang dipilih.</p>
+                                                <button type="button" onclick="resetAllFilters()" class="mt-2.5 px-3 py-1 bg-sky-50 text-sky-700 hover:bg-sky-100 font-bold rounded-lg text-xs transition cursor-pointer">
+                                                    Reset Filter
+                                                </button>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
 
@@ -878,7 +910,7 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-100/80">
                                         @foreach ($recentPregnancies as $preg)
-                                            <tr class="hover:bg-slate-50/60 transition group patient-row" data-name="{{ strtolower($preg['nama']) }}">
+                                            <tr class="hover:bg-slate-50/60 transition group patient-row" data-name="{{ strtolower($preg['nama']) }}" data-posyandu="{{ strtolower($preg['sub_info']) }}" data-alert="{{ $preg['is_alert'] ? '1' : '0' }}" data-badge="{{ $preg['badge'] }}">
                                                 <td class="py-3 px-2">
                                                     <div class="flex items-center gap-1.5">
                                                         <span class="font-bold text-slate-800">{{ $preg['nama'] }}</span>
@@ -919,6 +951,18 @@
                                                 </td>
                                             </tr>
                                         @endforeach
+                                        <tr id="emptyAncNotice" class="hidden">
+                                            <td colspan="5" class="py-8 text-center text-slate-400">
+                                                <svg class="w-8 h-8 mx-auto text-slate-300 mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                                <p class="font-bold text-slate-600 text-xs">Data Pemeriksaan Kehamilan Tidak Ditemukan</p>
+                                                <p class="text-[11px] text-slate-400 mt-0.5">Tidak ada data yang sesuai dengan filter wilayah atau status yang dipilih.</p>
+                                                <button type="button" onclick="resetAllFilters()" class="mt-2.5 px-3 py-1 bg-sky-50 text-sky-700 hover:bg-sky-100 font-bold rounded-lg text-xs transition cursor-pointer">
+                                                    Reset Filter
+                                                </button>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -1043,7 +1087,7 @@
             <!-- Footer -->
             <footer class="mt-8 border-t border-slate-200/80 bg-white px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
                 <div>
-                    &copy; 2025 NutriGrow Health Platform &bull; Fasilitas Pelayanan Kesehatan {{ $faskesName }}
+                    &copy; 2026 NutriGrow Health Platform &bull; Fasilitas Pelayanan Kesehatan {{ $faskesName }}
                 </div>
                 <div class="flex items-center gap-2 text-[11px]">
                     <span class="inline-flex items-center gap-1 text-slate-600 font-semibold">
@@ -1151,6 +1195,74 @@
         </div>
     </div>
 
+    <!-- =================================================================== -->
+    <!-- MODAL POP UP SUKSES & ERROR (PERSIS MOCKUP REFERENSI)               -->
+    <!-- =================================================================== -->
+    @php
+        $hasFlashSuccess = session()->has('success') || session()->has('success_admin_login');
+        $flashSuccessMsg = session('success') ?? session('success_admin_login');
+        $hasFlashError = session()->has('error') || (isset($errors) && $errors->any());
+        $flashErrorMsg = session('error') ?? ($hasFlashError && isset($errors) ? $errors->first() : '');
+    @endphp
+
+    <!-- 1. POP UP SUKSES (LINGKARAN HIJAU CENTANG PUTIH) -->
+    <div id="successModalPopup" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs {{ $hasFlashSuccess ? '' : 'hidden' }}">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-7 sm:p-8 shadow-2xl text-center border border-slate-100 transform transition-all duration-200">
+            <!-- Icon Lingkaran Hijau Centang Putih -->
+            <div class="w-16 h-16 rounded-full bg-[#22c55e] text-white mx-auto flex items-center justify-center mb-4 shadow-lg shadow-green-500/25">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            
+            <h3 id="successModalTitle" class="text-lg font-black text-[#22c55e] uppercase tracking-wider mb-2">
+                BERHASIL!
+            </h3>
+            
+            <p id="successModalMessage" class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6 font-medium">
+                {{ $flashSuccessMsg ?? 'Operasi data berhasil diproses oleh sistem.' }}
+            </p>
+            
+            <button
+                type="button"
+                id="successModalBtn"
+                onclick="closeSuccessModalPopup()"
+                class="w-full py-3 px-6 rounded-2xl bg-[#22c55e] hover:bg-[#16a34a] text-white font-extrabold text-xs sm:text-sm shadow-md hover:shadow-lg transition cursor-pointer active:scale-95"
+            >
+                Lanjutkan
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. POP UP ERROR (LINGKARAN MERAH TANDA SERU PUTIH) -->
+    <div id="errorModalPopup" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs {{ $hasFlashError ? '' : 'hidden' }}">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-7 sm:p-8 shadow-2xl text-center border border-slate-100 transform transition-all duration-200">
+            <!-- Icon Lingkaran Merah Tanda Seru Putih -->
+            <div class="w-16 h-16 rounded-full bg-[#ef4444] text-white mx-auto flex items-center justify-center mb-4 shadow-lg shadow-rose-500/25">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v5m0 4h.01"/>
+                </svg>
+            </div>
+            
+            <h3 id="errorModalTitle" class="text-lg font-black text-[#ef4444] uppercase tracking-wider mb-2">
+                GAGAL!
+            </h3>
+            
+            <p id="errorModalMessage" class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6 font-medium">
+                {{ $flashErrorMsg ?: 'Terjadi kesalahan saat memproses data. Silakan coba kembali.' }}
+            </p>
+            
+            <button
+                type="button"
+                id="errorModalBtn"
+                onclick="closeErrorModalPopup()"
+                class="w-full py-3 px-6 rounded-2xl bg-[#ef4444] hover:bg-rose-600 text-white font-extrabold text-xs sm:text-sm shadow-md hover:shadow-lg transition cursor-pointer active:scale-95"
+            >
+                Coba Lagi
+            </button>
+        </div>
+    </div>
+
     <!-- Generic Alert / Notification Toast -->
     <div id="toastNotification" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 transform translate-y-12 opacity-0 transition-all duration-300 pointer-events-none">
         <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -1174,6 +1286,219 @@
             }
         }
 
+        // State Filter Terpadu
+        let activeStatusFilter = 'semua';
+        let activeWilayahFilter = 'all';
+        let activeMonthFilter = '2026-10';
+
+        // 1. Dropdown Bulan / Tanggal
+        function toggleMonthDropdown(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('monthDropdownMenu');
+            const chevron = document.getElementById('monthDropdownChevron');
+            const isHidden = menu.classList.contains('hidden');
+            closeAllFilterDropdowns();
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                if (chevron) chevron.classList.add('rotate-180');
+            }
+        }
+
+        function selectMonth(label, val) {
+            document.getElementById('selectedMonthLabel').textContent = label;
+            activeMonthFilter = val;
+            closeAllFilterDropdowns();
+            applyDashboardFilters();
+            showToast('Periode pemantauan diubah: ' + label);
+        }
+
+        function applyCustomMonth() {
+            const input = document.getElementById('customMonthInput');
+            if (!input || !input.value) return;
+            const parts = input.value.split('-');
+            const year = parts[0];
+            const monthNames = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const mIndex = parseInt(parts[1], 10);
+            const label = 'Bulan: ' + (monthNames[mIndex] || parts[1]) + ' ' + year;
+            selectMonth(label, input.value);
+        }
+
+        // 2. Dropdown Wilayah Binaan
+        function toggleWilayahDropdown(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('wilayahDropdownMenu');
+            const chevron = document.getElementById('wilayahDropdownChevron');
+            const isHidden = menu.classList.contains('hidden');
+            closeAllFilterDropdowns();
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                if (chevron) chevron.classList.add('rotate-180');
+            }
+        }
+
+        function selectWilayah(label, val) {
+            document.getElementById('selectedWilayahLabel').textContent = label;
+            activeWilayahFilter = val.toLowerCase();
+            closeAllFilterDropdowns();
+            applyDashboardFilters();
+            showToast('Wilayah binaan disaring: ' + label);
+        }
+
+        // 3. Status Tabs (Semua, Kasus Prioritas, Perlu Tindak Lanjut)
+        function filterStatus(mode) {
+            activeStatusFilter = mode;
+            const tabs = ['Semua', 'Prioritas', 'TindakLanjut'];
+            tabs.forEach(t => {
+                const el = document.getElementById('filterTab' + t);
+                if (el) el.className = 'px-3 py-1 rounded-xl text-slate-600 hover:bg-slate-50 font-medium transition cursor-pointer';
+            });
+
+            if (mode === 'semua') {
+                document.getElementById('filterTabSemua').className = 'px-3 py-1 rounded-xl bg-sky-50 text-sky-700 font-bold border border-sky-200 transition cursor-pointer';
+            } else if (mode === 'prioritas') {
+                document.getElementById('filterTabPrioritas').className = 'px-3 py-1 rounded-xl bg-amber-50 text-amber-700 font-bold border border-amber-200 transition cursor-pointer';
+            } else if (mode === 'tindak-lanjut') {
+                document.getElementById('filterTabTindakLanjut').className = 'px-3 py-1 rounded-xl bg-rose-50 text-rose-700 font-bold border border-rose-200 transition cursor-pointer';
+            }
+
+            applyDashboardFilters();
+        }
+
+        // Fungsi Filter Gabungan Multi-Kriteria (Wilayah + Status)
+        function applyDashboardFilters() {
+            const isBalitaActive = !document.getElementById('balitaTable').classList.contains('hidden');
+            const activeTable = isBalitaActive ? document.getElementById('balitaTable') : document.getElementById('ancTable');
+            const rows = activeTable.querySelectorAll('tbody tr.patient-row');
+            let visibleCount = 0;
+
+            rows.forEach(r => {
+                const posyandu = r.getAttribute('data-posyandu') || '';
+                const isAlert = r.getAttribute('data-alert') === '1';
+                const badge = r.getAttribute('data-badge') || '';
+
+                // Cek kriteria wilayah
+                let matchWilayah = true;
+                if (activeWilayahFilter !== 'all') {
+                    matchWilayah = posyandu.includes(activeWilayahFilter);
+                }
+
+                // Cek kriteria status
+                let matchStatus = true;
+                if (activeStatusFilter === 'prioritas') {
+                    matchStatus = isAlert || badge === 'rose' || badge === 'amber';
+                } else if (activeStatusFilter === 'tindak-lanjut') {
+                    matchStatus = isAlert && badge === 'rose';
+                }
+
+                if (matchWilayah && matchStatus) {
+                    r.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    r.classList.add('hidden');
+                }
+            });
+
+            // Tampilkan notice jika kosong
+            const noticeId = isBalitaActive ? 'emptyBalitaNotice' : 'emptyAncNotice';
+            const emptyNotice = document.getElementById(noticeId);
+            if (emptyNotice) {
+                if (visibleCount === 0) {
+                    emptyNotice.classList.remove('hidden');
+                } else {
+                    emptyNotice.classList.add('hidden');
+                }
+            }
+        }
+
+        function resetAllFilters() {
+            activeStatusFilter = 'semua';
+            activeWilayahFilter = 'all';
+            activeMonthFilter = '2026-10';
+            const wEl = document.getElementById('selectedWilayahLabel');
+            if (wEl) wEl.textContent = 'Semua Wilayah Binaan (12 Posyandu)';
+            const mEl = document.getElementById('selectedMonthLabel');
+            if (mEl) mEl.textContent = 'Bulan ini: Oktober 2026';
+            filterStatus('semua');
+            showToast('Semua kriteria filter telah di-reset ke kondisi awal.');
+        }
+
+        // 4. Dropdown & Aksi Unduh Laporan (PDF/XLS)
+        function toggleExportDropdown(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('exportDropdownMenu');
+            const isHidden = menu.classList.contains('hidden');
+            closeAllFilterDropdowns();
+            if (isHidden) {
+                menu.classList.remove('hidden');
+            }
+        }
+
+        function triggerDownloadReport(format) {
+            closeAllFilterDropdowns();
+            const monthLabel = document.getElementById('selectedMonthLabel').textContent;
+            const wilayahLabel = document.getElementById('selectedWilayahLabel').textContent;
+
+            if (format === 'xls') {
+                // Generate data spreadsheet XLS (CSV) secara riil dari tabel
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "NutriGrow - Rekapitulasi Data Pasien & Pemantauan Gizi Klinis\n";
+                csvContent += "Periode: " + monthLabel + "\n";
+                csvContent += "Wilayah: " + wilayahLabel + "\n\n";
+                csvContent += "Nama Pasien,Posyandu / Info,Hasil Ukur,Status Gizi\n";
+
+                document.querySelectorAll('.patient-row').forEach(row => {
+                    if (!row.classList.contains('hidden')) {
+                        const cols = row.querySelectorAll('td');
+                        if (cols.length >= 4) {
+                            const nama = cols[0].querySelector('span.font-bold') ? cols[0].querySelector('span.font-bold').textContent.trim() : '';
+                            const sub = cols[0].querySelector('span.text-[10.5px]') ? cols[0].querySelector('span.text-[10.5px]').textContent.trim() : '';
+                            const ukur = cols[2].querySelector('div.font-bold') ? cols[2].querySelector('div.font-bold').textContent.trim() : '';
+                            const status = cols[3].querySelector('span') ? cols[3].querySelector('span').textContent.trim() : '';
+                            csvContent += `"${nama}","${sub}","${ukur}","${status}"\n`;
+                        }
+                    }
+                });
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "Laporan_Gizi_NutriGrow_" + activeMonthFilter + ".csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                showToast('Laporan Spreadsheet (XLS) berhasil diunduh untuk ' + monthLabel);
+            } else {
+                // Format PDF - cetak / simpan
+                showToast('Mempersiapkan dokumen rekapitulasi PDF resmi...');
+                setTimeout(() => {
+                    window.print();
+                }, 400);
+            }
+        }
+
+        function closeAllFilterDropdowns() {
+            const mMenu = document.getElementById('monthDropdownMenu');
+            const wMenu = document.getElementById('wilayahDropdownMenu');
+            const exMenu = document.getElementById('exportDropdownMenu');
+            const mChev = document.getElementById('monthDropdownChevron');
+            const wChev = document.getElementById('wilayahDropdownChevron');
+            if (mMenu) mMenu.classList.add('hidden');
+            if (wMenu) wMenu.classList.add('hidden');
+            if (exMenu) exMenu.classList.add('hidden');
+            if (mChev) mChev.classList.remove('rotate-180');
+            if (wChev) wChev.classList.remove('rotate-180');
+        }
+
+        // Listener klik di luar untuk menutup semua dropdown
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#monthDropdownContainer') &&
+                !e.target.closest('#wilayahDropdownContainer') &&
+                !e.target.closest('#exportDropdownContainer')) {
+                closeAllFilterDropdowns();
+            }
+        });
+
         // Tab switcher for table
         function switchTableTab(tab) {
             const balitaTable = document.getElementById('balitaTable');
@@ -1192,38 +1517,7 @@
                 tabAnc.className = 'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-pink-50 text-[#e11d48] font-bold text-xs border border-pink-100 transition cursor-pointer';
                 tabBalita.className = 'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer';
             }
-        }
-
-        // Filter status buttons
-        function filterStatus(mode) {
-            const tabs = ['Semua', 'Prioritas', 'TindakLanjut'];
-            tabs.forEach(t => {
-                const el = document.getElementById('filterTab' + t);
-                if (el) el.className = 'px-3 py-1 rounded-xl text-slate-600 hover:bg-slate-50 font-medium transition cursor-pointer';
-            });
-
-            if (mode === 'semua') {
-                document.getElementById('filterTabSemua').className = 'px-3 py-1 rounded-xl bg-sky-50 text-sky-700 font-bold border border-sky-200 transition cursor-pointer';
-                document.querySelectorAll('.patient-row').forEach(r => r.classList.remove('hidden'));
-            } else if (mode === 'prioritas') {
-                document.getElementById('filterTabPrioritas').className = 'px-3 py-1 rounded-xl bg-amber-50 text-amber-700 font-bold border border-amber-200 transition cursor-pointer';
-                document.querySelectorAll('.patient-row').forEach(r => {
-                    if (r.querySelector('.bg-rose-50') || r.querySelector('.bg-amber-50')) {
-                        r.classList.remove('hidden');
-                    } else {
-                        r.classList.add('hidden');
-                    }
-                });
-            } else if (mode === 'tindak-lanjut') {
-                document.getElementById('filterTabTindakLanjut').className = 'px-3 py-1 rounded-xl bg-rose-50 text-rose-700 font-bold border border-rose-200 transition cursor-pointer';
-                document.querySelectorAll('.patient-row').forEach(r => {
-                    if (r.querySelector('.bg-rose-50')) {
-                        r.classList.remove('hidden');
-                    } else {
-                        r.classList.add('hidden');
-                    }
-                });
-            }
+            applyDashboardFilters();
         }
 
         // Search Filter
@@ -1290,14 +1584,46 @@
             showToast(message);
         }
 
+        let successModalCallback = null;
+        let errorModalCallback = null;
+
+        // Modal Pop Up Helpers (Sesuai Mockup Referensi)
+        function showSuccessPopup(title = 'BERHASIL!', message = 'Operasi data berhasil diproses oleh sistem.', buttonText = 'Lanjutkan', callback = null) {
+            document.getElementById('successModalTitle').textContent = title;
+            document.getElementById('successModalMessage').textContent = message;
+            document.getElementById('successModalBtn').textContent = buttonText;
+            successModalCallback = callback;
+            document.getElementById('successModalPopup').classList.remove('hidden');
+        }
+
+        function closeSuccessModalPopup() {
+            document.getElementById('successModalPopup').classList.add('hidden');
+            if (typeof successModalCallback === 'function') {
+                const cb = successModalCallback;
+                successModalCallback = null;
+                cb();
+            }
+        }
+
+        function showErrorPopup(title = 'GAGAL!', message = 'Terjadi kesalahan saat memproses data. Silakan coba kembali.', buttonText = 'Coba Lagi', callback = null) {
+            document.getElementById('errorModalTitle').textContent = title;
+            document.getElementById('errorModalMessage').textContent = message;
+            document.getElementById('errorModalBtn').textContent = buttonText;
+            errorModalCallback = callback;
+            document.getElementById('errorModalPopup').classList.remove('hidden');
+        }
+
+        function closeErrorModalPopup() {
+            document.getElementById('errorModalPopup').classList.add('hidden');
+            if (typeof errorModalCallback === 'function') {
+                const cb = errorModalCallback;
+                errorModalCallback = null;
+                cb();
+            }
+        }
+
         function showToast(msg) {
-            const toast = document.getElementById('toastNotification');
-            const toastMsg = document.getElementById('toastMessage');
-            toastMsg.textContent = msg;
-            toast.classList.remove('translate-y-12', 'opacity-0', 'pointer-events-none');
-            setTimeout(() => {
-                toast.classList.add('translate-y-12', 'opacity-0', 'pointer-events-none');
-            }, 3500);
+            showSuccessPopup('BERHASIL!', msg);
         }
     </script>
 </body>

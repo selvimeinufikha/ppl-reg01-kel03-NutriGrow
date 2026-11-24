@@ -35,22 +35,16 @@ class AdminFasilitasKesehatanController extends Controller
         }
 
         // Data profil nakes yang sedang login
-        $adminName = $user->name ?: 'dr. Siti Nurhaliza, Sp.A';
+        $adminName = $user->name ?: 'dr. Sarah Diana';
         $adminEmail = $user->email;
-        $adminRole = $user->role === 'nakes' ? 'Tenaga Kesehatan (Bidan/Dokter)' : 'Administrator Faskes';
+        $adminRole = ($user->role === 'super_admin' || $user->role === 'admin' || str_contains(strtolower($adminName), 'sarah') || str_contains(strtolower($adminName), 'anita') || str_starts_with($adminEmail, 'admin') || str_contains(strtolower($adminEmail), 'anita'))
+            ? 'Super Admin'
+            : 'Super Admin';
         $faskesName = $user->faskes_name ?: 'Puskesmas Gambir';
         $nipStr = $user->nip_str ?: 'STR-19880412-2023-019';
 
         Carbon::setLocale('id');
         $tanggalHariIni = Carbon::now()->translatedFormat('l, j F Y');
-
-        // Pastikan ada data awal jika tabel masih kosong
-        if (FasilitasKesehatan::count() === 0) {
-            \Illuminate\Support\Facades\Artisan::call('db:seed', [
-                '--class' => 'Database\\Seeders\\FasilitasKesehatanSeeder',
-                '--force' => true,
-            ]);
-        }
 
         // Hitung statistik dinamis fasilitas kesehatan
         $totalCount = FasilitasKesehatan::count();

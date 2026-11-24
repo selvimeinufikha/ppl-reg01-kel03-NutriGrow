@@ -34,9 +34,11 @@ class AdminDashboardController extends Controller
         }
 
         // Data petugas yang sedang login
-        $adminName = $user->name ?: 'dr. Siti Nurhaliza, Sp.A';
+        $adminName = $user->name ?: 'dr. Sarah Diana';
         $adminEmail = $user->email;
-        $adminRole = $user->role === 'nakes' ? 'Tenaga Kesehatan (Bidan/Dokter)' : 'Administrator Faskes';
+        $adminRole = ($user->role === 'super_admin' || $user->role === 'admin' || str_contains(strtolower($adminName), 'sarah') || str_contains(strtolower($adminName), 'anita') || str_starts_with($adminEmail, 'admin') || str_contains(strtolower($adminEmail), 'anita'))
+            ? 'Super Admin'
+            : 'Super Admin';
         $faskesName = $user->faskes_name ?: 'Puskesmas Gambir';
         $nipStr = $user->nip_str ?: 'STR-19880412-2023-019';
 
@@ -96,7 +98,7 @@ class AdminDashboardController extends Controller
                 'id' => 'BLT-0821',
                 'nama' => 'An. Muhammad Rayyan',
                 'sub_info' => '18 Bulan • Posy. Melati 2',
-                'tanggal' => '24 Okt 2025',
+                'tanggal' => '24 Okt 2026',
                 'bb_tb' => '11.2 kg / 82.5 cm',
                 'detail_ukur' => 'LK: 46.5 cm',
                 'status_gizi' => 'Normal (Gizi Baik)',
@@ -107,7 +109,7 @@ class AdminDashboardController extends Controller
                 'id' => 'BLT-0822',
                 'nama' => 'An. Dimas Nugraha',
                 'sub_info' => '14 Bulan • Posy. Melati 3',
-                'tanggal' => '24 Okt 2025',
+                'tanggal' => '24 Okt 2026',
                 'bb_tb' => '7.8 kg / 70.2 cm',
                 'detail_ukur' => 'TB/U: -2.4 SD',
                 'status_gizi' => 'Stunting Ringan',
@@ -118,7 +120,7 @@ class AdminDashboardController extends Controller
                 'id' => 'BLT-0823',
                 'nama' => 'An. Alula Farzana',
                 'sub_info' => '24 Bulan • Posy. Melati 1',
-                'tanggal' => '23 Okt 2025',
+                'tanggal' => '23 Okt 2026',
                 'bb_tb' => '12.0 kg / 86.4 cm',
                 'detail_ukur' => 'LK: 47.0 cm',
                 'status_gizi' => 'Normal (Gizi Baik)',
@@ -129,7 +131,7 @@ class AdminDashboardController extends Controller
                 'id' => 'BLT-0824',
                 'nama' => 'An. Keenan Danendra',
                 'sub_info' => '6 Bulan • Pusk. Gambir',
-                'tanggal' => '23 Okt 2025',
+                'tanggal' => '23 Okt 2026',
                 'bb_tb' => '7.4 kg / 66.0 cm',
                 'detail_ukur' => 'ASI Eksklusif',
                 'status_gizi' => 'Normal (Gizi Baik)',
@@ -144,7 +146,7 @@ class AdminDashboardController extends Controller
                 'id' => 'ANC-0412',
                 'nama' => 'Ny. Linda Permata',
                 'sub_info' => 'G1P0A0, 28 Minggu • Posy. Melati 3',
-                'tanggal' => '24 Okt 2025',
+                'tanggal' => '24 Okt 2026',
                 'bb_tb' => '54.5 kg / 155 cm',
                 'detail_ukur' => 'LiLA: 21.5 cm (< 23.5 cm)',
                 'status_gizi' => 'Risiko KEK (Perlu PMT)',
@@ -155,7 +157,7 @@ class AdminDashboardController extends Controller
                 'id' => 'ANC-0413',
                 'nama' => 'Ny. Citra Dewi',
                 'sub_info' => 'G2P1A0, 32 Minggu • Pusk. Gambir',
-                'tanggal' => '23 Okt 2025',
+                'tanggal' => '23 Okt 2026',
                 'bb_tb' => '62.0 kg / 160 cm',
                 'detail_ukur' => 'LiLA: 26.0 cm (Normal)',
                 'status_gizi' => 'Normal & Sehat',
