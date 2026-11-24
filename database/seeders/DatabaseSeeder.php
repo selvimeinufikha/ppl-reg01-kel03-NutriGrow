@@ -196,6 +196,12 @@ class DatabaseSeeder extends Seeder
         if (class_exists(\Database\Seeders\PemeriksaanKehamilanSeeder::class)) {
             $this->call(\Database\Seeders\PemeriksaanKehamilanSeeder::class);
         }
+
+        // 8. Data Anak Tambahan (PBI-007, PBI-008, PBI-009)
+        if (class_exists(\Database\Seeders\DataAnakSeeder::class)) {
+            $this->call(\Database\Seeders\DataAnakSeeder::class);
         }
+    }
+}
     }
 }

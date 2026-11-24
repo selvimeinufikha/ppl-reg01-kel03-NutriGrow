@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Kehamilan extends Model
 {
@@ -29,6 +30,7 @@ class Kehamilan extends Model
         'berat_badan_pra_hamil',
         'lila_pra_hamil',
         'catatan',
+        'faktor_risiko',
     ];
 
     protected function casts(): array
@@ -84,6 +86,25 @@ class Kehamilan extends Model
     public function pasangan(): BelongsTo
     {
         return $this->belongsTo(Pasangan::class, 'pasangan_id');
+    }
+
+    /**
+     * Relasi ke data Anak yang lahir dari kehamilan ini.
+     */
+    public function anaks(): HasMany
+    {
+        return $this->hasMany(Anak::class, 'kehamilan_id');
+    }
+
+    /**
+     * Label deskriptif kehamilan untuk dropdown / tampilan kartu.
+     * Contoh: "Kehamilan Ke-1 (Sarah Rahmawati)"
+     */
+    public function getLabelAttribute(): string
+    {
+        $ibuName = $this->user ? $this->user->name : 'Ibu';
+        $gravida = $this->gravida ?: ('Kehamilan Ke-' . $this->id);
+        return "{$gravida} ({$ibuName})";
     }
 
     /**

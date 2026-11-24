@@ -14,6 +14,7 @@ use App\Http\Controllers\KehamilanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminPengukuranAnakController;
 use App\Http\Controllers\TumbuhKembangAnakController;
+use App\Http\Controllers\AnakController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,7 +71,6 @@ Route::prefix('data-pasangan')->name('pasangan.')->group(function () {
 Route::get('/tumbuh-kembang-anak', [TumbuhKembangAnakController::class, 'index'])->name('tumbuh-kembang.index');
 Route::get('/riwayat-tumbuh-kembang', [TumbuhKembangAnakController::class, 'index'])->name('riwayat-tumbuh-kembang');
 Route::get('/dashboard-pengguna/tumbuh-kembang-anak', [TumbuhKembangAnakController::class, 'index'])->name('dashboard.tumbuh-kembang');
-
 
 // =========================================================================
 // 2. WEBSITE ADMIN (Portal Khusus Faskes & Tenaga Kesehatan)
@@ -192,6 +192,11 @@ Route::prefix('profil')->name('profil.')->group(function () {
 // Alias rute mandiri untuk ganti kata sandi
 Route::get('/ganti-password', [ProfileController::class, 'editPassword'])->name('password.change');
 Route::put('/ganti-password', [ProfileController::class, 'updatePassword'])->name('password.change.update');
+
+// Rute Pengelolaan Data Anak (PBI-007, PBI-008, PBI-009)
+Route::resource('data-anak', AnakController::class);
+Route::get('/dashboard/data-anak', [AnakController::class, 'index'])->name('dashboard.data-anak');
+Route::get('/daftar-anak', [AnakController::class, 'daftarAnak'])->name('daftar-anak.index');
 
 Route::get('/data-edukasi-gizi', function () {
     return redirect()->route('admin.edukasi.index');

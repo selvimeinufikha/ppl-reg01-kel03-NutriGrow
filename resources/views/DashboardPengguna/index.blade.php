@@ -116,7 +116,7 @@
                         </svg>
                         <span>Data Pasangan</span>
                     </a>
-                    <a href="#data-anak" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
+                    <a href="{{ Route::has('data-anak.index') ? route('data-anak.index') : '#data-anak' }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
@@ -137,7 +137,7 @@
                         </svg>
                         <span>Pemeriksaan Kehamilan</span>
                     </a>
-                    <a href="{{ route('tumbuh-kembang.index') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
+                    <a href="{{ Route::has('tumbuh-kembang.index') ? route('tumbuh-kembang.index') : '#tumbuh-kembang' }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-brand-600 hover:bg-pink-50/60 transition">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                         </svg>
@@ -263,7 +263,8 @@
                 </div>
 
                 <!-- Profile Avatar -->
-                <a href="{{ route('profil.index') }}" class="flex items-center gap-2 hover:opacity-90 transition">
+                <!-- Profile Avatar -->
+                <a href="{{ Route::has('profil.index') ? route('profil.index') : 'javascript:void(0)' }}" class="flex items-center gap-2 hover:opacity-90 transition">
                     @if (isset($user) && $user && $user->foto_profil_url)
                         <img src="{{ $user->foto_profil_url }}" alt="{{ $userName }}" class="w-9 h-9 rounded-full object-cover ring-2 ring-pink-100 shadow-xs">
                     @else
