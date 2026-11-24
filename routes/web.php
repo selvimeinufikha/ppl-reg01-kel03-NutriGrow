@@ -17,6 +17,7 @@ use App\Http\Controllers\TumbuhKembangAnakController;
 use App\Http\Controllers\AnakController;
 use App\Services\StatusGiziCalculator;
 use App\Models\Anak;
+use App\Http\Controllers\InformasiNutrisiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -187,6 +188,17 @@ Route::prefix('admin')->group(function () {
         Route::put('/pengukuran-anak/{id}', [AdminPengukuranAnakController::class, 'update'])->name('admin.pengukuran.update');
         Route::post('/pengukuran-anak/{id}/update', [AdminPengukuranAnakController::class, 'update'])->name('admin.pengukuran.update.post');
         Route::delete('/pengukuran-anak/{id}', [AdminPengukuranAnakController::class, 'destroy'])->name('admin.pengukuran.destroy');
+
+        // Data Informasi Nutrisi (Portal Admin / Nakes - PBI-025 & PBI-026 & PBI-027)
+        Route::get('/informasi-nutrisi', [InformasiNutrisiController::class, 'index'])->name('admin.informasi-nutrisi.index');
+        Route::get('/data-informasi-nutrisi', [InformasiNutrisiController::class, 'index'])->name('admin.informasi-nutrisi.alias');
+        Route::get('/informasi-nutrisi/create', [InformasiNutrisiController::class, 'create'])->name('admin.informasi-nutrisi.create');
+        Route::post('/informasi-nutrisi', [InformasiNutrisiController::class, 'store'])->name('admin.informasi-nutrisi.store');
+        Route::get('/informasi-nutrisi/{informasi_nutrisi}', [InformasiNutrisiController::class, 'show'])->name('admin.informasi-nutrisi.show');
+        Route::get('/informasi-nutrisi/{informasi_nutrisi}/edit', [InformasiNutrisiController::class, 'edit'])->name('admin.informasi-nutrisi.edit');
+        Route::put('/informasi-nutrisi/{informasi_nutrisi}', [InformasiNutrisiController::class, 'update'])->name('admin.informasi-nutrisi.update');
+        Route::patch('/informasi-nutrisi/{informasi_nutrisi}', [InformasiNutrisiController::class, 'update']);
+        Route::delete('/informasi-nutrisi/{informasi_nutrisi}', [InformasiNutrisiController::class, 'destroy'])->name('admin.informasi-nutrisi.destroy');
     });
 
     // Beralih Peran Superadmin / Admin (Demonstrasi & Pengujian)
@@ -253,3 +265,9 @@ Route::get('/daftar-anak', [AnakController::class, 'daftarAnak'])->name('daftar-
 Route::get('/data-edukasi-gizi', function () {
     return redirect()->route('admin.edukasi.index');
 });
+
+// Rute Informasi Nutrisi & Rekomendasi Gizi (PBI-025, PBI-026, PBI-027)
+Route::resource('informasi-nutrisi', InformasiNutrisiController::class);
+Route::get('/rekomendasi-nutrisi', [InformasiNutrisiController::class, 'index'])->name('rekomendasi-nutrisi.index');
+Route::get('/admin/informasi-nutrisi/create', [InformasiNutrisiController::class, 'create'])->name('admin.informasi-nutrisi.create');
+Route::post('/admin/informasi-nutrisi', [InformasiNutrisiController::class, 'store'])->name('admin.informasi-nutrisi.store');

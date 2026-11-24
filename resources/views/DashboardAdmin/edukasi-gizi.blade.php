@@ -190,8 +190,7 @@
 
                     <!-- 7. Data Informasi Nutrisi -->
                     <a
-                        href="javascript:void(0)"
-                        onclick="showFeatureNotice('Data Informasi Nutrisi')"
+                        href="{{ Route::has('admin.informasi-nutrisi.index') ? route('admin.informasi-nutrisi.index') : 'javascript:void(0)' }}"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 hover:text-sky-800 hover:bg-white/70 hover:shadow-2xs transition"
                     >
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
