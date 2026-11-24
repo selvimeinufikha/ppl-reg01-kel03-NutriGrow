@@ -117,6 +117,15 @@ Route::prefix('admin')->group(function () {
     Route::get('/manajemen-akun/tambah', [AdminManajemenAkunController::class, 'create'])->name('admin.akun.create');
     Route::post('/manajemen-akun', [AdminManajemenAkunController::class, 'store'])->name('admin.akun.store');
 
+    // Beralih Peran Superadmin / Admin (Demonstrasi & Pengujian)
+    Route::get('/switch-role/{role}', [AdminDashboardController::class, 'switchRole'])->name('admin.switch-role');
+    Route::post('/switch-role', [AdminDashboardController::class, 'switchRole'])->name('admin.switch-role.post');
+
+    // Manajemen Akun Admin (Khusus Superadmin)
+    Route::post('/users/create-admin', [AdminDashboardController::class, 'storeAdmin'])->name('admin.users.create');
+    Route::post('/users/{id}/update-role', [AdminDashboardController::class, 'updateAdminRole'])->name('admin.users.update-role');
+    Route::delete('/users/{id}/delete', [AdminDashboardController::class, 'deleteAdmin'])->name('admin.users.delete');
+
     // Pengalihan dasar /admin selalu ke /admin/login
     Route::get('/', function () {
         return redirect()->route('admin.login');

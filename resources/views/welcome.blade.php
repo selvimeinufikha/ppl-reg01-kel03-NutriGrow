@@ -1,1 +1,1 @@
-﻿@include('HomePages.index')
+@include('HomePages.index')
