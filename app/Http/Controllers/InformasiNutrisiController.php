@@ -28,13 +28,33 @@ class InformasiNutrisiController extends Controller
     {
         $query = InformasiNutrisi::query();
 
-        // Filter pencarian nama bahan/menu atau kandungan gizi
+        // Filter pencarian cerdas & komprehensif
         if ($request->filled('q')) {
             $q = trim($request->q);
-            $query->where(function ($sub) use ($q) {
+            $lowerQ = strtolower($q);
+
+            $query->where(function ($sub) use ($q, $lowerQ) {
                 $sub->where('nama_bahan_menu', 'like', "%{$q}%")
                     ->orWhere('kandungan_gizi', 'like', "%{$q}%")
-                    ->orWhere('deskripsi_manfaat', 'like', "%{$q}%");
+                    ->orWhere('deskripsi_manfaat', 'like', "%{$q}%")
+                    ->orWhere('saran_penggunaan', 'like', "%{$q}%")
+                    ->orWhere('kategori_fase', 'like', "%{$q}%")
+                    ->orWhere('kategori_kondisi', 'like', "%{$q}%");
+
+                // Sinonim & kueri kontekstual cerdas (dengan pemisahan kata tepat)
+                $isMpasi = str_contains($lowerQ, 'mpasi');
+                if ($isMpasi || str_contains($lowerQ, 'balita') || str_contains($lowerQ, 'bayi') || preg_match('/\banak\b/i', $q)) {
+                    $sub->orWhere('kategori_fase', 'Tumbuh Kembang Anak');
+                }
+                if (preg_match('/\b(hamil|kehamilan|janin|trimester|bumil)\b/i', $q)) {
+                    $sub->orWhere('kategori_fase', 'Masa Kehamilan');
+                }
+                if (!$isMpasi && preg_match('/\b(asi|laktasi|menyusui|busui)\b/i', $q)) {
+                    $sub->orWhere('kategori_fase', 'Ibu Menyusui');
+                }
+                if (preg_match('/\b(promil|konsepsi|prakonsepsi|kesuburan)\b/i', $q)) {
+                    $sub->orWhere('kategori_fase', 'Persiapan Kehamilan');
+                }
             });
         }
 
