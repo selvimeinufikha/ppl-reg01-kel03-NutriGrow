@@ -206,5 +206,10 @@ class DatabaseSeeder extends Seeder
         if (class_exists(\Database\Seeders\FasilitasKesehatanSeeder::class)) {
             $this->call(\Database\Seeders\FasilitasKesehatanSeeder::class);
         }
+
+        // 10. Data Rekomendasi Nutrisi Kemenkes & Generasi Bebas Stunting
+        if (class_exists(\Database\Seeders\InformasiNutrisiSeeder::class)) {
+            $this->call(\Database\Seeders\InformasiNutrisiSeeder::class);
+        }
     }
 }

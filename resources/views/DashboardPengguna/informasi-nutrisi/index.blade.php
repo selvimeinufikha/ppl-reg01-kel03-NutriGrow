@@ -30,82 +30,74 @@
             }
         }
     </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body class="h-full font-sans antialiased text-slate-800 bg-[#f8fafc] flex overflow-hidden">
+<body class="h-full font-sans antialiased text-slate-800 bg-[#f8fafc] flex overflow-hidden selection:bg-brand-500 selection:text-white">
 
-    <!-- MOBILE OVERLAY -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 z-30 hidden lg:hidden backdrop-blur-xs transition-opacity"></div>
-
-@include('components.user-sidebar', ['active' => 'rekomendasi-nutrisi'])
-
+    <!-- SIDEBAR TERPUSAT -->
+    @include('components.user-sidebar', ['active' => 'rekomendasi-nutrisi'])
 
     <!-- MAIN CONTENT AREA -->
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- TOP HEADER -->
-        <header class="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 flex items-center justify-between flex-shrink-0 z-20">
+        <header class="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 flex items-center justify-between flex-shrink-0 z-20 sticky top-0">
             <div class="flex items-center gap-3">
-                <button id="open-sidebar-btn" class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition">
+                <button type="button" onclick="toggleSidebar()" class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition" title="Buka Menu">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
                 <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500">
                     <span class="flex items-center gap-1.5 font-medium text-slate-600">
                         <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        Rabu, 24 Mei 2026
+                        {{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y') }}
                     </span>
                     <span class="text-slate-300">•</span>
                     <span class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-[11px] font-semibold border border-blue-100">
-                        Poskes: Posyandu Melati 1 & Puskesmas Sejahtera
+                        Faskes: Posyandu Mawar 1 &amp; Puskesmas Sejahtera
                     </span>
                 </div>
             </div>
 
-            <!-- Profile & Notification -->
+            <!-- Profile & Family Pill -->
             <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-50 border border-rose-100 text-xs font-semibold text-rose-700">
-                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                    <span>{{ $userName }}</span>
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-pink-50 border border-pink-100 text-xs font-semibold text-brand-700">
+                    <span class="w-2 h-2 rounded-full bg-brand-500"></span>
+                    <span>Keluarga {{ $userName }}</span>
                 </div>
-                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-xs border border-rose-200">
-                    {{ substr($userName, 0, 1) }}
-                </div>
+                <a href="{{ route('profil.index') }}" class="w-9 h-9 rounded-full bg-gradient-to-tr from-rose-600 via-pink-600 to-rose-500 text-white font-bold text-xs flex items-center justify-center shadow-xs ring-2 ring-white hover:ring-brand-200 transition" title="Profil Pengguna">
+                    @if (Auth::user()?->foto_profil)
+                        <img src="{{ asset('storage/' . Auth::user()->foto_profil) }}" class="w-full h-full rounded-full object-cover" alt="Profil">
+                    @else
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    @endif
+                </a>
             </div>
         </header>
 
         <!-- MAIN SCROLLABLE BODY -->
-        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
-            <!-- Breadcrumbs -->
+        <main class="flex-1 overflow-y-auto no-scrollbar p-4 sm:p-6 lg:p-8 space-y-7 max-w-7xl w-full mx-auto">
+            <!-- Breadcrumbs (Tanpa tombol tambah untuk Pengguna) -->
             <div class="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-500">
                 <div class="flex items-center gap-1.5 font-medium">
-                    <a href="{{ route('dashboard.pengguna') }}" class="hover:text-brand-600 transition">Dashboard</a>
-                    <span>/</span>
-                    <span>Nutrisi & Panduan</span>
-                    <span>/</span>
-                    <span class="text-brand-600 font-semibold">Rekomendasi Nutrisi</span>
+                    <a href="{{ route('dashboard.pengguna') }}" class="hover:text-brand-600 transition flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        <span>Dashboard</span>
+                    </a>
+                    <span>&rsaquo;</span>
+                    <span>Nutrisi &amp; Pantauan</span>
+                    <span>&rsaquo;</span>
+                    <span class="text-brand-600 font-bold">Rekomendasi Nutrisi</span>
                 </div>
-
-                <!-- Admin Action: Tambah Rekomendasi Nutrisi -->
-                <a href="{{ route('admin.informasi-nutrisi.create') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs shadow-sm transition hover:shadow-md">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-                    </svg>
-                    <span>+ Tambah Informasi Nutrisi</span>
-                </a>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[11px] font-semibold">
+                    <span>Terverifikasi Ahli Gizi &amp; Kemenkes RI</span>
+                </div>
             </div>
 
-            <!-- Flash Success Message -->
-            @if(session('success'))
-                <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between">
-                    <div class="flex items-center gap-2.5">
-                        <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <span>{{ session('success') }}</span>
-                    </div>
-                    <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700">&times;</button>
-                </div>
-            @endif
-
-            <!-- HERO BANNER (Persis desain screenshot) -->
+            <!-- HERO BANNER -->
             <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-rose-50/90 via-pink-50/60 to-purple-50/40 border border-pink-100 p-6 sm:p-8 lg:p-10 shadow-xs">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                     <div class="lg:col-span-7 space-y-4">
@@ -123,7 +115,7 @@
                                 🐟 Kaya Protein Hewani
                             </span>
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-slate-200/80 shadow-xs">
-                                💊 Zat Besi & Asam Folat
+                                💊 Zat Besi &amp; Asam Folat
                             </span>
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-slate-200/80 shadow-xs">
                                 🛡️ Bebas Stunting
@@ -134,122 +126,131 @@
                     <!-- Right Illustration Banner -->
                     <div class="lg:col-span-5 flex justify-center lg:justify-end">
                         <div class="relative w-full max-w-sm rounded-2xl overflow-hidden shadow-md border-2 border-white bg-slate-100 aspect-video flex items-center justify-center group">
-                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80" alt="Gizi Seimbang" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <img src="{{ asset('images/hero-family-organic.png') }}" 
+                                 alt="Gizi Seimbang" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80';">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent flex items-end p-3">
-                                <span class="text-[11px] font-bold text-white drop-shadow">Isi Piringku & Menu Bergizi</span>
+                                <span class="text-[11px] font-bold text-white drop-shadow">Isi Piringku &amp; Menu Bergizi</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- FASE KRUSIAL NUTRISI: PILIH TAHAP KEHIDUPAN (4 Cards) -->
+            <!-- FASE KRUSIAL NUTRISI: PILIH TAHAP KEHIDUPAN (Bisa diklik untuk filter) -->
             <div class="space-y-4">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between flex-wrap gap-2">
                     <div>
                         <span class="text-[10px] uppercase font-bold tracking-wider text-rose-500 block">FASE KRUSIAL NUTRISI</span>
                         <h2 class="text-base sm:text-lg font-bold text-slate-900">Pilih Tahap Kehidupan</h2>
-                        <p class="text-xs text-slate-500">Sesuaikan rekomendasi nutrisi dengan fase kesehatan Anda dan keluarga saat ini.</p>
+                        <p class="text-xs text-slate-500">Klik salah satu tahap untuk memfilter rekomendasi gizi yang sesuai dengan kondisi keluarga Anda.</p>
                     </div>
-                    @if($activeFase)
-                        <a href="{{ route('informasi-nutrisi.index') }}" class="text-xs font-semibold text-brand-700 hover:underline">
-                            Tampilkan Semua Tahap &rarr;
-                        </a>
-                    @endif
+                    
+                    <!-- Tombol Tampilkan Semua Tahap -->
+                    <a href="{{ route('informasi-nutrisi.index') }}" 
+                       class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-2xs {{ empty($activeFase) ? 'bg-[#b8235a] text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-600 hover:text-brand-700 hover:bg-slate-50' }}">
+                        <span>Tampilkan Semua Tahap</span>
+                        <span>&rarr;</span>
+                    </a>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- FASE 1: PERSIAPAN KEHAMILAN -->
-                    <div class="rounded-2xl border p-4 bg-white transition hover:shadow-md flex flex-col justify-between {{ $activeFase === 'Persiapan Kehamilan' ? 'ring-2 ring-brand-700 border-brand-700' : 'border-slate-200/80' }}">
+                    <a href="{{ $activeFase === 'Persiapan Kehamilan' ? route('informasi-nutrisi.index') : route('informasi-nutrisi.index', ['fase' => 'Persiapan Kehamilan']) }}" 
+                       class="rounded-2xl border p-4.5 bg-white transition-all duration-200 hover:shadow-md flex flex-col justify-between cursor-pointer group {{ $activeFase === 'Persiapan Kehamilan' ? 'ring-2 ring-[#b8235a] border-[#b8235a] bg-rose-50/30 shadow-xs' : 'border-slate-200/80 hover:border-pink-300' }}">
                         <div>
                             <div class="flex items-center justify-between mb-3">
-                                <span class="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-sm">
+                                <span class="w-9 h-9 rounded-xl {{ $activeFase === 'Persiapan Kehamilan' ? 'bg-[#b8235a] text-white' : 'bg-rose-50 text-rose-600 group-hover:bg-rose-100' }} flex items-center justify-center font-bold text-base transition">
                                     ❤️
                                 </span>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Fase 1</span>
+                                <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full {{ $activeFase === 'Persiapan Kehamilan' ? 'bg-[#b8235a] text-white' : 'bg-slate-100 text-slate-600' }}">
+                                    {{ $activeFase === 'Persiapan Kehamilan' ? '✓ Aktif' : 'Fase 1' }}
+                                </span>
                             </div>
-                            <h3 class="text-sm font-bold text-slate-900 mb-0.5">Persiapan Kehamilan</h3>
-                            <span class="text-[10px] font-semibold text-rose-500 block mb-2">Prakonsepsi & Calon Ibu</span>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-brand-700 transition mb-0.5">Persiapan Kehamilan</h3>
+                            <span class="text-[10px] font-semibold text-rose-500 block mb-2">Prakonsepsi &amp; Calon Ibu</span>
                             <p class="text-xs text-slate-500 leading-relaxed">
-                                Asupan asam folat, zat besi, seng, dan gizi seimbang untuk...
+                                Asupan asam folat, zat besi, seng, dan gizi seimbang untuk mempersiapkan ovulasi dan kualitas sel telur.
                             </p>
                         </div>
-                        <div class="pt-4 mt-2">
-                            <a href="{{ route('informasi-nutrisi.index', ['fase' => 'Persiapan Kehamilan']) }}" class="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold py-2 px-3 rounded-xl transition {{ $activeFase === 'Persiapan Kehamilan' ? 'bg-brand-800 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
-                                <span>Lihat Rekomendasi</span>
-                                <span class="text-xs">&rarr;</span>
-                            </a>
+                        <div class="pt-4 mt-2 border-t border-slate-100/80 flex items-center justify-between text-xs font-bold {{ $activeFase === 'Persiapan Kehamilan' ? 'text-[#b8235a]' : 'text-slate-500 group-hover:text-brand-700' }}">
+                            <span>{{ $activeFase === 'Persiapan Kehamilan' ? 'Sedang Ditampilkan' : 'Pilih Tahap Ini' }}</span>
+                            <span>&rarr;</span>
                         </div>
-                    </div>
+                    </a>
 
-                    <!-- FASE 2: MASA KEHAMILAN (ACTIVE / HIGHLIGHT IN MOCKUP) -->
-                    <div class="rounded-2xl border p-4 bg-white transition hover:shadow-md flex flex-col justify-between {{ ($activeFase === 'Masa Kehamilan' || !$activeFase) ? 'ring-2 ring-brand-700 border-brand-700' : 'border-slate-200/80' }}">
+                    <!-- FASE 2: MASA KEHAMILAN -->
+                    <a href="{{ $activeFase === 'Masa Kehamilan' ? route('informasi-nutrisi.index') : route('informasi-nutrisi.index', ['fase' => 'Masa Kehamilan']) }}" 
+                       class="rounded-2xl border p-4.5 bg-white transition-all duration-200 hover:shadow-md flex flex-col justify-between cursor-pointer group {{ $activeFase === 'Masa Kehamilan' ? 'ring-2 ring-[#b8235a] border-[#b8235a] bg-rose-50/30 shadow-xs' : 'border-slate-200/80 hover:border-pink-300' }}">
                         <div>
                             <div class="flex items-center justify-between mb-3">
-                                <span class="w-8 h-8 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center font-bold text-sm">
+                                <span class="w-9 h-9 rounded-xl {{ $activeFase === 'Masa Kehamilan' ? 'bg-[#b8235a] text-white' : 'bg-pink-50 text-pink-600 group-hover:bg-pink-100' }} flex items-center justify-center font-bold text-base transition">
                                     🤰
                                 </span>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">Fase 2 (Aktif)</span>
+                                <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full {{ $activeFase === 'Masa Kehamilan' ? 'bg-[#b8235a] text-white' : 'bg-rose-100 text-rose-700' }}">
+                                    {{ $activeFase === 'Masa Kehamilan' ? '✓ Aktif' : 'Fase 2' }}
+                                </span>
                             </div>
-                            <h3 class="text-sm font-bold text-slate-900 mb-0.5">Masa Kehamilan</h3>
-                            <span class="text-[10px] font-semibold text-rose-500 block mb-2">Trimester 1, 2, & 3</span>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-brand-700 transition mb-0.5">Masa Kehamilan</h3>
+                            <span class="text-[10px] font-semibold text-rose-500 block mb-2">Trimester 1, 2, &amp; 3</span>
                             <p class="text-xs text-slate-500 leading-relaxed">
-                                Kebutuhan kalori tambahan, DHA, kalsium dan protein esensial untuk...
+                                Kebutuhan kalori tambahan, DHA, kalsium, dan protein hewani esensial untuk pembentukan organ janin.
                             </p>
                         </div>
-                        <div class="pt-4 mt-2">
-                            <a href="{{ route('informasi-nutrisi.index', ['fase' => 'Masa Kehamilan']) }}" class="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold py-2 px-3 rounded-xl transition {{ ($activeFase === 'Masa Kehamilan' || !$activeFase) ? 'bg-brand-800 text-white shadow-sm' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
-                                <span>Lihat Rekomendasi</span>
-                                <span class="text-xs">&rarr;</span>
-                            </a>
+                        <div class="pt-4 mt-2 border-t border-slate-100/80 flex items-center justify-between text-xs font-bold {{ $activeFase === 'Masa Kehamilan' ? 'text-[#b8235a]' : 'text-slate-500 group-hover:text-brand-700' }}">
+                            <span>{{ $activeFase === 'Masa Kehamilan' ? 'Sedang Ditampilkan' : 'Pilih Tahap Ini' }}</span>
+                            <span>&rarr;</span>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- FASE 3: IBU MENYUSUI -->
-                    <div class="rounded-2xl border p-4 bg-white transition hover:shadow-md flex flex-col justify-between {{ $activeFase === 'Ibu Menyusui' ? 'ring-2 ring-brand-700 border-brand-700' : 'border-slate-200/80' }}">
+                    <a href="{{ $activeFase === 'Ibu Menyusui' ? route('informasi-nutrisi.index') : route('informasi-nutrisi.index', ['fase' => 'Ibu Menyusui']) }}" 
+                       class="rounded-2xl border p-4.5 bg-white transition-all duration-200 hover:shadow-md flex flex-col justify-between cursor-pointer group {{ $activeFase === 'Ibu Menyusui' ? 'ring-2 ring-[#b8235a] border-[#b8235a] bg-rose-50/30 shadow-xs' : 'border-slate-200/80 hover:border-pink-300' }}">
                         <div>
                             <div class="flex items-center justify-between mb-3">
-                                <span class="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold text-sm">
+                                <span class="w-9 h-9 rounded-xl {{ $activeFase === 'Ibu Menyusui' ? 'bg-[#b8235a] text-white' : 'bg-sky-50 text-sky-600 group-hover:bg-sky-100' }} flex items-center justify-center font-bold text-base transition">
                                     🍼
                                 </span>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Fase 3</span>
+                                <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full {{ $activeFase === 'Ibu Menyusui' ? 'bg-[#b8235a] text-white' : 'bg-slate-100 text-slate-600' }}">
+                                    {{ $activeFase === 'Ibu Menyusui' ? '✓ Aktif' : 'Fase 3' }}
+                                </span>
                             </div>
-                            <h3 class="text-sm font-bold text-slate-900 mb-0.5">Ibu Menyusui</h3>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-brand-700 transition mb-0.5">Ibu Menyusui</h3>
                             <span class="text-[10px] font-semibold text-sky-600 block mb-2">Masa Laktasi / ASI Eksklusif</span>
                             <p class="text-xs text-slate-500 leading-relaxed">
-                                Nutrisi pelancar ASI, hidrasi cairan cukup, vitamin A, dan nutrisi pemulihan...
+                                Nutrisi pelancar ASI, hidrasi cairan cukup (+3 liter), vitamin A, dan nutrisi pemulihan pasca melahirkan.
                             </p>
                         </div>
-                        <div class="pt-4 mt-2">
-                            <a href="{{ route('informasi-nutrisi.index', ['fase' => 'Ibu Menyusui']) }}" class="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold py-2 px-3 rounded-xl transition {{ $activeFase === 'Ibu Menyusui' ? 'bg-brand-800 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
-                                <span>Lihat Rekomendasi</span>
-                                <span class="text-xs">&rarr;</span>
-                            </a>
+                        <div class="pt-4 mt-2 border-t border-slate-100/80 flex items-center justify-between text-xs font-bold {{ $activeFase === 'Ibu Menyusui' ? 'text-[#b8235a]' : 'text-slate-500 group-hover:text-brand-700' }}">
+                            <span>{{ $activeFase === 'Ibu Menyusui' ? 'Sedang Ditampilkan' : 'Pilih Tahap Ini' }}</span>
+                            <span>&rarr;</span>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- FASE 4: TUMBUH KEMBANG ANAK -->
-                    <div class="rounded-2xl border p-4 bg-white transition hover:shadow-md flex flex-col justify-between {{ $activeFase === 'Tumbuh Kembang Anak' ? 'ring-2 ring-brand-700 border-brand-700' : 'border-slate-200/80' }}">
+                    <a href="{{ $activeFase === 'Tumbuh Kembang Anak' ? route('informasi-nutrisi.index') : route('informasi-nutrisi.index', ['fase' => 'Tumbuh Kembang Anak']) }}" 
+                       class="rounded-2xl border p-4.5 bg-white transition-all duration-200 hover:shadow-md flex flex-col justify-between cursor-pointer group {{ $activeFase === 'Tumbuh Kembang Anak' ? 'ring-2 ring-[#b8235a] border-[#b8235a] bg-rose-50/30 shadow-xs' : 'border-slate-200/80 hover:border-pink-300' }}">
                         <div>
                             <div class="flex items-center justify-between mb-3">
-                                <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
+                                <span class="w-9 h-9 rounded-xl {{ $activeFase === 'Tumbuh Kembang Anak' ? 'bg-[#b8235a] text-white' : 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100' }} flex items-center justify-center font-bold text-base transition">
                                     👶
                                 </span>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Fase 4</span>
+                                <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full {{ $activeFase === 'Tumbuh Kembang Anak' ? 'bg-[#b8235a] text-white' : 'bg-slate-100 text-slate-600' }}">
+                                    {{ $activeFase === 'Tumbuh Kembang Anak' ? '✓ Aktif' : 'Fase 4' }}
+                                </span>
                             </div>
-                            <h3 class="text-sm font-bold text-slate-900 mb-0.5">Tumbuh Kembang Anak</h3>
-                            <span class="text-[10px] font-semibold text-emerald-600 block mb-2">MPASI & Balita (0-5 Tahun)</span>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-brand-700 transition mb-0.5">Tumbuh Kembang Anak</h3>
+                            <span class="text-[10px] font-semibold text-emerald-600 block mb-2">MPASI &amp; Balita (0-5 Tahun)</span>
                             <p class="text-xs text-slate-500 leading-relaxed">
-                                Kepadatan energi tinggi, protein hewani (telur, ikan, daging) pencegah stunting...
+                                Kepadatan energi tinggi, protein hewani (telur, ikan, daging) pencegah stunting dan pembentuk kecerdasan.
                             </p>
                         </div>
-                        <div class="pt-4 mt-2">
-                            <a href="{{ route('informasi-nutrisi.index', ['fase' => 'Tumbuh Kembang Anak']) }}" class="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold py-2 px-3 rounded-xl transition {{ $activeFase === 'Tumbuh Kembang Anak' ? 'bg-brand-800 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
-                                <span>Lihat Rekomendasi</span>
-                                <span class="text-xs">&rarr;</span>
-                            </a>
+                        <div class="pt-4 mt-2 border-t border-slate-100/80 flex items-center justify-between text-xs font-bold {{ $activeFase === 'Tumbuh Kembang Anak' ? 'text-[#b8235a]' : 'text-slate-500 group-hover:text-brand-700' }}">
+                            <span>{{ $activeFase === 'Tumbuh Kembang Anak' ? 'Sedang Ditampilkan' : 'Pilih Tahap Ini' }}</span>
+                            <span>&rarr;</span>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
 
@@ -258,15 +259,15 @@
                 <form method="GET" action="{{ route('informasi-nutrisi.index') }}" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
                     <!-- Search input -->
                     <div class="sm:col-span-5 relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         </span>
-                        <input type="text" name="q" value="{{ $searchTerm }}" placeholder="Cari makanan kaya gizi, zat besi, cegah stunting..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+                        <input type="text" name="q" value="{{ $searchTerm }}" placeholder="Cari makanan bergizi, zat besi, asam folat, cegah stunting..." class="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white shadow-2xs">
                     </div>
 
                     <!-- Fase select -->
                     <div class="sm:col-span-3">
-                        <select name="fase" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <select name="fase" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-2xs cursor-pointer">
                             <option value="">Semua Tahap Kehidupan</option>
                             @foreach($daftarFase as $fKey => $fLabel)
                                 <option value="{{ $fKey }}" {{ $activeFase === $fKey ? 'selected' : '' }}>{{ $fKey }}</option>
@@ -276,7 +277,7 @@
 
                     <!-- Kondisi select -->
                     <div class="sm:col-span-3">
-                        <select name="kondisi" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <select name="kondisi" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-2xs cursor-pointer">
                             <option value="">Semua Kategori</option>
                             @foreach($daftarKondisi as $kKey => $kLabel)
                                 <option value="{{ $kKey }}" {{ $activeKondisi === $kKey ? 'selected' : '' }}>{{ $kKey }}</option>
@@ -286,119 +287,107 @@
 
                     <!-- Actions -->
                     <div class="sm:col-span-1 flex items-center gap-1">
-                        <button type="submit" class="w-full p-2 bg-brand-800 hover:bg-brand-900 text-white rounded-xl text-xs font-bold transition flex items-center justify-center">
+                        <button type="submit" class="w-full py-2.5 px-3 bg-[#b8235a] hover:bg-[#a01d4d] text-white rounded-xl text-xs font-bold transition flex items-center justify-center shadow-xs cursor-pointer" title="Cari">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         </button>
                     </div>
                 </form>
 
-                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100 flex-wrap gap-2">
                     <span class="flex items-center gap-1.5 font-medium">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                        Menampilkan <strong class="text-slate-800">{{ $nutrisis->count() }}</strong> rekomendasi nutrisi terverifikasi
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        Menampilkan <strong class="text-slate-800">{{ $nutrisis->count() }}</strong> rekomendasi nutrisi
+                        @if($activeFase)
+                            untuk tahap <strong class="text-[#b8235a]">"{{ $activeFase }}"</strong>
+                        @endif
                     </span>
-                    <a href="{{ route('informasi-nutrisi.index') }}" class="text-rose-600 hover:underline font-medium">
-                        ↺ Reset Filter
-                    </a>
+                    @if($searchTerm || $activeFase || $activeKondisi)
+                        <a href="{{ route('informasi-nutrisi.index') }}" class="text-rose-600 hover:text-rose-800 font-bold flex items-center gap-1">
+                            <span>↺ Reset Filter &amp; Pencarian</span>
+                        </a>
+                    @endif
                 </div>
             </div>
 
-            <!-- KOLEKSI TERPILIH: REKOMENDASI UNTUK ANDA -->
+            <!-- KOLEKSI TERPILIH: REKOMENDASI UNTUK ANDA (Persis gambar media_1795506220354_603ca97d.jpg) -->
             <div class="space-y-4">
                 <div>
                     <span class="text-[10px] uppercase font-bold tracking-wider text-rose-500 block">KOLEKSI TERPILIH</span>
-                    <h2 class="text-base sm:text-lg font-bold text-slate-900">Rekomendasi untuk Anda</h2>
-                    <p class="text-xs text-slate-500">Konten edukasi umum berbasis pedoman gizi seimbang Kemenkes RI. Bukan pengganti anjuran/resep dokter/ahli gizi klinis.</p>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Rekomendasi untuk Anda</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Konten edukasi umum berbasis pedoman gizi seimbang Kemenkes RI. Bukan pengganti anjuran/resep dokter/ahli gizi klinis.</p>
                 </div>
 
                 @if($nutrisis->isEmpty())
-                    <div class="bg-white rounded-3xl border border-dashed border-slate-200 p-12 text-center space-y-4">
+                    <div class="bg-white rounded-3xl border border-slate-200/80 p-12 text-center space-y-4 shadow-xs">
                         <div class="w-16 h-16 mx-auto rounded-full bg-rose-50 text-rose-500 flex items-center justify-center text-2xl">
                             🔍
                         </div>
                         <div class="max-w-md mx-auto">
-                            @if($searchTerm || $activeFase || $activeKondisi)
-                                <h3 class="text-sm font-bold text-slate-800">Data Tidak Ditemukan</h3>
-                                <p class="text-xs text-slate-500 mt-1">
-                                    Tidak ada informasi nutrisi yang sesuai dengan
-                                    @if($searchTerm)
-                                        pencarian <strong class="text-slate-700">"{{ $searchTerm }}"</strong>
-                                    @endif
-                                    @if($activeFase)
-                                        fase <strong class="text-slate-700">{{ $activeFase }}</strong>
-                                    @endif
-                                    @if($activeKondisi)
-                                        kondisi <strong class="text-slate-700">{{ $activeKondisi }}</strong>
-                                    @endif
-                                </p>
-                                <a href="{{ route('informasi-nutrisi.index') }}" class="inline-flex items-center gap-1.5 mt-3 px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-brand-800 font-bold text-xs transition">
-                                    ↺ Reset Filter &amp; Pencarian
-                                </a>
-                            @else
-                                <h3 class="text-sm font-bold text-slate-800">Belum Ada Informasi Nutrisi</h3>
-                                <p class="text-xs text-slate-500 mt-1">
-                                    Belum ada data nutrisi yang sesuai dengan pencarian atau filter saat ini.
-                                </p>
-                                <a href="{{ route('admin.informasi-nutrisi.create') }}" class="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-xl bg-brand-800 text-white font-bold text-xs shadow-sm hover:bg-brand-900 transition">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                                    <span>Tambah Informasi Nutrisi Pertama</span>
-                                </a>
-                            @endif
+                            <h3 class="text-base font-bold text-slate-900">Data Tidak Ditemukan</h3>
+                            <p class="text-xs text-slate-500 mt-1">
+                                Tidak ada rekomendasi nutrisi yang sesuai dengan filter atau kata kunci saat ini. Silakan coba tahap lain atau reset filter.
+                            </p>
+                            <a href="{{ route('informasi-nutrisi.index') }}" class="inline-flex items-center gap-1.5 mt-4 px-5 py-2.5 rounded-full bg-[#b8235a] hover:bg-[#a01d4d] text-white font-bold text-xs shadow-xs transition">
+                                ↺ Tampilkan Semua Rekomendasi
+                            </a>
                         </div>
                     </div>
                 @else
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach($nutrisis as $item)
-                            <div class="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-md transition flex flex-col justify-between group">
+                            <div class="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between group">
                                 <!-- Card Image & Badges -->
                                 <div>
-                                    <div class="relative h-44 bg-slate-100 overflow-hidden">
-                                        <img src="{{ $item->foto ? $item->foto : 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=600&q=80' }}" alt="{{ $item->nama_bahan_menu }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                    <div class="relative h-48 bg-slate-100 overflow-hidden">
+                                        <img src="{{ $item->foto ? $item->foto : 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80' }}" 
+                                             alt="{{ $item->nama_bahan_menu }}" 
+                                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                                             onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=600&q=80';">
                                         
-                                        <!-- Top Left Badges -->
-                                        <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[85%]">
-                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-600/90 text-white shadow-xs backdrop-blur-xs">
+                                        <!-- Top Left Badges (Fase) -->
+                                        <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[80%]">
+                                            <span class="text-[11px] font-bold px-3 py-1 rounded-full bg-[#b8235a] text-white shadow-xs backdrop-blur-xs">
                                                 {{ $item->kategori_fase }}
                                             </span>
                                         </div>
 
-                                        <!-- Top Right Category Badge -->
-                                        <div class="absolute top-3 right-3">
-                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900/80 text-white shadow-xs backdrop-blur-xs">
+                                        <!-- Bottom Right Category Badge (Kondisi) -->
+                                        <div class="absolute bottom-3 right-3">
+                                            <span class="text-[11px] font-bold px-3 py-1 rounded-xl bg-white/95 text-slate-800 shadow-xs backdrop-blur-xs border border-slate-100">
                                                 {{ $item->kategori_kondisi }}
                                             </span>
                                         </div>
                                     </div>
 
                                     <!-- Content -->
-                                    <div class="p-5 space-y-3">
-                                        <!-- Kandungan Gizi pill -->
-                                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200/60 text-[11px] font-semibold text-amber-900">
-                                            <span>⚡</span>
-                                            <span class="truncate max-w-[240px]">{{ $item->kandungan_gizi }}</span>
+                                    <div class="p-5 sm:p-6 space-y-3">
+                                        <!-- Kandungan Gizi Pill with Bolt Icon (Persis Screenshot) -->
+                                        <div class="flex items-center gap-1.5 text-xs font-bold text-sky-700">
+                                            <span class="text-sky-600">⚡</span>
+                                            <span class="truncate">{{ $item->kandungan_gizi }}</span>
                                         </div>
 
-                                        <h3 class="text-base font-bold text-slate-900 leading-snug group-hover:text-brand-700 transition">
+                                        <!-- Title -->
+                                        <h3 class="text-base sm:text-lg font-extrabold text-slate-900 leading-snug group-hover:text-brand-700 transition">
                                             {{ $item->nama_bahan_menu }}
                                         </h3>
 
+                                        <!-- Description -->
                                         <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed">
                                             {{ $item->saran_penggunaan }}
                                         </p>
                                     </div>
                                 </div>
 
-                                <!-- Card Footer Action -->
-                                <div class="px-5 pb-5 pt-2 border-t border-slate-100 flex items-center gap-2">
-                                    <button onclick="openNutrisiDetail({{ $item->id }})" class="flex-1 py-2.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100/80 text-brand-800 font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <!-- Card Footer: Tombol Baca Selengkapnya berbentuk Pill Pink Halus (Persis Screenshot) -->
+                                <div class="px-5 sm:px-6 pb-6 pt-2">
+                                    <button 
+                                        type="button" 
+                                        onclick="openNutrisiDetail({{ $item->id }})" 
+                                        class="w-full py-2.5 px-4 rounded-full bg-rose-50 hover:bg-rose-100 text-[#b8235a] font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer border border-rose-100/70 shadow-2xs group-hover:border-rose-200"
+                                    >
                                         <span>Baca Selengkapnya</span>
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
-                                    </button>
-                                    <a href="{{ route('informasi-nutrisi.edit', $item->id) }}" class="p-2.5 rounded-xl border border-slate-200 text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition" title="Edit Data Nutrisi">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                    </a>
-                                    <button type="button" onclick="confirmDeleteUserNutrisi({{ $item->id }}, '{{ addslashes($item->nama_bahan_menu) }}')" class="p-2.5 rounded-xl border border-slate-200 text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer" title="Hapus Data Nutrisi">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        <span class="text-sm">📖</span>
                                     </button>
                                 </div>
                             </div>
@@ -407,90 +396,198 @@
                 @endif
             </div>
 
-            <!-- PEDOMAN PERILAKU HIDUP BERSIH & SEHAT: TIPS GIZI SEHARI-HARI (4 Cards at bottom of screenshot) -->
-            <div class="space-y-4 pt-2">
-                <div>
-                    <span class="text-[10px] uppercase font-bold tracking-wider text-rose-500 block">PEDOMAN PERILAKU HIDUP BERSIH & SEHAT</span>
-                    <h2 class="text-base sm:text-lg font-bold text-slate-900">Tips Gizi Sehari-hari</h2>
-                    <p class="text-xs text-slate-500">Kebiasaan sederhana dalam dapur keluarga yang berdampak besar bagi pertumbuhan prima anak.</p>
+            <!-- PEDOMAN PERILAKU HIDUP BERSIH & SEHAT: TIPS GIZI SEHARI-HARI (Persis gambar media_1795506287454_320af4ab.png dan dibuat berfungsi) -->
+            <div class="space-y-4 pt-4 border-t border-slate-200/60">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-rose-500 block">PEDOMAN PERILAKU HIDUP BERSIH &amp; SEHAT</span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Tips Gizi Sehari-hari</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Kebiasaan sederhana dalam dapur keluarga yang berdampak besar bagi pertumbuhan prima anak. Klik tiap tips untuk melihat panduan lengkapnya.</p>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-2">
-                        <div class="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center font-bold text-sm">
-                            🍱
+                    <!-- Tip 1: Konsumsi Beragam & Bervariasi -->
+                    <div 
+                        onclick="openTipsModal(0)" 
+                        class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-pink-300 transition-all duration-200 cursor-pointer group flex flex-col justify-between space-y-3"
+                    >
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+                                🍱
+                            </div>
+                            <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-brand-700 transition">
+                                Konsumsi Beragam &amp; Bervariasi
+                            </h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Tidak ada satu jenis makanan tunggal yang memiliki semua zat gizi lengkap. Kombinasikan lauk hewani, nabati, dan aneka sayur warna-warni setiap kali makan.
+                            </p>
                         </div>
-                        <h4 class="text-xs font-bold text-slate-900">Konsumsi Beragam & Bervariasi</h4>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">
-                            Tidak ada satu jenis makanan tunggal yang memiliki semua zat gizi lengkap. Kombinasikan lauk hewani, nabati, dan aneka sayur warna-warni setiap kali makan.
-                        </p>
+                        <div class="pt-2 text-[11px] font-bold text-[#b8235a] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            <span>Baca Panduan Lengkap</span>
+                            <span>&rarr;</span>
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-2">
-                        <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
-                            🧼
+                    <!-- Tip 2: Kebersihan Bahan & Masak -->
+                    <div 
+                        onclick="openTipsModal(1)" 
+                        class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-pink-300 transition-all duration-200 cursor-pointer group flex flex-col justify-between space-y-3"
+                    >
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+                                🧼
+                            </div>
+                            <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-brand-700 transition">
+                                Kebersihan Bahan &amp; Masak
+                            </h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Cuci tangan pakai sabun, masak matang sempurna, dan pisahkan talenan daging mentah dengan makanan siap saji untuk mencegah infeksi diare pemicu stunting.
+                            </p>
                         </div>
-                        <h4 class="text-xs font-bold text-slate-900">Kebersihan Bahan & Masak</h4>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">
-                            Cuci tangan pakai sabun, masak matang sempurna, dan pisahkan talenan daging mentah dengan makanan siap saji untuk mencegah infeksi diare pemicu stunting.
-                        </p>
+                        <div class="pt-2 text-[11px] font-bold text-[#b8235a] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            <span>Baca Panduan Lengkap</span>
+                            <span>&rarr;</span>
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-2">
-                        <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-sm">
-                            ⚖️
+                    <!-- Tip 3: Porsi Sesuai Tahap Kehidupan -->
+                    <div 
+                        onclick="openTipsModal(2)" 
+                        class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-pink-300 transition-all duration-200 cursor-pointer group flex flex-col justify-between space-y-3"
+                    >
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+                                ⚖️
+                            </div>
+                            <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-brand-700 transition">
+                                Porsi Sesuai Tahap Kehidupan
+                            </h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Ibu hamil dan menyusui butuh tambahan kalori serta asam folat, sedangkan balita membutuhkan porsi kecil tapi sering dan bertekstur padat gizi hewani.
+                            </p>
                         </div>
-                        <h4 class="text-xs font-bold text-slate-900">Porsi Sesuai Tahap Kehidupan</h4>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">
-                            Ibu hamil dan menyusui butuh tambahan kalori serta asam folat, sedangkan balita membutuhkan porsi kecil tapi sering dan bertekstur padat gizi hewani.
-                        </p>
+                        <div class="pt-2 text-[11px] font-bold text-[#b8235a] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            <span>Baca Panduan Lengkap</span>
+                            <span>&rarr;</span>
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-2">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
-                            🩺
+                    <!-- Tip 4: Konsultasi Tenaga Kesehatan -->
+                    <div 
+                        onclick="openTipsModal(3)" 
+                        class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-pink-300 transition-all duration-200 cursor-pointer group flex flex-col justify-between space-y-3"
+                    >
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+                                🩺
+                            </div>
+                            <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-brand-700 transition">
+                                Konsultasi Tenaga Kesehatan
+                            </h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Apabila balita mengalami kenaikan berat badan tidak memadai (weight faltering) atau ibu mengalami mual berlebih, segera temu bidan/dokter faskes terdekat.
+                            </p>
                         </div>
-                        <h4 class="text-xs font-bold text-slate-900">Konsultasi Tenaga Kesehatan</h4>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">
-                            Apabila balita mengalami kenaikan berat badan tidak memadai (weight faltering) atau ibu mengalami mual berlebih, segera temu bidan/dokter faskes terdekat.
-                        </p>
+                        <div class="pt-2 text-[11px] font-bold text-[#b8235a] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            <span>Baca Panduan Lengkap</span>
+                            <span>&rarr;</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- DETAIL MODAL -->
+    <!-- DETAIL REKOMENDASI NUTRISI MODAL -->
     <div id="detail-modal" class="fixed inset-0 bg-slate-900/50 z-50 hidden backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto space-y-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto space-y-5">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                <span id="modal-badge-fase" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800">Fase</span>
-                <button onclick="closeNutrisiDetail()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">&times;</button>
+                <div class="flex items-center gap-2">
+                    <span id="modal-badge-fase" class="text-[11px] font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-800">Fase</span>
+                    <span id="modal-badge-kondisi" class="text-[11px] font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700">Kategori</span>
+                </div>
+                <button type="button" onclick="closeNutrisiDetail()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center font-bold text-lg transition cursor-pointer">&times;</button>
             </div>
 
             <div>
-                <span id="modal-badge-kondisi" class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Kategori</span>
-                <h3 id="modal-title" class="text-lg font-bold text-slate-900 leading-snug">Judul Bahan/Menu</h3>
+                <h3 id="modal-title" class="text-xl font-extrabold text-slate-900 leading-snug">Judul Bahan/Menu</h3>
             </div>
 
-            <div class="p-3 rounded-2xl bg-amber-50/80 border border-amber-200/70 text-xs text-amber-900 space-y-1">
-                <strong class="font-bold flex items-center gap-1.5">⚡ Kandungan Gizi Utama:</strong>
-                <p id="modal-kandungan" class="text-xs"></p>
+            <!-- Kandungan Gizi Utama -->
+            <div class="p-4 rounded-2xl bg-sky-50/80 border border-sky-100 text-xs text-sky-950 space-y-1.5 shadow-2xs">
+                <div class="font-bold text-sky-900 flex items-center gap-1.5">
+                    <span>⚡</span>
+                    <span>Kandungan Gizi Utama:</span>
+                </div>
+                <p id="modal-kandungan" class="text-xs font-semibold leading-relaxed"></p>
             </div>
 
-            <div class="space-y-1">
-                <h4 class="text-xs font-bold text-slate-700">Saran Penggunaan / Anjuran Konsumsi:</h4>
-                <p id="modal-saran" class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-2xl border border-slate-100 whitespace-pre-line"></p>
+            <!-- Saran Penggunaan / Porsi -->
+            <div class="space-y-1.5">
+                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Saran Penggunaan &amp; Anjuran Konsumsi:</h4>
+                <p id="modal-saran" class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-100 whitespace-pre-line"></p>
             </div>
 
-            <div id="modal-manfaat-wrap" class="space-y-1 hidden">
-                <h4 class="text-xs font-bold text-slate-700">Deskripsi & Manfaat Kesehatan:</h4>
-                <p id="modal-manfaat" class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-2xl border border-slate-100 whitespace-pre-line"></p>
+            <!-- Deskripsi & Manfaat Klinis -->
+            <div id="modal-manfaat-wrap" class="space-y-1.5 hidden">
+                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Manfaat Klinis &amp; Pencegahan Stunting:</h4>
+                <p id="modal-manfaat" class="text-xs text-slate-600 leading-relaxed bg-rose-50/40 p-4 rounded-2xl border border-rose-100/70 whitespace-pre-line"></p>
             </div>
 
             <div class="pt-3 flex justify-end">
-                <button onclick="closeNutrisiDetail()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
-                    Tutup
+                <button type="button" onclick="closeNutrisiDetail()" class="w-full sm:w-auto px-6 py-2.5 bg-[#b8235a] hover:bg-[#a01d4d] text-white font-bold text-xs rounded-full shadow-md transition cursor-pointer">
+                    Tutup Panduan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PANDUAN TIPS GIZI SEHARI-HARI (BERFUNGSI LENGKAP) -->
+    <div id="tips-modal" class="fixed inset-0 bg-slate-900/50 z-50 hidden backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div id="tips-modal-icon" class="w-10 h-10 rounded-2xl bg-rose-50 text-xl flex items-center justify-center flex-shrink-0">
+                        🍱
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-rose-500">Panduan Perilaku Hidup Bersih &amp; Sehat</span>
+                        <h3 id="tips-modal-title" class="text-lg font-extrabold text-slate-900 leading-tight">Judul Tips</h3>
+                    </div>
+                </div>
+                <button type="button" onclick="closeTipsModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center font-bold text-lg transition cursor-pointer">&times;</button>
+            </div>
+
+            <!-- Subtitle -->
+            <div class="p-3.5 rounded-2xl bg-pink-50/70 border border-pink-100 text-xs text-brand-900 font-semibold flex items-center gap-2">
+                <span>💡</span>
+                <span id="tips-modal-subtitle">Subjudul tips praktis keluarga</span>
+            </div>
+
+            <!-- Konten Penjelasan Utama -->
+            <div class="space-y-2">
+                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Prinsip Penting:</h4>
+                <p id="tips-modal-desc" class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-100"></p>
+            </div>
+
+            <!-- Poin-poin Langkah Praktis -->
+            <div class="space-y-2">
+                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Langkah Praktis Dapur Keluarga:</h4>
+                <ul id="tips-modal-steps" class="space-y-2 text-xs text-slate-700">
+                    <!-- diisi lewat JS -->
+                </ul>
+            </div>
+
+            <!-- Pesan Tambahan / Catatan Ahli Gizi -->
+            <div class="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-100 text-xs text-emerald-900 space-y-1">
+                <span class="font-bold flex items-center gap-1.5">🌟 Catatan Ahli Gizi Kemenkes:</span>
+                <p id="tips-modal-note" class="text-xs leading-relaxed text-emerald-800"></p>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+                <button type="button" onclick="closeTipsModal()" class="w-full sm:w-auto px-6 py-2.5 bg-[#b8235a] hover:bg-[#a01d4d] text-white font-bold text-xs rounded-full shadow-md transition cursor-pointer">
+                    Saya Mengerti
                 </button>
             </div>
         </div>
@@ -498,35 +595,100 @@
 
     <!-- JS SCRIPTS -->
     <script>
-        // Mobile Sidebar Toggle
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        const openBtn = document.getElementById('open-sidebar-btn');
-        const closeBtn = document.getElementById('close-sidebar-btn');
+        // Data Interaktif untuk 4 Tips Gizi Sehari-hari
+        const tipsData = [
+            {
+                icon: "🍱",
+                title: "Konsumsi Beragam & Bervariasi",
+                subtitle: "Pedoman Piring Sehat & Rotasi Menu Bergizi",
+                desc: "Tidak ada satu jenis makanan tunggal yang memiliki semua zat gizi lengkap. Kunci tumbuh kembang prima anak adalah kombinasi seimbang antara protein hewani, protein nabati, karbohidrat kompleks, serat, dan aneka mikronutrien.",
+                steps: [
+                    "<strong>Sertakan Protein Hewani Setiap Makan:</strong> Prioritaskan telur ayam, ikan kembung, ayam, atau daging sapi karena asam amino esensial hewani lebih mudah diserap oleh tubuh balita dan ibu hamil.",
+                    "<strong>Variasikan Warna Sayur & Buah:</strong> Pilih sayuran berwarna hijau tua (bayam, brokoli), oranye (wortel, labu), dan merah (tomat) untuk mencukupi kebutuhan vitamin A, C, dan antioksidan.",
+                    "<strong>Batasi Gula, Garam, dan Lemak (GGL):</strong> Hindari makanan instan atau berpengawet tinggi pada masa kehamilan dan MPASI balita.",
+                    "<strong>Rotasi Menu Mingguan:</strong> Ganti kombinasi menu setiap 2-3 hari agar anak tidak bosan dan asupan mikronutrien beragam."
+                ],
+                note: "Konsumsi protein hewani bersama makanan kaya vitamin C (seperti jeruk atau tomat) dapat meningkatkan penyerapan zat besi hingga 3 kali lipat untuk mencegah anemia."
+            },
+            {
+                icon: "🧼",
+                title: "Kebersihan Bahan & Masak",
+                subtitle: "5 Kunci Keamanan Pangan Mencegah Infeksi & Diare",
+                desc: "Penyakit infeksi berulang seperti diare dan cacingan adalah salah satu pemicu utama kegagalan pertumbuhan (growth faltering) yang berujung pada stunting. Menjaga higienitas makanan sama pentingnya dengan kandungan gizi makanan itu sendiri.",
+                steps: [
+                    "<strong>Cuci Tangan dengan Sabun:</strong> Cuci tangan di bawah air mengalir minimal 20 detik sebelum memegang bahan makanan, sebelum menyuapi anak, dan setelah dari kamar mandi.",
+                    "<strong>Pisahkan Talenan & Pisau:</strong> Gunakan talenan terpisah untuk daging/ikan mentah dan makanan matang/sayuran siap santap guna mencegah kontaminasi silang bakteri.",
+                    "<strong>Masak Hingga Matang Sempurna:</strong> Pastikan daging, ayam, telur, dan ikan dimasak hingga matang menyeluruh (suhu di atas 75°C) untuk membunuh kuman Salmonella dan parasit.",
+                    "<strong>Gunakan Air Bersih & Bahan Segar:</strong> Selalu gunakan air matang untuk membilas peralatan makan bayi dan sayuran mentah.",
+                    "<strong>Simpan Makanan dengan Benar:</strong> Jangan biarkan makanan matang berada di suhu ruang lebih dari 2 jam. Simpan dalam kulkas bertutup rapat."
+                ],
+                note: "Kebersihan peralatan makan balita dan air minum yang terjamin menurunkan risiko diare hingga 45%, melindungi berat badan anak agar tetap di garis hijau KMS."
+            },
+            {
+                icon: "⚖️",
+                title: "Porsi Sesuai Tahap Kehidupan",
+                subtitle: "Penyesuaian Kalori & Tekstur Dari Hamil hingga Balita",
+                desc: "Kebutuhan gizi bersifat spesifik pada setiap periode 1000 Hari Pertama Kehidupan. Mengatur porsi secara tepat mencegah kekurangan gizi (underweight) maupun kelebihan berat badan.",
+                steps: [
+                    "<strong>Ibu Hamil Trimester 1:</strong> Belum butuh porsi besar tambahan, namun wajib konsumsi asam folat 400-600 mcg dan makanan bertekstur lembut untuk mengatasi mual.",
+                    "<strong>Ibu Hamil Trimester 2 & 3:</strong> Tambahkan 1 porsi makan selingan padat gizi (+300 kkal/hari) kaya zat besi dan kalsium untuk pertumbuhan pesat kerangka janin.",
+                    "<strong>Ibu Menyusui:</strong> Butuh tambahan +500 kkal/hari dengan asupan cairan minimal 3 liter (10-12 gelas) air putih per hari agar volume ASI melimpah.",
+                    "<strong>Balita MPASI (6-8 Bulan):</strong> Tekstur lumat kental (tidak cair), berikan 2-3 kali makan utama sehari (2-3 sendok makan bertahap) kaya zat besi.",
+                    "<strong>Balita 9-11 Bulan:</strong> Tekstur cincang halus / finger food, berikan 3-4 kali sehari setengah mangkok kecil.",
+                    "<strong>Balita 12-24 Bulan:</strong> Makanan keluarga dengan cita rasa tidak pedas, porsi 3/4 mangkok kecil 3-4 kali sehari ditambah 1-2 kali selingan."
+                ],
+                note: "Lambung balita masih berukuran kecil. Jangan berikan kuah sup berlebih tanpa lauk; utamakan kepadatan kalori dan protein hewani di setiap suapan."
+            },
+            {
+                icon: "🩺",
+                title: "Konsultasi Tenaga Kesehatan",
+                subtitle: "Deteksi Dini Tumbuh Kembang & Suplementasi Nutrisi",
+                desc: "Pemantauan rutin ke faskes memastikan setiap keterlambatan kenaikan berat badan atau tanda anemia dapat diintervensi sebelum terlambat menjadi stunting kronis.",
+                steps: [
+                    "<strong>Kunjungan Rutin Posyandu Tiap Bulan:</strong> Timbang berat badan dan ukur panjang/tinggi badan balita secara rutin sampai usia 5 tahun.",
+                    "<strong>Waspadai 'Weight Faltering':</strong> Jika kenaikan berat badan balita tidak memenuhi garis target KBM pada KMS, segera konsultasi ke Bidan atau Dokter Puskesmas.",
+                    "<strong>Pemeriksaan Kehamilan (ANC Minimal 6 Kali):</strong> 2 kali pada trimester 1 (oleh dokter dengan USG), 1 kali trimester 2, dan 3 kali trimester 3.",
+                    "<strong>Dapatkan Suplementasi Program:</strong> Pastikan ibu hamil meminum Tablet Tambah Darah (TTD) minimal 90 tablet, dan balita mendapatkan Vitamin A (Februari & Agustus) serta obat cacing.",
+                    "<strong>Tanyakan Konseling Gizi:</strong> Jangan ragu berkonsultasi mengenai keluhan balita sulit makan (GTM) atau alergi makanan di Poli Gizi Puskesmas terdekat."
+                ],
+                note: "Konsultasi gratis tersedia di Posyandu dan Puskesmas terdekat. Intervensi stunting paling efektif dilakukan sebelum anak berusia 2 tahun (periode emas HPK)."
+            }
+        ];
 
-        if (openBtn) {
-            openBtn.addEventListener('click', () => {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
+        // Fungsi Buka Modal Tips Gizi
+        function openTipsModal(index) {
+            const tip = tipsData[index];
+            if (!tip) return;
+
+            document.getElementById('tips-modal-icon').textContent = tip.icon;
+            document.getElementById('tips-modal-title').textContent = tip.title;
+            document.getElementById('tips-modal-subtitle').textContent = tip.subtitle;
+            document.getElementById('tips-modal-desc').innerHTML = tip.desc;
+            document.getElementById('tips-modal-note').textContent = tip.note;
+
+            const stepsContainer = document.getElementById('tips-modal-steps');
+            stepsContainer.innerHTML = '';
+            tip.steps.forEach(step => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100';
+                li.innerHTML = `<span class="text-rose-500 font-bold mt-0.5">•</span><span>${step}</span>`;
+                stepsContainer.appendChild(li);
             });
+
+            document.getElementById('tips-modal').classList.remove('hidden');
         }
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            });
-        }
-        if (overlay) {
-            overlay.addEventListener('click', () => {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            });
+
+        function closeTipsModal() {
+            document.getElementById('tips-modal').classList.add('hidden');
         }
 
         // Nutrisi Detail Modal
         function openNutrisiDetail(id) {
             fetch(`/informasi-nutrisi/${id}`, {
-                headers: { 'Accept': 'application/json' }
+                headers: { 
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             })
             .then(res => res.json())
             .then(res => {
@@ -558,44 +720,13 @@
             document.getElementById('detail-modal').classList.add('hidden');
         }
 
-        function confirmDeleteUserNutrisi(id, name) {
-            document.getElementById('delete-user-item-name').textContent = '"' + name + '"';
-            document.getElementById('delete-user-form').action = '/informasi-nutrisi/' + id;
-            document.getElementById('delete-user-modal').classList.remove('hidden');
-        }
-
-        function closeDeleteUserModal() {
-            document.getElementById('delete-user-modal').classList.add('hidden');
-        }
+        // Tutup modal dengan tombol Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeNutrisiDetail();
+                closeTipsModal();
+            }
+        });
     </script>
-
-    <!-- DIALOG KONFIRMASI PENGHAPUSAN (PBI-026) -->
-    <div id="delete-user-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 space-y-4">
-            <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-xl">
-                🗑️
-            </div>
-
-            <div class="text-center space-y-1">
-                <h3 class="text-base font-extrabold text-slate-900">Konfirmasi Penghapusan</h3>
-                <p class="text-xs text-slate-500">
-                    Apakah Anda yakin ingin menghapus informasi nutrisi <strong id="delete-user-item-name" class="text-slate-800"></strong> dari rekomendasi? Tindakan ini tidak dapat dibatalkan.
-                </p>
-            </div>
-
-            <form id="delete-user-form" method="POST" action="">
-                @csrf
-                @method('DELETE')
-                <div class="grid grid-cols-2 gap-3 pt-2">
-                    <button type="button" onclick="closeDeleteUserModal()" class="w-full py-2.5 px-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer">
-                        Batal
-                    </button>
-                    <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md shadow-rose-600/20 transition cursor-pointer">
-                        Ya, Hapus
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
 </body>
 </html>
